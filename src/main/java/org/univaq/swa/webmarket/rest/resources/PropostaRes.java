@@ -32,15 +32,57 @@ import org.univaq.swa.webmarket.rest.exceptions.RESTWebApplicationException;
  * @author jessviozzi
  */
 
-@Path("proposte")
+@Path("/proposte")
 
 public class PropostaRes {
     
-    //rivedere
- @GET
-    @Path("{idproposta: [0-9]+}")
+    @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPOG(
+    public Response getProposals(
+            @Context UriInfo uriinfo,
+            //iniettiamo elementi di contesto utili per la verifica d'accesso
+            @Context SecurityContext sec,
+            @Context ContainerRequestContext req)
+            throws RESTWebApplicationException, SQLException, ClassNotFoundException, NamingException {
+        
+        List<String> l = new ArrayList();
+        
+        InitialContext ctx;
+        try {
+            ctx = new InitialContext();
+            DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+            Connection conn = ds.getConnection();
+            
+            PreparedStatement ps = conn.prepareStatement("Select * FROM proposta");
+            
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                
+                    l.add(rs.getString("produttore"));
+                    l.add(rs.getString("prodotto"));
+                    l.add(rs.getString("codice"));
+                    l.add(rs.getString("codice_prodotto"));
+                    l.add(String.valueOf(rs.getFloat("prezzo"))); 
+                    l.add(rs.getString("URL"));
+                    l.add(rs.getString("note"));
+                    l.add(rs.getString("stato"));
+                    l.add(rs.getString("data")); 
+                    l.add(rs.getString("motivazione"));
+                    l.add(String.valueOf(rs.getInt("richiesta_id")));               
+            }
+            
+        } catch (NamingException ex) {
+            Logger.getLogger(PropostaRes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return Response.ok(l).build();
+    }
+    
+ @GET
+    @Path("/{idproposta: [0-9]+}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getProposalById(
             @PathParam("idproposta") int idproposta,
             @Context UriInfo uriinfo,
             //iniettiamo elementi di contesto utili per la verifica d'accesso
