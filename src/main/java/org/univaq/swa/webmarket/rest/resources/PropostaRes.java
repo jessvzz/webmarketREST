@@ -53,7 +53,7 @@ public class PropostaRes {
             DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
             Connection conn = ds.getConnection();
             
-            PreparedStatement ps = conn.prepareStatement("Select * FROM proposta");
+            PreparedStatement ps = conn.prepareStatement("Select * FROM proposta_acquisto");
             
             ResultSet rs = ps.executeQuery();
             
@@ -98,7 +98,7 @@ public class PropostaRes {
             DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
             Connection conn = ds.getConnection();
             
-            PreparedStatement ps = conn.prepareStatement("Select * FROM proposta WHERE id = ?");
+            PreparedStatement ps = conn.prepareStatement("Select * FROM proposta_acquisto WHERE id = ?");
             ps.setInt(1, idproposta);
             
             ResultSet rs = ps.executeQuery();

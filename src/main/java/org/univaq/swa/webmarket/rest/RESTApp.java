@@ -13,6 +13,7 @@ import java.util.Set;
 import org.univaq.swa.webmarket.rest.exceptions.AppExceptionMapper;
 import org.univaq.swa.webmarket.rest.exceptions.JacksonExceptionMapper;
 import org.univaq.swa.webmarket.rest.jackson.ObjectMapperContextResolver;
+import org.univaq.swa.webmarket.rest.resources.PropostaRes;
 import org.univaq.swa.webmarket.rest.resources.RichiestaRes;
 import org.univaq.swa.webmarket.rest.resources.SimpleRes;
 import org.univaq.swa.webmarket.rest.security.AuthLoggedFilter;
@@ -33,6 +34,7 @@ public class RESTApp extends Application {
         c.add(SimpleRes.class);
         c.add(AuthenticationRes.class);
         c.add(RichiestaRes.class);
+        c.add(PropostaRes.class);
         
         
         //aggiungiamo il provider Jackson per poter
