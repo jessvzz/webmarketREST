@@ -15,7 +15,7 @@ import jakarta.ws.rs.core.Response;
  */
 
 public class RESTWebApplicationException extends WebApplicationException {
-    public RESTWebApplicationException() {
+    public RESTWebApplicationException(Exception e) {
         super(Response.serverError().build());
     }
     public RESTWebApplicationException(String message) {

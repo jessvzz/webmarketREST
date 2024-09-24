@@ -1,16 +1,17 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package org.univaq.swa.webmarket.rest.resources;
 
-import javax.sql.DataSource;
-import jakarta.ws.rs.POST;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
-import jakarta.ws.rs.core.UriInfo;
-import jakarta.ws.rs.container.ContainerRequestContext;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -18,71 +19,80 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.sql.DataSource;
 import org.univaq.swa.webmarket.rest.exceptions.RESTWebApplicationException;
+import org.univaq.swa.webmarket.rest.models.PropostaAcquisto;
 import org.univaq.swa.webmarket.rest.models.RichiestaOrdine;
+import org.univaq.swa.webmarket.rest.models.StatoRichiesta;
 
 /**
- * Servizio REST per la gestione delle richieste di acquisto
+ *
+ * @author jessviozzi
  */
-
-/**
- * 
- * author samanta95
- */
-
-@Path("/richieste")
-
 public class RichiestaRes {
+    private final RichiestaOrdine richiesta;
 
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)  
-    @Consumes(MediaType.APPLICATION_JSON)  
-    public Response inserisciRichiesta(
-            RichiestaOrdine richiesta,  // Oggetto RichiestaOrdine ricevuto dal client
-            @Context UriInfo uriinfo,  // UriInfo per ottenere informazioni sulla richiesta
-            @Context SecurityContext sec,  // Per gestire la sicurezza
-            @Context ContainerRequestContext req) throws RESTWebApplicationException, SQLException, ClassNotFoundException, NamingException {
-        
+    RichiestaRes(RichiestaOrdine richiesta) {
+        this.richiesta = richiesta;
+    }
+    
+    @GET
+    @Produces("application/json")
+    public Response getItem() {
+        if (richiesta == null) {
+            throw new RESTWebApplicationException(Response.Status.NOT_FOUND.getStatusCode(), "Richiesta non trovata.");
+        }
+        return Response.ok(richiesta).build();
+    }
+
+    @PUT
+    @Path("/presa_in_carico") 
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response presaInCarico(@Context SecurityContext sec) throws SQLException {
         InitialContext ctx;
         Connection conn = null;
         PreparedStatement ps = null;
+
         try {
-            // Inizializzazione del contesto JNDI e recupero del DataSource
             ctx = new InitialContext();
             DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
             conn = ds.getConnection();
-            
-            // Query SQL per l'inserimento della richiesta
-            String query = "INSERT INTO richiesta_ordine (note, stato, data, codice_richiesta, utente_id, tecnico_id, categoria_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
-            
-            ps = conn.prepareStatement(query);
-            ps.setString(1, richiesta.getNote());
-            ps.setString(2, richiesta.getStato().toString()); 
-            ps.setDate(3, new java.sql.Date(richiesta.getData().getTime()));  // Conversione da java.util.Date a java.sql.Date
-            ps.setString(4, richiesta.getCodiceRichiesta());
-            ps.setInt(5, richiesta.getUtente().getId());  
-            ps.setInt(6, richiesta.getTecnico() != null ? richiesta.getTecnico().getId() : null);  // Tecnico può essere null all'inizio
-            ps.setInt(7, richiesta.getCategoria().getId()); 
 
-            // Esecuzione della query di inserimento
-            int rowsInserted = ps.executeUpdate();
-            
-            if (rowsInserted > 0) {
-                // Se l'inserimento ha successo, restituiamo un HTTP 201 Created
-                return Response.status(Response.Status.CREATED).entity("Richiesta inserita con successo").build();
-            } else {
-                // Se l'inserimento non va a buon fine
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore durante l'inserimento della richiesta").build();
+            int tecnicoId = getLoggedTechnicianId(sec);
+            if (tecnicoId == -1) {
+                return Response.status(Response.Status.FORBIDDEN)
+                               .entity("Tecnico non autenticato.")
+                               .build();
             }
 
-        } catch (NamingException | SQLException e) {
-            // Gestione delle eccezioni
-            Logger.getLogger(RichiestaRes.class.getName()).log(Level.SEVERE, null, e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore interno del server").build();
+            String query = "UPDATE richiesta_ordine SET stato = ?, tecnico = ? WHERE id = ?";
+            ps = conn.prepareStatement(query);
+            ps.setString(1, StatoRichiesta.PRESA_IN_CARICO.toString());
+            ps.setInt(2, tecnicoId);
+            ps.setInt(3, richiesta.getId());
+            
+            int rowsUpdated = ps.executeUpdate();
+            if (rowsUpdated > 0) {
+                return Response.ok("Richiesta aggiornata con successo.").build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND)
+                               .entity("Richiesta non trovata.")
+                               .build();
+            }
+        } catch (SQLException | NamingException ex) {
+            Logger.getLogger(RichiestaRes.class.getName()).log(Level.SEVERE, null, ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                           .entity("Errore interno del server.")
+                           .build();
         } finally {
-            // Chiusura delle risorse
             if (ps != null) ps.close();
             if (conn != null) conn.close();
         }
+    }
+
+    //ANCORA DA IMPLEMENTARE
+    //per trovare id tecnico loggato
+    private int getLoggedTechnicianId(SecurityContext sec) {
+        return 1;
     }
 }
