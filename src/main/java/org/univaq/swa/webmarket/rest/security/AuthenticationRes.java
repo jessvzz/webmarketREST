@@ -6,6 +6,8 @@ import jakarta.ws.rs.core.*;
 
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static jakarta.ws.rs.core.Response.Status.UNAUTHORIZED;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 @Path("auth")
 public class AuthenticationRes {
@@ -13,7 +15,7 @@ public class AuthenticationRes {
     @POST
     @Path("login")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response login(@FormParam("username") String username, @FormParam("password") String password, @Context UriInfo uriInfo){
+    public Response login(@FormParam("username") String username, @FormParam("password") String password, @Context UriInfo uriInfo) throws NoSuchAlgorithmException, InvalidKeySpecException{
 
         if(AuthHelpers.getInstance().authenticateUser(username, password)){
             String token = AuthHelpers.getInstance().issueToken(username, uriInfo);

@@ -123,7 +123,7 @@ private Utente recuperaUtente(Connection conn, int utenteId) throws SQLException
 }
 
 
-//recupero la Categoria
+//recupero la categoria
 private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQLException {
     PreparedStatement ps = conn.prepareStatement("SELECT * FROM categoria WHERE id = ?");
     ps.setInt(1, categoriaId);

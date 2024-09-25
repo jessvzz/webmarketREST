@@ -2,7 +2,7 @@
 
 ## Gea
 
-- [ ]   Login/logout con username e password.
+- [x]   Login/logout con username e password.
 - [ ]   Associazione di una richiesta di acquisto a un tecnico incaricato
 - [ ]   Approvazione (da parte dell'ordinante) di una  _proposta di acquisto_
 - [ ]   Estrazione lista delle richieste di acquisto  _in corso_  (non chiuse) di un determinato ordinante
