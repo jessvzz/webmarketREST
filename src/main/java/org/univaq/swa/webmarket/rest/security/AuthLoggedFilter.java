@@ -11,6 +11,8 @@ import java.io.IOException;
 
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static jakarta.ws.rs.core.Response.Status.UNAUTHORIZED;
+import jakarta.ws.rs.core.SecurityContext;
+import java.security.Principal;
 
 @Provider
 @Logged
@@ -23,7 +25,7 @@ public class AuthLoggedFilter implements ContainerRequestFilter {
         String authHeader = request.getHeaderString(AUTHORIZATION);
         if(authHeader != null && authHeader.startsWith("Bearer "))
         {
-            String token = authHeader.substring("Bearer".length()).trim();
+            String token = authHeader.substring("Bearer ".length()).trim();
             if (!token.isEmpty())
             {
                 try
@@ -33,6 +35,28 @@ public class AuthLoggedFilter implements ContainerRequestFilter {
                     {
                         request.setProperty("token", token);
                         request.setProperty("username", username);
+                        request.setSecurityContext(new SecurityContext() {
+                            @Override
+                            public Principal getUserPrincipal() {
+                                return () -> username; 
+                            }
+                            
+                            //DA IMPLEMENTARE
+                            @Override
+                            public boolean isUserInRole(String role) {
+                                return true; 
+                            }
+
+                            @Override
+                            public boolean isSecure() {
+                                return request.getUriInfo().getRequestUri().getScheme().equals("https");
+                            }
+
+                            @Override
+                            public String getAuthenticationScheme() {
+                                return "Bearer";
+                            }
+                        });
                     }
                     else
                     {

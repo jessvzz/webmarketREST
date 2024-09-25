@@ -66,7 +66,7 @@ public class RichiesteRes {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                richiesta.setCodiceRichiesta(rs.getString("codiceRichiesta"));
+                richiesta.setCodiceRichiesta(rs.getString("codice_richiesta"));
                 richiesta.setData(rs.getDate("data"));
                 richiesta.setNote(rs.getString("note"));
                 richiesta.setStato(StatoRichiesta.valueOf(rs.getString("stato")));

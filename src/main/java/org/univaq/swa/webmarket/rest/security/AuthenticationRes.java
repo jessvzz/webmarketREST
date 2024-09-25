@@ -19,7 +19,9 @@ public class AuthenticationRes {
 
         if(AuthHelpers.getInstance().authenticateUser(username, password)){
             String token = AuthHelpers.getInstance().issueToken(username, uriInfo);
-            return Response.noContent().header(AUTHORIZATION, "Bearer "+ token).build();
+            return Response.ok(token)
+                        .cookie(new NewCookie.Builder("token").value(token).build())
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token).build();
         }
         return Response.status(UNAUTHORIZED).build();
     }
