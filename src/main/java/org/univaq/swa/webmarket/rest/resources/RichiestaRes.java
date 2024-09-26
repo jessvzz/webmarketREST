@@ -8,6 +8,7 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -49,18 +50,19 @@ public class RichiestaRes {
     @PUT
     @Path("/presa_in_carico") 
     @Produces(MediaType.APPLICATION_JSON)
-    public Response presaInCarico(@Context SecurityContext sec) throws SQLException {
+    public Response presaInCarico(@QueryParam("techid") int techId, @Context SecurityContext sec) throws SQLException {
         InitialContext ctx;
         Connection conn = null;
         PreparedStatement ps = null;
 
         try {
+            System.out.println("id tecnico: "+techId);
             ctx = new InitialContext();
             DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
             conn = ds.getConnection();
 
-            int tecnicoId = getLoggedTechnicianId(sec);
-            if (tecnicoId == -1) {
+            
+            if (techId < 0) {
                 return Response.status(Response.Status.FORBIDDEN)
                                .entity("Tecnico non autenticato.")
                                .build();
@@ -69,7 +71,7 @@ public class RichiestaRes {
             String query = "UPDATE richiesta_ordine SET stato = ?, tecnico = ? WHERE id = ?";
             ps = conn.prepareStatement(query);
             ps.setString(1, StatoRichiesta.PRESA_IN_CARICO.toString());
-            ps.setInt(2, tecnicoId);
+            ps.setInt(2, techId);
             ps.setInt(3, richiesta.getId());
             
             int rowsUpdated = ps.executeUpdate();
@@ -91,6 +93,7 @@ public class RichiestaRes {
         }
     }
 
+    /*
     //ANCORA DA IMPLEMENTARE
     //per trovare id tecnico loggato
     private int getLoggedTechnicianId(SecurityContext sec) {
@@ -142,4 +145,5 @@ public class RichiestaRes {
 
         return -1;
     }
+*/
 }

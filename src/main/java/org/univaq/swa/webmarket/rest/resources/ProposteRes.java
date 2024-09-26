@@ -6,9 +6,11 @@ package org.univaq.swa.webmarket.rest.resources;
 
 import javax.sql.DataSource;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
@@ -28,6 +30,7 @@ import javax.naming.NamingException;
 import org.univaq.swa.webmarket.rest.exceptions.RESTWebApplicationException;
 import org.univaq.swa.webmarket.rest.models.PropostaAcquisto;
 import org.univaq.swa.webmarket.rest.models.StatoProposta;
+import org.univaq.swa.webmarket.rest.models.StatoRichiesta;
 
 /**
  *
@@ -74,7 +77,7 @@ public class ProposteRes {
             proposta.setStatoProposta(StatoProposta.valueOf(rs.getString("stato")));
             proposta.setData(rs.getDate("data"));
             proposta.setMotivazione(rs.getString("motivazione"));
-            proposta.setId(rs.getInt("richiesta_id")); 
+            proposta.setId(rs.getInt("id")); 
             
             ps.close();
 
@@ -86,6 +89,7 @@ public class ProposteRes {
         
         return new PropostaRes(proposta);
     }
+    
     
     
     @GET
