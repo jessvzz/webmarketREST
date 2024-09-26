@@ -30,4 +30,6 @@ public class RESTWebApplicationException extends WebApplicationException {
                 .type("text/plain")
                 .build());
     }
+    
+    
 }

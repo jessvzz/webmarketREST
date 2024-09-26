@@ -42,6 +42,69 @@ import org.univaq.swa.webmarket.rest.models.Utente;
 @Path("/richieste")
 
 public class RichiesteRes {
+    
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAll() {
+        List<RichiestaOrdine> richiesteInAttesa = new ArrayList<>();
+        InitialContext ctx;
+
+        try {
+            ctx = new InitialContext();
+            DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+
+            try (Connection conn = ds.getConnection()) {
+                PreparedStatement ps = conn.prepareStatement("SELECT * FROM richiesta_ordine");
+                ResultSet rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    RichiestaOrdine richiesta = new RichiestaOrdine();
+                    richiesta.setId(rs.getInt("id"));
+                    richiesta.setCodiceRichiesta(rs.getString("codice_richiesta"));
+                    richiesta.setData(rs.getDate("data"));
+                    richiesta.setNote(rs.getString("note"));
+                    richiesta.setStato(StatoRichiesta.valueOf(rs.getString("stato")));
+                    
+                    
+                    int utenteId = rs.getInt("utente");
+                    int tecnicoId = rs.getInt("tecnico");
+                    int categoriaId = rs.getInt("categoria_id");
+                    
+                    System.out.println("utente: "+utenteId+", tecnico: "+tecnicoId+", categoria: "+categoriaId);
+                    /*
+                    if (!rs.wasNull() && utenteId > 0) {
+                        Utente utente = recuperaUtente(conn, utenteId);
+                        if (utente != null) {
+                            richiesta.setUtente(utente);
+                        }
+                    }
+
+                    if (!rs.wasNull() && tecnicoId > 0) {
+                        Utente tecnico = recuperaUtente(conn, tecnicoId);
+                        if (tecnico != null) {
+                            richiesta.setTecnico(tecnico);
+                        }
+                    }
+
+                    if (!rs.wasNull() && categoriaId > 0) {
+                        Categoria categoria = recuperaCategoria(conn, categoriaId);
+                        if (categoria != null) {
+                            richiesta.setCategoria(categoria);
+                        }
+                    }
+                    */
+
+                    richiesteInAttesa.add(richiesta);
+                }
+            }
+
+        } catch (NamingException | SQLException ex) {
+            Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore interno del server").build();
+        }
+
+        return Response.ok(richiesteInAttesa).build();
+    }
 
     @Path("/{idrichiesta: [0-9]+}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -66,6 +129,7 @@ public class RichiesteRes {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
+                richiesta.setId(rs.getInt("id"));
                 richiesta.setCodiceRichiesta(rs.getString("codice_richiesta"));
                 richiesta.setData(rs.getDate("data"));
                 richiesta.setNote(rs.getString("note"));
@@ -74,7 +138,8 @@ public class RichiesteRes {
                 int utenteId = rs.getInt("utente");
                 int tecnicoId = rs.getInt("tecnico");
                 int categoriaId = rs.getInt("categoria_id");
-
+                
+                /*
                 //trovo utete
                 if (utenteId > 0) {
                     Utente utente = recuperaUtente(conn, utenteId);
@@ -92,6 +157,7 @@ public class RichiesteRes {
                     Categoria categoria = recuperaCategoria(conn, categoriaId);
                     richiesta.setCategoria(categoria);
                 }
+                */
 
             } else {
                 throw new RESTWebApplicationException(Response.Status.NOT_FOUND.getStatusCode(), "Richiesta non trovata");
@@ -137,7 +203,6 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
     }
     return null; 
 }
-    
     
     @POST
     @Produces(MediaType.APPLICATION_JSON)  
@@ -210,13 +275,13 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
 
                 while (rs.next()) {
                     RichiestaOrdine richiesta = new RichiestaOrdine();
-                    richiesta.setCodiceRichiesta(rs.getString("codiceRichiesta"));
+                    richiesta.setCodiceRichiesta(rs.getString("codice_richiesta"));
                     richiesta.setData(rs.getDate("data"));
                     richiesta.setNote(rs.getString("note"));
                     richiesta.setStato(StatoRichiesta.valueOf(rs.getString("stato")));
 
-                    int utenteId = rs.getInt("utente_id");
-                    int tecnicoId = rs.getInt("tecnico_id");
+                    int utenteId = rs.getInt("utente");
+                    int tecnicoId = rs.getInt("tecnico");
                     int categoriaId = rs.getInt("categoria_id");
 
                     if (utenteId > 0) {

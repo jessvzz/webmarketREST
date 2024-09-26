@@ -22,13 +22,17 @@ public class RichiestaOrdineSerializer extends JsonSerializer<RichiestaOrdine> {
         java.sql.Date sqlDate = (Date) item.getData();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); 
         String formattedDate = sdf.format(sqlDate);
-        jgen.writeStringField("data", formattedDate); //formatto la data come stringa
+        jgen.writeStringField("data", formattedDate); 
         
+        if (item.getUtente() != null) {
         jgen.writeObjectField("utente", item.getUtente());
-        if (item.getTecnico() != null) {
-            jgen.writeObjectField("tecnico", item.getTecnico()); // Scriviamo l'oggetto 'tecnico'
         }
+        if (item.getTecnico() != null) {
+            jgen.writeObjectField("tecnico", item.getTecnico()); 
+        }
+        if (item.getUtente() != null) {
         jgen.writeObjectField("categoria", item.getCategoria());
+        }
         jgen.writeEndObject(); // }
     }
 }

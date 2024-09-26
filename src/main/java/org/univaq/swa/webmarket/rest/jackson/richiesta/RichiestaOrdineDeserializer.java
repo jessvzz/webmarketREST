@@ -51,6 +51,7 @@ public class RichiestaOrdineDeserializer extends JsonDeserializer<RichiestaOrdin
         }
         
         if (node.has("utente")) {
+            
             JsonNode utenteNode = node.get("utente");
             Utente utente = jp.getCodec().treeToValue(utenteNode, Utente.class);
             richiesta.setUtente(utente);
