@@ -7,7 +7,7 @@
 - [x]   Approvazione (da parte dell'ordinante) di una  _proposta di acquisto_
 - [x]   Estrazione lista delle richieste di acquisto  _in corso_  (non chiuse) di un determinato ordinante
 - [x]  Estrazione di tutti i dettagli di una richiesta di acquisto (richiesta iniziale, eventuale prodotto candidato, approvazione/rifiuto dell'ordinante con relativa motivazione)
-- [ ]  logout
+- [x]  logout
 
 ## Samanta
 - [ ] Inserimento di una  _richiesta di acquisto_  (comprensiva di categoria di prodotto, di tutte le caratteristiche richieste per quel tipo di prodotto e delle eventuali note)
