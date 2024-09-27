@@ -211,7 +211,7 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
     }
     return null; 
 }
-    
+    //Inserimento di una nuova richiesta
     @POST
     @Produces(MediaType.APPLICATION_JSON)  
     @Consumes(MediaType.APPLICATION_JSON)  
@@ -231,7 +231,7 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
             conn = ds.getConnection();
             
             // Query SQL per l'inserimento della richiesta
-            String query = "INSERT INTO richiesta_ordine (note, stato, data, codice_richiesta, utente_id, tecnico_id, categoria_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO richiesta_ordine (note, stato, data, codice_richiesta, utente, tecnico, categoria_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
             
             ps = conn.prepareStatement(query);
             ps.setString(1, richiesta.getNote());
@@ -375,5 +375,102 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
     }
     
     
-    
-}
+        //     @GET
+        // @Path("/non_assegnate")
+        // @Produces(MediaType.APPLICATION_JSON)
+        // public Response getRichiesteNonAssegnate() {
+        //     List<RichiestaOrdine> richiesteNonAssegnate = new ArrayList<>();
+        //     InitialContext ctx;
+
+        //     try {
+        //         ctx = new InitialContext();
+        //         DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+
+        //         try (Connection conn = ds.getConnection()) {
+        //             PreparedStatement ps = conn.prepareStatement("SELECT * FROM richiesta_ordine WHERE tecnico IS NULL OR tecnico = 0");
+        //             ResultSet rs = ps.executeQuery();
+
+        //             while (rs.next()) {
+        //                 RichiestaOrdine richiesta = new RichiestaOrdine();
+        //                 richiesta.setId(rs.getInt("ID"));
+        //                 richiesta.setCodiceRichiesta(rs.getString("codice_richiesta"));
+        //                 richiesta.setData(rs.getDate("data"));
+        //                 richiesta.setNote(rs.getString("note"));
+        //                 richiesta.setStato(StatoRichiesta.valueOf(rs.getString("stato")));
+
+        //                 int utenteId = rs.getInt("utente");
+        //                 int categoriaId = rs.getInt("categoria_id");
+
+        //                 if (utenteId > 0) {
+        //                     Utente utente = recuperaUtente(conn, utenteId);
+        //                     richiesta.setUtente(utente);
+        //                 }
+
+        //                 if (categoriaId > 0) {
+        //                     Categoria categoria = recuperaCategoria(conn, categoriaId);
+        //                     richiesta.setCategoria(categoria);
+        //                 }
+
+        //                 richiesteNonAssegnate.add(richiesta);
+        //             }
+        //         }
+
+        //     } catch (NamingException | SQLException ex) {
+        //         Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, ex);
+        //         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore interno del server").build();
+        //     }
+
+        //     return Response.ok(richiesteNonAssegnate).build();
+        // }
+
+        // @GET
+        // @Path("/gestite_da_tecnico/{idtecnico}")
+        // @Produces(MediaType.APPLICATION_JSON)
+        // public Response getRichiesteGestiteDaTecnico(@PathParam("idtecnico") int idTecnico) {
+        //     List<RichiestaOrdine> richiesteGestite = new ArrayList<>();
+        //     InitialContext ctx;
+        
+        //     try {
+        //         ctx = new InitialContext();
+        //         DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+        
+        //         try (Connection conn = ds.getConnection()) {
+        //             PreparedStatement ps = conn.prepareStatement("SELECT * FROM richiesta_ordine WHERE tecnico = ?");
+        //             ps.setInt(1, idTecnico);
+        //             ResultSet rs = ps.executeQuery();
+        
+        //             while (rs.next()) {
+        //                 RichiestaOrdine richiesta = new RichiestaOrdine();
+        //                 richiesta.setId(rs.getInt("ID"));
+        //                 richiesta.setCodiceRichiesta(rs.getString("codice_richiesta"));
+        //                 richiesta.setData(rs.getDate("data"));
+        //                 richiesta.setNote(rs.getString("note"));
+        //                 richiesta.setStato(StatoRichiesta.valueOf(rs.getString("stato")));
+        
+        //                 int utenteId = rs.getInt("utente");
+        //                 int categoriaId = rs.getInt("categoria_id");
+        
+        //                 if (utenteId > 0) {
+        //                     Utente utente = recuperaUtente(conn, utenteId);
+        //                     richiesta.setUtente(utente);
+        //                 }
+        
+        //                 if (categoriaId > 0) {
+        //                     Categoria categoria = recuperaCategoria(conn, categoriaId);
+        //                     richiesta.setCategoria(categoria);
+        //                 }
+        
+        //                 richiesteGestite.add(richiesta);
+        //             }
+        //         }
+        
+        //     } catch (NamingException | SQLException ex) {
+        //         Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, ex);
+        //         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore interno del server").build();
+        //     }
+        
+        //     return Response.ok(richiesteGestite).build();
+        // }
+        
+
+    }

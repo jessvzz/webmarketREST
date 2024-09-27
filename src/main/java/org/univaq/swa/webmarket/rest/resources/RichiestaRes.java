@@ -6,6 +6,8 @@ package org.univaq.swa.webmarket.rest.resources;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObjectBuilder;
+import jakarta.websocket.server.PathParam;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -238,5 +240,45 @@ public class RichiestaRes {
 
         return -1;
     }
+
+    //cancellazione
+    // @DELETE
+    // @Path("/{idrichiesta}")
+    // @Produces(MediaType.APPLICATION_JSON)
+    // public Response eliminaRichiesta(@PathParam("idrichiesta") int idRichiesta) {
+    //     InitialContext ctx;
+    //     Connection conn = null;
+    //     PreparedStatement ps = null;
+
+    //     try {
+    //         ctx = new InitialContext();
+    //         DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+    //         conn = ds.getConnection();
+
+    //         // Query SQL per eliminare la richiesta
+    //         String query = "DELETE FROM richiesta_ordine WHERE id = ?";
+    //         ps = conn.prepareStatement(query);
+    //         ps.setInt(1, idRichiesta);
+
+    //         int rowsDeleted = ps.executeUpdate();
+
+    //         if (rowsDeleted > 0) {
+    //             return Response.ok("Richiesta eliminata con successo").build();
+    //         } else {
+    //             return Response.status(Response.Status.NOT_FOUND).entity("Richiesta non trovata").build();
+    //         }
+
+    //     } catch (SQLException e) {
+    //         Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, e);
+    //         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore interno del server").build();
+    //     } catch (NamingException e) {
+    //         Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, e);
+    //         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore di connessione al database").build();
+    //     } finally {
+    //         // Chiusura delle risorse
+    //         if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+    //         if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+    //     }
+    // }
 
 }
