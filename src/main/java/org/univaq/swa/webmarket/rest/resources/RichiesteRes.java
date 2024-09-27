@@ -71,11 +71,11 @@ public class RichiesteRes {
                     int categoriaId = rs.getInt("categoria_id");
                     
                     System.out.println("utente: "+utenteId+", tecnico: "+tecnicoId+", categoria: "+categoriaId);
-                    /*
+                    
                     if (!rs.wasNull() && utenteId > 0) {
                         Utente utente = recuperaUtente(conn, utenteId);
                         if (utente != null) {
-                            richiesta.setUtente(utente);
+                           richiesta.setUtente(utente);
                         }
                     }
 
@@ -92,7 +92,7 @@ public class RichiesteRes {
                             richiesta.setCategoria(categoria);
                         }
                     }
-                    */
+                    
 
                     richiesteInAttesa.add(richiesta);
                 }
@@ -139,7 +139,7 @@ public class RichiesteRes {
                 int tecnicoId = rs.getInt("tecnico");
                 int categoriaId = rs.getInt("categoria_id");
                 
-                /*
+                
                 //trovo utete
                 if (utenteId > 0) {
                     Utente utente = recuperaUtente(conn, utenteId);
@@ -157,7 +157,7 @@ public class RichiesteRes {
                     Categoria categoria = recuperaCategoria(conn, categoriaId);
                     richiesta.setCategoria(categoria);
                 }
-                */
+                
 
             } else {
                 throw new RESTWebApplicationException(Response.Status.NOT_FOUND.getStatusCode(), "Richiesta non trovata");
@@ -182,7 +182,9 @@ private Utente recuperaUtente(Connection conn, int utenteId) throws SQLException
         utente.setId(rs.getInt("id"));
         utente.setUsername(rs.getString("username"));
         utente.setEmail(rs.getString("email"));
+        utente.setPassword(rs.getString("password"));
         
+        System.out.println("sono qui utente");
         return utente;
     }
     return null; 
@@ -199,6 +201,11 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
         Categoria categoria = new Categoria();
         categoria.setId(rs.getInt("id"));
         categoria.setNome(rs.getString("nome"));
+        categoria.setPadre(rs.getInt("padre"));
+
+        
+        System.out.println("sono qui categoria");
+
         return categoria;
     }
     return null; 
