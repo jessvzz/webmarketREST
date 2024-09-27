@@ -5,7 +5,7 @@
 - [x]   Login con username e password.
 - [x]   Associazione di una richiesta di acquisto a un tecnico incaricato
 - [x]   Approvazione (da parte dell'ordinante) di una  _proposta di acquisto_
-- [ ]   Estrazione lista delle richieste di acquisto  _in corso_  (non chiuse) di un determinato ordinante
+- [x]   Estrazione lista delle richieste di acquisto  _in corso_  (non chiuse) di un determinato ordinante
 - [ ]  Estrazione di tutti i dettagli di una richiesta di acquisto (richiesta iniziale, eventuale prodotto candidato, approvazione/rifiuto dell'ordinante con relativa motivazione)
 - [ ]  logout
 

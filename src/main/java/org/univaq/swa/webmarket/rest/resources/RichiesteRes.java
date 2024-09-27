@@ -7,6 +7,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -317,4 +318,62 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
 
         return Response.ok(richiesteInAttesa).build();
     }
+    
+    @GET
+    @Path("/non_risolte")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getRichiesteNonRisolte(@QueryParam("ordId") int utenteId) {
+        List<RichiestaOrdine> richieste = new ArrayList<>();
+        InitialContext ctx;
+
+        try {
+            ctx = new InitialContext();
+            DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+
+            try (Connection conn = ds.getConnection()) {
+                PreparedStatement ps = conn.prepareStatement("SELECT * FROM richiesta_ordine WHERE stato != ? AND utente = ?");
+                ps.setString(1, "RISOLTA");
+                ps.setInt(2, utenteId);
+                ResultSet rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    RichiestaOrdine richiesta = new RichiestaOrdine();
+                    richiesta.setId(rs.getInt("ID"));
+                    richiesta.setCodiceRichiesta(rs.getString("codice_richiesta"));
+                    richiesta.setData(rs.getDate("data"));
+                    richiesta.setNote(rs.getString("note"));
+                    richiesta.setStato(StatoRichiesta.valueOf(rs.getString("stato")));
+
+                    int tecnicoId = rs.getInt("tecnico");
+                    int categoriaId = rs.getInt("categoria_id");
+
+                    if (utenteId > 0) {
+                        Utente utente = recuperaUtente(conn, utenteId);
+                        richiesta.setUtente(utente);
+                    }
+
+                    if (tecnicoId > 0) {
+                        Utente tecnico = recuperaUtente(conn, tecnicoId);
+                        richiesta.setTecnico(tecnico);
+                    }
+
+                    if (categoriaId > 0) {
+                        Categoria categoria = recuperaCategoria(conn, categoriaId);
+                        richiesta.setCategoria(categoria);
+                    }
+
+                    richieste.add(richiesta);
+                }
+            }
+
+        } catch (NamingException | SQLException ex) {
+            Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore interno del server").build();
+        }
+
+        return Response.ok(richieste).build();
+    }
+    
+    
+    
 }
