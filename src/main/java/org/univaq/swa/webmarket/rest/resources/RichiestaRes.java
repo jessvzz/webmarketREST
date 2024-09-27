@@ -28,6 +28,7 @@ import org.univaq.swa.webmarket.rest.exceptions.RESTWebApplicationException;
 import org.univaq.swa.webmarket.rest.models.PropostaAcquisto;
 import org.univaq.swa.webmarket.rest.models.RichiestaOrdine;
 import org.univaq.swa.webmarket.rest.models.StatoRichiesta;
+import org.univaq.swa.webmarket.rest.security.Logged;
 
 /**
  *
@@ -50,18 +51,20 @@ public class RichiestaRes {
     }
 
     @PUT
+    @Logged
     @Path("/presa_in_carico") 
     @Produces(MediaType.APPLICATION_JSON)
-    public Response presaInCarico(@QueryParam("techid") int techId, @Context SecurityContext sec) throws SQLException {
+    public Response presaInCarico(@Context SecurityContext sec) throws SQLException {
         InitialContext ctx;
         Connection conn = null;
         PreparedStatement ps = null;
 
         try {
-            System.out.println("id tecnico: "+techId);
             ctx = new InitialContext();
             DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
             conn = ds.getConnection();
+            
+            int techId = getLoggedTechnicianId(sec);
 
             
             if (techId < 0) {
@@ -183,7 +186,7 @@ public class RichiestaRes {
     }
 
 
-    /*
+    
     //ANCORA DA IMPLEMENTARE
     //per trovare id tecnico loggato
     private int getLoggedTechnicianId(SecurityContext sec) {
@@ -235,5 +238,5 @@ public class RichiestaRes {
 
         return -1;
     }
-*/
+
 }
