@@ -30,6 +30,7 @@ import org.univaq.swa.webmarket.rest.models.RichiestaOrdine;
 import org.univaq.swa.webmarket.rest.models.StatoProposta;
 import org.univaq.swa.webmarket.rest.models.StatoRichiesta;
 import org.univaq.swa.webmarket.rest.models.Utente;
+import org.univaq.swa.webmarket.rest.security.Logged;
 
 /**
  * Servizio REST per la gestione delle richieste di acquisto
@@ -320,15 +321,17 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
     }
     
     @GET
-    @Path("/non_risolte")
+    @Logged
+    @Path("/in_corso")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getRichiesteNonRisolte(@QueryParam("ordId") int utenteId) {
+    public Response getRichiesteNonRisolte(@Context SecurityContext sec) {
         List<RichiestaOrdine> richieste = new ArrayList<>();
         InitialContext ctx;
 
         try {
             ctx = new InitialContext();
             DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+            int utenteId = UserUtils.getLoggedId(sec);
 
             try (Connection conn = ds.getConnection()) {
                 PreparedStatement ps = conn.prepareStatement("SELECT * FROM richiesta_ordine WHERE stato != ? AND utente = ?");
