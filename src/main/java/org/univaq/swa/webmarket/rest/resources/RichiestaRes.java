@@ -4,6 +4,8 @@
  */
 package org.univaq.swa.webmarket.rest.resources;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObjectBuilder;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -92,6 +94,94 @@ public class RichiestaRes {
             if (conn != null) conn.close();
         }
     }
+    
+    
+    @GET
+    @Path("/dettagli")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDettagliRichiesta() throws SQLException {
+        InitialContext ctx;
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            ctx = new InitialContext();
+            DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+            conn = ds.getConnection();
+
+            String query = "SELECT r.id AS richiesta_id, r.codice_richiesta, r.data AS data_richiesta, " +
+                           "r.note AS note_richiesta, r.stato AS stato_richiesta, u.username AS ordinante, " +
+                           "cat.nome AS categoria, p.produttore, p.prodotto, p.codice_prodotto, p.prezzo, " +
+                           "p.stato AS stato_proposta, p.motivazione AS motivazione_proposta, p.URL AS url_prodotto, " +
+                           "p.note AS note_proposta, o.stato AS stato_ordine, o.data AS data_ordine " +
+                           "FROM richiesta_ordine r " +
+                           "LEFT JOIN utente u ON r.utente = u.ID " +
+                           "LEFT JOIN categoria cat ON r.categoria_id = cat.ID " +
+                           "LEFT JOIN proposta_acquisto p ON r.id = p.richiesta_id " +
+                           "LEFT JOIN ordine o ON p.id = o.proposta_id " +
+                           "WHERE r.id = ?";
+
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, richiesta.getId());
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                // uso una struttura fatta con jsonObjBuilder
+                JsonObjectBuilder richiestaDetails = Json.createObjectBuilder()
+                    .add("richiesta_id", rs.getInt("richiesta_id"))
+                    .add("codice_richiesta", rs.getString("codice_richiesta"))
+                    .add("data_richiesta", rs.getDate("data_richiesta").toString())
+                    .add("note_richiesta", rs.getString("note_richiesta"))
+                    .add("stato_richiesta", rs.getString("stato_richiesta"))
+                    .add("ordinante", rs.getString("ordinante"))
+                    .add("categoria", rs.getString("categoria"));
+
+                //se prodotto è nullo non ci sta proposta
+                if (rs.getString("prodotto") != null) {
+                    JsonObjectBuilder propostaBuilder = Json.createObjectBuilder()
+                        .add("produttore", rs.getString("produttore"))
+                        .add("prodotto", rs.getString("prodotto"))
+                        .add("codice_prodotto", rs.getString("codice_prodotto"))
+                        .add("prezzo", rs.getDouble("prezzo"))
+                        .add("stato_proposta", rs.getString("stato_proposta"));
+
+                    String motivazione = rs.getString("motivazione_proposta");
+                    if (motivazione != null) {
+                        propostaBuilder.add("motivazione_proposta", motivazione);
+                    }
+
+                    String note = rs.getString("note_proposta");
+                    if (note != null) {
+                        propostaBuilder.add("note_proposta", note);
+                    }
+
+                    propostaBuilder.add("url_prodotto", rs.getString("url_prodotto"));
+
+                    richiestaDetails.add("proposta", propostaBuilder);
+                }
+
+
+                
+
+                return Response.ok(richiestaDetails.build()).build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND)
+                               .entity("Dettagli della richiesta non trovati.")
+                               .build();
+            }
+        } catch (SQLException | NamingException ex) {
+            Logger.getLogger(RichiestaRes.class.getName()).log(Level.SEVERE, null, ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                           .entity("Errore interno del server.")
+                           .build();
+        } finally {
+            if (rs != null) rs.close();
+            if (ps != null) ps.close();
+            if (conn != null) conn.close();
+        }
+    }
+
 
     /*
     //ANCORA DA IMPLEMENTARE
