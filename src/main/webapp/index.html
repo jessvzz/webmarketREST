@@ -1,305 +1,60 @@
 <!DOCTYPE html>
-<html>
+<html lang="it" xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <title>JAX-RS EventsREST application (JakartaEE 10)</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="res/restest.css"/>
+        <title>WebMarket</title>
+        <link rel="stylesheet" href="res/normalize.css" type="text/css"/>        
+        <link rel="stylesheet" href="res/grid.css" type="text/css"/>
+        <link rel="stylesheet" href="res/default.css" type="text/css"/> 
+        
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+
     </head>
     <body>
-        <h1>JAX-RS EventsREST application (JakartaEE 10)</h1>
-        <p>This is a sample web application based on <strong>JakartaEE 10</strong> that runs on Apache <strong>Tomcat 10.1</strong> with <strong>Java 14</strong> or above.</p>
-        <p> The application is configured to expose RESTful resources through the <strong>JAX-RS</strong> reference implementation, <strong>Jersey</strong> (version 3, for Jakarta EE).</p>
-        <p> JAX-RS JSON serialization is handled by the <strong>Jackson</strong> JSON Provider (version 2, for Jakarta EE).</p>
+        <div class="container">
+            <div class="header-container" id="header">
+    <div class="sixteen columns">Web Market
+        <div class="subtitle">L'eCommerce facile per il tuo ente</div>
+    </div>
+    <div class="logininfo">
+                <a href="login?referrer=http%3A%2F%2Flocalhost%3A8080%2FWebMarket%2F">[login]</a>
+    </div>
+</div>
+            <div class="row" id="body">
+
+                <div >
+<div class="form-card">
+    
+<h1 class='title-dark-brown'>Login</h1>
+<form method="post" action="login">
+<input type="hidden" name="login" value="true"/>
+<div class="input-group">
+    <label for="username" class="form-label">Username:</label>
+    <input type="text" id="username" name="username" class="form-input" required>
+</div>
+<div class="input-group">
+    <label for="password" class="form-label">Password</label>
+    <input type="password" id="password" name="password" class="form-input" required>
+</div>
+<div>
+    <button class="form-button" type="submit">Login</button>
+</div>
+</form>
+</div>
 
 
-        <p>The RESTful resources, grouped under the /rest prefix, are the following:</p>
-
-        <table class="restest" width="100%">
-            <thead>
-                <tr>
-                    <th>Path</th>
-                    <th>Method</th>
-                    <th>Parameters</th>
-                    <th>Payload</th>
-                    <th>Authentication</th>
-                    <th>(Test) Request</th>
-                    <th>(Expected) Result</th>
-                </tr>
-            </thead>
-            <tbody>
-<!--
-
-                <tr data-rest-test-auth data-rest-test-target data-rest-test-method="post" data-rest-test-url="rest/events"
-                    data-rest-test-content-type="application/json" data-rest-test-status="201"
-                    data-rest-test-payload=' { "uid" : "IDabc", "summary" : "Event IDabc", "location" : null, "start" : "2024-04-10T13:48:48+02:00", "end" : "2024-04-10T13:48:48.295207+02:00", "categories" : null, "attachment" : "Y2lhbyBhIHR1dHRp", "participants" : [ { "name" : "Pinco Pallino #0", "email" : "pinco.pallino0@univaq.it" }, { "name" : "Pinco Pallino #1", "email" : "pinco.pallino1@univaq.it" } ], "recurrence" : { "count" : null, "interval" : 2, "until" : "2024-06-10T13:48+02:00", "frequency" : "WEEKLY" } }'>
-                    <td>events</td>
-                    <td>POST</td>
-                    <td></td>
-                    <td>Event object (JSON)</td>
-                    <td>Bearer token</td>
-                    <td class="request"></td>
-                    <td  class="output"></td>
-                </tr>
-
-                <tr data-rest-test data-rest-test-target data-rest-test-url="rest/events?from=2024-02-01T00:00Z&amp;to=2024-03-01T00:00Z&amp;cat=work,personal">
-                    <td>/events?from={a}&amp;to={b}&amp;cat={c}</td>
-                    <td>GET</td>
-                    <td>{a},{b}: ISO OFFSET DATETIME, {c}: comma-separated list</td>
-                    <td></td>
-                    <td></td>
-                    <td class="request"></td>
-                    <td  class="output">Filtered event list</td>
-                </tr>
-
-                <tr data-rest-test data-rest-test-target data-rest-test-url="rest/events/current?cat=work,personal">
-                    <td>/events/current?cat={c}</td>
-                    <td>GET</td>
-                    <td>{c}: comma-separated list</td>
-                    <td></td>
-                    <td></td>
-                    <td class="request"></td>
-                    <td  class="output">Lista eventi correnti</td>
-                </tr>
-
-
-                <tr data-rest-test data-rest-test-accept="text/plain" data-rest-test-target data-rest-test-url="rest/events/count?from=2024-02-01T00:00Z&amp;to=2024-03-01T00:00Z&amp;cat=work,personal">
-                    <td>/events/count?from={a}&amp;to={b}&amp;cat={c}</td>
-                    <td>GET</td>
-                    <td>{a},{b}: ISO OFFSET DATETIME, {c}: comma-separated list</td>
-                    <td></td>
-                    <td></td>
-                    <td class="request"></td>
-                    <td  class="output">Numero eventi filtrati (testo)</td>
-                </tr>
-                
-                <tr data-rest-test  data-rest-test-accept="application/json" data-rest-test-target data-rest-test-url="rest/events/count?from=2024-02-01T00:00Z&amp;to=2024-03-01T00:00Z&amp;cat=work,personal">
-                    <td>/events/count?from={a}&amp;to={b}&amp;cat={c}</td>
-                    <td>GET</td>
-                    <td>{a},{b}: ISO OFFSET DATETIME, {c}: comma-separated list</td>
-                    <td></td>
-                    <td></td>
-                    <td class="request"></td>
-                    <td  class="output">Numero eventi filtrati (JSON)</td>
-                </tr>
-                
-                <tr data-rest-test data-rest-test-status="406" data-rest-test-accept="application/pdf" data-rest-test-target data-rest-test-url="rest/events/count?from=2024-02-01T00:00Z&amp;to=2024-03-01T00:00Z&amp;cat=work,personal">
-                    <td>/events/count?from={a}&amp;to={b}&amp;cat={c}</td>
-                    <td>GET</td>
-                    <td>{a},{b}: ISO OFFSET DATETIME, {c}: comma-separated list</td>
-                    <td></td>
-                    <td></td>
-                    <td class="request"></td>
-                    <td  class="output">Numero eventi filtrati (PDF)</td>
-                </tr>
-
-
-
-                <tr data-rest-test data-rest-test-target data-rest-test-url="rest/events/IDabc">
-                    <td>events/{uid}</td>
-                    <td>GET</td>
-                    <td>{uid}: ID[a-z0-9]+</td>
-                    <td></td>
-                    <td></td>
-                    <td class="request"></td>
-                    <td  class="output">Evento completo</td>
-                </tr>
-
-                <tr data-rest-test-auth data-rest-test-target data-rest-test-method="PUT" data-rest-test-url="rest/events/IDabc"
-                    data-rest-test-content-type="application/json" data-rest-test-status="204"
-                    data-rest-test-payload='{ "uid" : "IDabc", "summary":"Test", "start":"2024-03-10T17:04:20Z", "end":"2024-03-10T17:04:21Z" }'>
-                    <td>events/{uid}</td>
-                    <td>PUT</td>
-                    <td>{uid}: ID[a-z0-9]+</td>
-                    <td>Event object (JSON)</td>
-                    <td>Bearer token</td>
-                    <td class="request"></td>
-                    <td  class="output"></td>
-                </tr>
-
-                <tr data-rest-test-auth data-rest-test-target data-rest-test-method="delete" data-rest-test-status="204" data-rest-test-url="rest/events/IDabc">
-                    <td>events/{uid}</td>
-                    <td>DELETE</td>
-                    <td>{uid}: ID[a-z0-9]+</td>
-                    <td></td>
-                    <td>Bearer token</td>
-                    <td class="request"></td>
-                    <td  class="output"></td>
-                </tr>
-
-
-                <tr data-rest-test-auth data-rest-test-target data-rest-test-method="put" data-rest-test-url="rest/events/IDabc/recurrence"
-                    data-rest-test-content-type="application/json" data-rest-test-status="204"
-                    data-rest-test-payload='{ "interval" : 2, "until" : "2024-05-15T18:55:22+02:00", "frequency" : "WEEKLY" }'>
-                    <td>events/{uid}/recurrence</td>
-                    <td>PUT</td>
-                    <td>{uid}: ID[a-z0-9]+</td>
-                    <td>Recurrence rule object (JSON)</td>
-                    <td>Bearer token</td>
-                    <td class="request"></td>
-                    <td  class="output"></td>
-                </tr>
-
-
-                <tr data-rest-test data-rest-test-url="rest/events/IDabc/attachment">
-                    <td>events/{uid}/attachment</td>
-                    <td>GET</td>
-                    <td>{uid}: ID[a-z0-9]+</td>
-                    <td></td>
-                    <td></td>
-                    <td class="request"></td>
-                    <td  class="output">Event (binary) attachment</td>
-                </tr>
-                
-                 <tr data-rest-test-auth data-rest-test-target data-rest-test-method="put" data-rest-test-url="rest/events/IDabc/attachment"
-                    data-rest-test-content-type="text/plain" data-rest-test-status="204"
-                    data-rest-test-payload='payloadbinario'>
-                    <td>events/{uid}/attachment</td>
-                    <td>PUT</td>
-                    <td>{uid}: ID[a-z0-9]+</td>
-                    <td>Event (binary) attachment</td>
-                    <td>Bearer token</td>
-                    <td class="request"></td>
-                    <td  class="output"></td>
-                </tr>
-
-                <tr data-rest-test data-rest-test-target data-rest-test-url="rest/events/IDabc/participants">
-                    <td>events/{uid}/participants</td>
-                    <td>GET</td>
-                    <td>{uid}: ID[a-z0-9]+</td>
-                    <td></td>
-                    <td></td>
-                    <td class="request"></td>
-                    <td  class="output">Event participants list</td>
-                </tr>
-
-                <tr data-rest-test-auth data-rest-test-target data-rest-test-method="post" data-rest-test-url="rest/events/IDabc/participants"
-                    data-rest-test-content-type="application/json" data-rest-test-status="201"
-                    data-rest-test-payload='{ "name" : "Pinco Pallino #0", "email" : "pinco.pallino0@univaq.it" }'>
-                    <td>events/{uid}/participants</td>
-                    <td>POST</td>
-                    <td>{uid}: ID[a-z0-9]+</td>
-                    <td>Participant object (JSON)</td>
-                    <td>Bearer token</td>
-                    <td class="request"></td>
-                    <td  class="output"></td>
-                </tr>
-
-                <tr data-rest-test-auth data-rest-test-target data-rest-test-method="DELETE" data-rest-test-url="rest/events/IDabc/participants/pinco@pllino.com"  data-rest-test-status="204">
-                    <td>events/{uid}/participants/{partid}</td>
-                    <td>DELETE</td>
-                    <td>{uid}: ID[a-z0-9]+, {partid}: participant email</td>
-                    <td></td>
-                    <td>Bearer token</td>
-                    <td class="request"></td>
-                    <td  class="output"></td>
-                </tr>
-
-                <tr data-rest-test-target data-rest-test-method="OPTIONS" data-rest-test-url="rest/events/IDabc/participants"
-                    data-rest-test-status="200">
-                    <td>events/{uid}/participants</td>
-                    <td>OPTIONS</td>
-                    <td>{uid}: ID[a-z0-9]+</td>
-                    <td></td>
-                    <td></td>
-                    <td class="request"></td>
-                    <td  class="output"></td>
-                </tr>
-
--->
-            </tbody>
-        </table>
-
-        <h2>Authentication</h2>
-        <p>To test the login/logout resource <em>(AuthenticationRes)</em>, use the login form below. <strong>Links marked with &#x1f512; on this page call
-                restful endpoints requiring a bearer token and can be clicked only after a successful login.</strong></p>
-
-        <table class="restest" width="100%">
-            <thead>
-                <tr>
-                    <th>Path</th>
-                    <th>Method</th>
-                    <th>Parameters</th>
-                    <th>Payload</th>
-                    <th>Authentication</th>
-                    <th>(Test) Request</th>
-                    <th>(Expected) Result</th>                    
-                </tr>
-            </thead>
-            <tbody>
-                <!--
-                <tr data-rest-test-target data-rest-test-token  data-rest-test-url="rest/auth/login" data-rest-test-method="post" data-rest-test-status="200"
-                    data-rest-test-content-type="application/x-www-form-urlencoded" data-rest-test-payload="username=u&password=p">
-                    <td >/auth/login</td>
-                    <td>POST</td>
-                    <td></td>
-                    <td>form-encoded username and password</td>
-                    <td></td>
-                    <td class="request"></td>
-                    <td class="output"></td>                    
-                </tr>
-                <tr data-rest-test-target data-rest-test-auth="1000"  data-rest-test-url="rest/auth/logout" data-rest-test-method="delete" data-rest-test-status="204">
-                    <td >/auth/logout</td>
-                    <td>DELETE</td>
-                    <td></td>
-                    <td></td>
-                    <td>Bearer token</td>
-                    <td class="request"></td>
-                    <td class="output"></td>                    
-                </tr>
-                <tr data-rest-test-target data-rest-test-auth  data-rest-test-url="rest/auth/refresh" data-rest-test-method="get" data-rest-test-status="200">
-                    <td >/auth/refresh</td>
-                    <td>GET</td>
-                    <td></td>
-                    <td></td>
-                    <td>Bearer token</td>
-                    <td class="request"></td>
-                    <td class="output"></td>
-                </tr>
-                -->
-            </tbody>
-            <tfoot>
-                <!--
-                <tr>
-                    <td colspan="7">                        
-                        <form method="post" action="rest/auth/login" enctype="application/x-www-form-urlencoded">
-                            <p>Username: <input style="width:30%" type="text" value="u" id="username-field" name="username-field"/> 
-                                Password: <input style="width:30%" type="password" value="p" id="password-field" name="password-field"/>
-                                <input type="submit" value="login" name="login-button" id="login-button"/>
-                                <input type="submit" value="logout" name="logout-button" id="logout-button"/></p>      
-                        </form>
-                        <form method="post" action="rest/auth/login" enctype="application/x-www-form-urlencoded">
-                            <p>Token: <input style="width:80%" type="text" id="token-field" name="token-field"/> <input type="submit" value="refresh" name="refresh-button" id="refresh-button"/></p>
-                        </form>
-                    </td>
-                </tr>
-                -->
-            </tfoot>
-        </table>
-
-        <div style="border: 1px solid gray; margin: 1em auto; padding: 1em">
-            <p>
-                <em>Note that this project includes a Javascript library that automatically checks the above endpoints when this webpage is opened. This library
-                    is not part of the JAX-RS framework and it is not required to implement RESTful resources, and has been developed only as an aid for the
-                    sample resources included in this project.</em>
-            </p>
-            <p>
-                <span class="rest-test-message-error" style="color: red">
-                    Some tested endpoints did not return the expected result
-
-                </span>
-                <span class="rest-test-message-ok" style="color: green">
-                    All tested endpoints returned the correct result
-                </span>
-            </p>
+                </div>
+            </div>
+<div class="row" id="footer">
+    <div class="sixteen columns">Contatti: webmarket.univaq@outlook.com | Page compiled on 27/09/2024 17:13:15</div>   
+    
+</div>
         </div>
-
-
-
-
         <script src="res/restest.js">/* */</script>
         <script>
             let tester = new Restest();
         </script>
     </body>
 </html>
+
