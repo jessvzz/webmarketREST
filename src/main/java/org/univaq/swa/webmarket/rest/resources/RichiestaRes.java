@@ -190,43 +190,43 @@ public class RichiestaRes {
 
     
     //cancellazione
-    // @DELETE
-    // @Path("/{idrichiesta}")
-    // @Produces(MediaType.APPLICATION_JSON)
-    // public Response eliminaRichiesta(@PathParam("idrichiesta") int idRichiesta) {
-    //     InitialContext ctx;
-    //     Connection conn = null;
-    //     PreparedStatement ps = null;
+     @DELETE
+     @Produces(MediaType.APPLICATION_JSON)
+     public Response eliminaRichiesta() {
+         InitialContext ctx;
+         Connection conn = null;
+         PreparedStatement ps = null;
 
-    //     try {
-    //         ctx = new InitialContext();
-    //         DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
-    //         conn = ds.getConnection();
+         try {
+             ctx = new InitialContext();
+             DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+             conn = ds.getConnection();
+             
+             int idRichiesta = richiesta.getId();
+             // Query SQL per eliminare la richiesta
+             String query = "DELETE FROM richiesta_ordine WHERE id = ?";
+             ps = conn.prepareStatement(query);
+             ps.setInt(1, idRichiesta);
 
-    //         // Query SQL per eliminare la richiesta
-    //         String query = "DELETE FROM richiesta_ordine WHERE id = ?";
-    //         ps = conn.prepareStatement(query);
-    //         ps.setInt(1, idRichiesta);
+             int rowsDeleted = ps.executeUpdate();
 
-    //         int rowsDeleted = ps.executeUpdate();
+             if (rowsDeleted > 0) {
+                 return Response.ok("Richiesta eliminata con successo").build();
+             } else {
+                 return Response.status(Response.Status.NOT_FOUND).entity("Richiesta non trovata").build();
+             }
 
-    //         if (rowsDeleted > 0) {
-    //             return Response.ok("Richiesta eliminata con successo").build();
-    //         } else {
-    //             return Response.status(Response.Status.NOT_FOUND).entity("Richiesta non trovata").build();
-    //         }
-
-    //     } catch (SQLException e) {
-    //         Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, e);
-    //         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore interno del server").build();
-    //     } catch (NamingException e) {
-    //         Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, e);
-    //         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore di connessione al database").build();
-    //     } finally {
-    //         // Chiusura delle risorse
-    //         if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
-    //         if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
-    //     }
-    // }
+         } catch (SQLException e) {
+             Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, e);
+             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore interno del server").build();
+         } catch (NamingException e) {
+             Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, e);
+             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore di connessione al database").build();
+         } finally {
+             // Chiusura delle risorse
+             if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+             if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+         }
+     }
 
 }

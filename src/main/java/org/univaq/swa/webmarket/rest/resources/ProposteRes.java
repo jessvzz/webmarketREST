@@ -141,94 +141,49 @@ public class ProposteRes {
     }
 
     // //inserimento
-    // @POST
-    // @Consumes(MediaType.APPLICATION_JSON)
-    // @Produces(MediaType.APPLICATION_JSON)
-    // public Response inserisciProposta(PropostaAcquisto proposta) {
-    //     InitialContext ctx;
-    //     Connection conn = null;
-    //     PreparedStatement ps = null;
+     @POST
+     @Consumes(MediaType.APPLICATION_JSON)
+     @Produces(MediaType.APPLICATION_JSON)
+     public Response inserisciProposta(PropostaAcquisto proposta) {
+         InitialContext ctx;
+         Connection conn = null;
+         PreparedStatement ps = null;
 
-    //     try {
-    //         ctx = new InitialContext();
-    //         DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
-    //         conn = ds.getConnection();
+         try {
+             ctx = new InitialContext();
+             DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+             conn = ds.getConnection();
 
-    //         // Query SQL per inserire una nuova proposta
-    //         String query = "INSERT INTO proposta_acquisto (produttore, prodotto, codice, codice_prodotto, prezzo, URL, note, stato, richiesta_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    //         ps = conn.prepareStatement(query);
-    //         ps.setString(1, proposta.getProduttore());
-    //         ps.setString(2, proposta.getProdotto());
-    //         ps.setString(3, proposta.getCodice());
-    //         ps.setString(4, proposta.getCodiceProdotto());
-    //         ps.setFloat(5, proposta.getPrezzo());
-    //         ps.setString(6, proposta.getUrl());
-    //         ps.setString(7, proposta.getNote());
-    //         ps.setString(8, proposta.getStatoProposta().toString());
-    //         ps.setInt(9, proposta.getRichiestaOrdine().getId()); // ID della richiesta associata
+             // Query SQL per inserire una nuova proposta
+             String query = "INSERT INTO proposta_acquisto (produttore, prodotto, codice, codice_prodotto, prezzo, URL, note, stato, richiesta_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+             ps = conn.prepareStatement(query);
+             ps.setString(1, proposta.getProduttore());
+             ps.setString(2, proposta.getProdotto());
+             ps.setString(3, proposta.getCodice());
+             ps.setString(4, proposta.getCodiceProdotto());
+             ps.setFloat(5, proposta.getPrezzo());
+             ps.setString(6, proposta.getUrl());
+             ps.setString(7, proposta.getNote());
+             ps.setString(8, proposta.getStatoProposta().toString());
+             ps.setInt(9, proposta.getRichiestaOrdine().getId()); // ID della richiesta associata
 
-    //         int rowsInserted = ps.executeUpdate();
+             int rowsInserted = ps.executeUpdate();
 
-    //         if (rowsInserted > 0) {
-    //             return Response.status(Response.Status.CREATED).entity("Proposta inserita con successo").build();
-    //         } else {
-    //             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore durante l'inserimento della proposta").build();
-    //         }
+             if (rowsInserted > 0) {
+                 return Response.status(Response.Status.CREATED).entity("Proposta inserita con successo").build();
+             } else {
+                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore durante l'inserimento della proposta").build();
+             }
 
-    //     } catch (SQLException | NamingException e) {
-    //         Logger.getLogger(ProposteRes.class.getName()).log(Level.SEVERE, null, e);
-    //         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore interno del server").build();
-    //     } finally {
-    //         // Chiusura delle risorse
-    //         if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
-    //         if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
-    //     }
-    // }
+         } catch (SQLException | NamingException e) {
+             Logger.getLogger(ProposteRes.class.getName()).log(Level.SEVERE, null, e);
+             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore interno del server").build();
+         } finally {
+             // Chiusura delle risorse
+             if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+             if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+         }
+     }
 
-    // //modifica
-    // @PUT
-    //     @Path("/{idproposta}")
-    //     @Consumes(MediaType.APPLICATION_JSON)
-    //     @Produces(MediaType.APPLICATION_JSON)
-    //     public Response modificaProposta(@PathParam("idproposta") int idProposta, PropostaAcquisto proposta) {
-    //         InitialContext ctx;
-    //         Connection conn = null;
-    //         PreparedStatement ps = null;
-
-    //         try {
-    //             ctx = new InitialContext();
-    //             DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
-    //             conn = ds.getConnection();
-
-    //             // Query SQL per aggiornare una proposta esistente
-    //             String query = "UPDATE proposta_acquisto SET produttore = ?, prodotto = ?, codice = ?, codice_prodotto = ?, prezzo = ?, URL = ?, note = ?, stato = ? WHERE id = ?";
-    //             ps = conn.prepareStatement(query);
-    //             ps.setString(1, proposta.getProduttore());
-    //             ps.setString(2, proposta.getProdotto());
-    //             ps.setString(3, proposta.getCodice());
-    //             ps.setString(4, proposta.getCodiceProdotto());
-    //             ps.setFloat(5, proposta.getPrezzo());
-    //             ps.setString(6, proposta.getUrl());
-    //             ps.setString(7, proposta.getNote());
-    //             ps.setString(8, proposta.getStatoProposta().toString());
-    //             ps.setInt(9, idProposta); // ID della proposta da aggiornare
-
-    //             int rowsUpdated = ps.executeUpdate();
-
-    //             if (rowsUpdated > 0) {
-    //                 return Response.ok("Proposta modificata con successo").build();
-    //             } else {
-    //                 return Response.status(Response.Status.NOT_FOUND).entity("Proposta non trovata").build();
-    //             }
-
-    //         } catch (SQLException | NamingException e) {
-    //             Logger.getLogger(ProposteRes.class.getName()).log(Level.SEVERE, null, e);
-    //             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore interno del server").build();
-    //         } finally {
-    //             // Chiusura delle risorse
-    //             if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
-    //             if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
-    //         }
-    //     }
     
 }

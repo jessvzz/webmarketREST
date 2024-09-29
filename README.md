@@ -19,4 +19,10 @@
 ## ALTRO
 - [ ] Contrassegnare tutto come "protected path" con @Context e @Logged
 - [x] trova modo per far vedere categoria, utente e tecnico in richieste
+- [ ] Rivedere Deserializer richiesta
+- [ ] Rivedere path richieste 'gestite_da'
 
+# Cose che non funzionano
+- Inserimento Richiesta
+- Inserimento proposta
+- modifica proposta
