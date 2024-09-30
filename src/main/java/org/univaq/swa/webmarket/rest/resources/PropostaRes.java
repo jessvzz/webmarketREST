@@ -89,7 +89,7 @@ public class PropostaRes {
      @PUT
          @Consumes(MediaType.APPLICATION_JSON)
          @Produces(MediaType.APPLICATION_JSON)
-         public Response modificaProposta(@PathParam("idproposta") int idProposta, PropostaAcquisto proposta) {
+         public Response modificaProposta(PropostaAcquisto prop) {
              InitialContext ctx;
              Connection conn = null;
              PreparedStatement ps = null;
@@ -98,19 +98,19 @@ public class PropostaRes {
                  ctx = new InitialContext();
                  DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
                  conn = ds.getConnection();
+                 int idProposta = proposta.getId();
 
                  // Query SQL per aggiornare una proposta esistente
-                 String query = "UPDATE proposta_acquisto SET produttore = ?, prodotto = ?, codice = ?, codice_prodotto = ?, prezzo = ?, URL = ?, note = ?, stato = ? WHERE id = ?";
+                 String query = "UPDATE proposta_acquisto SET produttore = ?, prodotto = ?, codice_prodotto = ?, prezzo = ?, URL = ?, note = ?, stato = ? WHERE id = ?";
                  ps = conn.prepareStatement(query);
-                 ps.setString(1, proposta.getProduttore());
-                 ps.setString(2, proposta.getProdotto());
-                 ps.setString(3, proposta.getCodice());
-                 ps.setString(4, proposta.getCodiceProdotto());
-                 ps.setFloat(5, proposta.getPrezzo());
-                 ps.setString(6, proposta.getUrl());
-                 ps.setString(7, proposta.getNote());
-                 ps.setString(8, proposta.getStatoProposta().toString());
-                 ps.setInt(9, idProposta); // ID della proposta da aggiornare
+                 ps.setString(1, prop.getProduttore());
+                 ps.setString(2, prop.getProdotto());
+                 ps.setString(3, prop.getCodiceProdotto());
+                 ps.setFloat(4, prop.getPrezzo());
+                 ps.setString(5, prop.getUrl());
+                 ps.setString(6, prop.getNote());
+                 ps.setString(7, prop.getStatoProposta().toString());
+                 ps.setInt(8, idProposta); // ID della proposta da aggiornare
 
                  int rowsUpdated = ps.executeUpdate();
 

@@ -23,6 +23,4 @@
 - [ ] Rivedere path richieste 'gestite_da'
 
 # Cose che non funzionano
-- Inserimento Richiesta
 - Inserimento proposta
-- modifica proposta
