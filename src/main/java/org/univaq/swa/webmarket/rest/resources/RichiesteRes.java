@@ -217,16 +217,25 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
     @POST
     // @Produces(MediaType.APPLICATION_JSON)  
     @Consumes(MediaType.APPLICATION_JSON)  
+    
     public Response inserisciRichiesta(
             RichiestaOrdine richiesta,  // Oggetto RichiestaOrdine ricevuto dal client
             @Context UriInfo uriinfo,  // UriInfo per ottenere informazioni sulla richiesta
             @Context SecurityContext sec,  // Per gestire la sicurezza
             @Context ContainerRequestContext req) throws RESTWebApplicationException, SQLException, ClassNotFoundException, NamingException {
         
+
+                System.out.println("Metodo inserisciRichiesta chiamato");
+
+                
         InitialContext ctx;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
+
+            // Debug 1: Stampa l'oggetto RichiestaOrdine per vedere se è popolato correttamente
+           System.out.println("DEBUG: RichiestaOrdine ricevuta: " + richiesta.toString());
+
             // Inizializzazione del contesto JNDI e recupero del DataSource
             ctx = new InitialContext();
             DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
@@ -236,6 +245,17 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
             String query = "INSERT INTO richiesta_ordine (note, stato, data, codice_richiesta, utente, tecnico, categoria_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
             
             ps = conn.prepareStatement(query);
+
+            // Debug 2: Stampa i valori prima di assegnarli ai parametri SQL
+            System.out.println("DEBUG: Valori da inserire nella query:");
+            System.out.println("Note: " + richiesta.getNote());
+            System.out.println("Stato: " + richiesta.getStato().toString());
+            System.out.println("Data: " + richiesta.getData());
+            System.out.println("Codice Richiesta: " + richiesta.getCodiceRichiesta());
+            System.out.println("Utente ID: " + richiesta.getUtente().getId());
+            System.out.println("Tecnico ID: " + (richiesta.getTecnico() != null ? richiesta.getTecnico().getId() : "NULL"));
+            System.out.println("Categoria ID: " + (richiesta.getCategoria() != null ? richiesta.getCategoria().getId() : "NULL"));
+
             ps.setString(1, richiesta.getNote());
             ps.setString(2, richiesta.getStato().toString()); 
             ps.setDate(3, new java.sql.Date(richiesta.getData().getTime()));  // Conversione da java.util.Date a java.sql.Date
@@ -258,10 +278,14 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
             int rowsInserted = ps.executeUpdate();
             
             if (rowsInserted > 0) {
+
+                System.out.println("DEBUG: Inserimento riuscito");
+
                 // Se l'inserimento ha successo, restituiamo un HTTP 201 Created
                 return Response.status(Response.Status.CREATED).entity("Richiesta inserita con successo").build();
             } else {
                 // Se l'inserimento non va a buon fine
+                System.out.println("DEBUG: Inserimento non riuscito");
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore durante l'inserimento della richiesta").build();
             }
 

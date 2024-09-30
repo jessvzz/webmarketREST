@@ -24,6 +24,11 @@ public class CategoriaDeserializer extends JsonDeserializer<Categoria> {
         Categoria c = new Categoria();
         
         JsonNode node = jp.getCodec().readTree(jp);
+
+        if (node.has("id")) {
+            c.setId(node.get("id").asInt());
+        }
+
         if (node.has("nome")) {
             c.setNome(node.get("nome").asText());
         }
