@@ -215,6 +215,7 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
     //Inserimento di una nuova richiesta
 
     @POST
+    @Logged
     // @Produces(MediaType.APPLICATION_JSON)  
     @Consumes(MediaType.APPLICATION_JSON)  
     
@@ -232,6 +233,7 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
         Connection conn = null;
         PreparedStatement ps = null;
         try {
+            int utenteId = UserUtils.getLoggedId(sec);
 
             // Debug 1: Stampa l'oggetto RichiestaOrdine per vedere se è popolato correttamente
            System.out.println("DEBUG: RichiestaOrdine ricevuta: " + richiesta.toString());
@@ -242,7 +244,7 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
             conn = ds.getConnection();
             
             // Query SQL per l'inserimento della richiesta
-            String query = "INSERT INTO richiesta_ordine (note, stato, data, codice_richiesta, utente, tecnico, categoria_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO richiesta_ordine (note, stato, data, utente, categoria_id) VALUES (?, ?, ?, ?, ?)";
             
             ps = conn.prepareStatement(query);
 
@@ -251,26 +253,17 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
             System.out.println("Note: " + richiesta.getNote());
             System.out.println("Stato: " + richiesta.getStato().toString());
             System.out.println("Data: " + richiesta.getData());
-            System.out.println("Codice Richiesta: " + richiesta.getCodiceRichiesta());
-            System.out.println("Utente ID: " + richiesta.getUtente().getId());
-            System.out.println("Tecnico ID: " + (richiesta.getTecnico() != null ? richiesta.getTecnico().getId() : "NULL"));
             System.out.println("Categoria ID: " + (richiesta.getCategoria() != null ? richiesta.getCategoria().getId() : "NULL"));
 
             ps.setString(1, richiesta.getNote());
             ps.setString(2, richiesta.getStato().toString()); 
             ps.setDate(3, new java.sql.Date(richiesta.getData().getTime()));  // Conversione da java.util.Date a java.sql.Date
-            ps.setString(4, richiesta.getCodiceRichiesta());
-            ps.setInt(5, richiesta.getUtente().getId());  
+            ps.setInt(4, utenteId);  
             // ps.setInt(6, richiesta.getTecnico() != null ? richiesta.getTecnico().getId() : null);  // Tecnico può essere null all'inizio
-            if (richiesta.getTecnico() != null) {
-                ps.setInt(6, richiesta.getTecnico().getId());
-            } else {
-                ps.setNull(6, java.sql.Types.INTEGER);
-            }
             if (richiesta.getCategoria() != null) {
-                ps.setInt(7, richiesta.getCategoria().getId());
+                ps.setInt(5, richiesta.getCategoria().getId());
             } else {
-                ps.setNull(7, java.sql.Types.INTEGER);
+                ps.setNull(5, java.sql.Types.INTEGER);
             }
             // ps.setInt(7, richiesta.getCategoria().getId()); 
 
