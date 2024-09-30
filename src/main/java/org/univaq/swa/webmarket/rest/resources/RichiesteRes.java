@@ -213,8 +213,9 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
     return null; 
 }
     //Inserimento di una nuova richiesta
+
     @POST
-    @Produces(MediaType.APPLICATION_JSON)  
+    // @Produces(MediaType.APPLICATION_JSON)  
     @Consumes(MediaType.APPLICATION_JSON)  
     public Response inserisciRichiesta(
             RichiestaOrdine richiesta,  // Oggetto RichiestaOrdine ricevuto dal client
@@ -240,8 +241,18 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
             ps.setDate(3, new java.sql.Date(richiesta.getData().getTime()));  // Conversione da java.util.Date a java.sql.Date
             ps.setString(4, richiesta.getCodiceRichiesta());
             ps.setInt(5, richiesta.getUtente().getId());  
-            ps.setInt(6, richiesta.getTecnico() != null ? richiesta.getTecnico().getId() : null);  // Tecnico può essere null all'inizio
-            ps.setInt(7, richiesta.getCategoria().getId()); 
+            // ps.setInt(6, richiesta.getTecnico() != null ? richiesta.getTecnico().getId() : null);  // Tecnico può essere null all'inizio
+            if (richiesta.getTecnico() != null) {
+                ps.setInt(6, richiesta.getTecnico().getId());
+            } else {
+                ps.setNull(6, java.sql.Types.INTEGER);
+            }
+            if (richiesta.getCategoria() != null) {
+                ps.setInt(7, richiesta.getCategoria().getId());
+            } else {
+                ps.setNull(7, java.sql.Types.INTEGER);
+            }
+            // ps.setInt(7, richiesta.getCategoria().getId()); 
 
             // Esecuzione della query di inserimento
             int rowsInserted = ps.executeUpdate();
@@ -257,11 +268,25 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
         } catch (NamingException | SQLException e) {
             // Gestione delle eccezioni
             Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore interno del server").build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("!!Errore interno del server!!").build();
         } finally {
             // Chiusura delle risorse
-            if (ps != null) ps.close();
-            if (conn != null) conn.close();
+            // if (ps != null) ps.close();
+            // if (conn != null) conn.close();
+             if (ps != null) {
+                 try {
+                     ps.close();
+                 } catch (SQLException e) {
+                     Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, e);
+                 }
+             }
+             if (conn != null) {
+                 try {
+                     conn.close();
+                 } catch (SQLException e) {
+                     Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, e);
+                 }
+             }
         }
     }
     

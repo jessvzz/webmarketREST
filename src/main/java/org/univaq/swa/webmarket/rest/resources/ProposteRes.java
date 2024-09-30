@@ -140,7 +140,7 @@ public class ProposteRes {
         return Response.ok(proposte).build();
     }
 
-    // //inserimento
+    //inserimento
      @POST
      @Consumes(MediaType.APPLICATION_JSON)
      @Produces(MediaType.APPLICATION_JSON)

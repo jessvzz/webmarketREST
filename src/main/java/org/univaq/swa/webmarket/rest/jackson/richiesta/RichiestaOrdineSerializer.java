@@ -24,15 +24,15 @@ public class RichiestaOrdineSerializer extends JsonSerializer<RichiestaOrdine> {
         String formattedDate = sdf.format(sqlDate);
         jgen.writeStringField("data", formattedDate); 
         
-        if (item.getUtente() != null) {
+        // if (item.getUtente() != null) {
         jgen.writeObjectField("utente", item.getUtente());
-        }
-        if (item.getTecnico() != null) {
+        // }
+        // if (item.getTecnico() != null) {
             jgen.writeObjectField("tecnico", item.getTecnico()); 
-        }
-        if (item.getUtente() != null) {
+        // }
+        // if (item.getUtente() != null) {
         jgen.writeObjectField("categoria", item.getCategoria());
-        }
+        // }
         jgen.writeEndObject(); // }
     }
 }

@@ -30,7 +30,7 @@ public class PropostaAcquistoSerializer extends JsonSerializer<PropostaAcquisto>
         jgen.writeStringField("produttore", item.getProduttore());
         jgen.writeStringField("url", item.getUrl());
         jgen.writeNumberField("prezzo", item.getPrezzo());
-        jgen.writeObjectField("richiestaOridne", item.getRichiestaOrdine());
+        jgen.writeObjectField("richiestaOrdine", item.getRichiestaOrdine());
         jgen.writeObjectField("stato", item.getStatoProposta());
 
         java.sql.Date sqlDate = item.getData();

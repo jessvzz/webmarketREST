@@ -18,26 +18,10 @@ public class RichiestaOrdineDeserializer extends JsonDeserializer<RichiestaOrdin
     public RichiestaOrdine deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
         RichiestaOrdine richiesta = new RichiestaOrdine(); // Creo un oggetto vuoto di RichiestaOrdine
         
-        JsonNode node = jp.getCodec().readTree(jp); // Leggiamo l'albero JSON
-        
-        // if (node.has("id")) {
-        //     richiesta.setId(node.get("id").asInt());
-        // }
-        
-        if (node.has("note")) {
-            richiesta.setNote(node.get("note").asText());
+        JsonNode node = jp.getCodec().readTree(jp);
+        if (node.has("id")) {
+            richiesta.setId(node.get("id").asInt());
         }
-        
-        if (node.has("codiceRichiesta")) {
-            richiesta.setCodiceRichiesta(node.get("codiceRichiesta").asText());
-        }
-        
-        if (node.has("stato")) {
-            JsonNode statoNode = node.get("stato");
-            StatoRichiesta stato = jp.getCodec().treeToValue(statoNode, StatoRichiesta.class);
-            richiesta.setStato(stato);
-        }
-        
         if (node.has("data")) {
             String dataStr = node.get("data").asText();
             try {
@@ -50,23 +34,37 @@ public class RichiestaOrdineDeserializer extends JsonDeserializer<RichiestaOrdin
             }
         }
         
+        if (node.has("stato")) {
+            JsonNode statoNode = node.get("stato");
+            StatoRichiesta stato = jp.getCodec().treeToValue(statoNode, StatoRichiesta.class);
+            richiesta.setStato(stato);
+        }
+
         if (node.has("utente")) {
             
             JsonNode utenteNode = node.get("utente");
             Utente utente = jp.getCodec().treeToValue(utenteNode, Utente.class);
             richiesta.setUtente(utente);
         }
+
+        if (node.has("categoria")) {
+            JsonNode categoriaNode = node.get("categoria");
+            Categoria categoria = jp.getCodec().treeToValue(categoriaNode, Categoria.class);
+            richiesta.setCategoria(categoria);
+        }
+
+        if (node.has("note")) {
+            richiesta.setNote(node.get("note").asText());
+        }
+        
+        if (node.has("codiceRichiesta")) {
+            richiesta.setCodiceRichiesta(node.get("codiceRichiesta").asText());
+        }
         
         if (node.has("tecnico")) {
             JsonNode tecnicoNode = node.get("tecnico");
             Utente tecnico = jp.getCodec().treeToValue(tecnicoNode, Utente.class);
             richiesta.setTecnico(tecnico);
-        }
-        
-        if (node.has("categoria")) {
-            JsonNode categoriaNode = node.get("categoria");
-            Categoria categoria = jp.getCodec().treeToValue(categoriaNode, Categoria.class);
-            richiesta.setCategoria(categoria);
         }
         
         return richiesta;
