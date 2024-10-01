@@ -22,5 +22,3 @@
 - [ ] Rivedere Deserializer richiesta
 - [ ] Rivedere path richieste 'gestite_da'
 
-# Cose che non funzionano
-- Inserimento proposta

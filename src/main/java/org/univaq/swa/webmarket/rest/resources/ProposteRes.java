@@ -143,7 +143,7 @@ public class ProposteRes {
 
     //inserimento
      @POST
-    //  @Logged
+     @Logged
      @Consumes(MediaType.APPLICATION_JSON)
      public Response inserisciProposta(
         PropostaAcquisto proposta, //oggetto Proposta ricevuto in formato JSON dal client
@@ -158,7 +158,7 @@ public class ProposteRes {
             PreparedStatement ps = null;
 
          try {
-            //  int utenteId = UserUtils.getLoggedId(sec);
+            int utenteId = UserUtils.getLoggedId(sec);
 
             // Debug 1: Stampa l'oggetto PropostaAcquisto per vedere se è popolato correttamente
             System.out.println("DEBUG: Proposta ricevuta: " + proposta.toString());

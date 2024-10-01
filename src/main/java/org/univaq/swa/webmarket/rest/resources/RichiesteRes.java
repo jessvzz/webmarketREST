@@ -215,8 +215,7 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
     //Inserimento di una nuova richiesta
 
     @POST
-    @Logged
-    // @Produces(MediaType.APPLICATION_JSON)  
+    @Logged 
     @Consumes(MediaType.APPLICATION_JSON)  
     
     public Response inserisciRichiesta(
