@@ -34,6 +34,7 @@ import org.univaq.swa.webmarket.rest.exceptions.RESTWebApplicationException;
 import org.univaq.swa.webmarket.rest.models.PropostaAcquisto;
 import org.univaq.swa.webmarket.rest.models.StatoProposta;
 import org.univaq.swa.webmarket.rest.models.StatoRichiesta;
+import org.univaq.swa.webmarket.rest.security.Logged;
 
 /**
  *
@@ -142,21 +143,54 @@ public class ProposteRes {
 
     //inserimento
      @POST
+    //  @Logged
      @Consumes(MediaType.APPLICATION_JSON)
-     @Produces(MediaType.APPLICATION_JSON)
-     public Response inserisciProposta(PropostaAcquisto proposta) {
-         InitialContext ctx;
-         Connection conn = null;
-         PreparedStatement ps = null;
+     public Response inserisciProposta(
+        PropostaAcquisto proposta, //oggetto Proposta ricevuto in formato JSON dal client
+        @Context UriInfo uriinfo,  // UriInfo per ottenere informazioni sulla richiesta
+        @Context SecurityContext sec,  // Per gestire la sicurezza
+        @Context ContainerRequestContext req) throws RESTWebApplicationException, SQLException, ClassNotFoundException, NamingException {
+        
+            System.out.println("Metodo inserisciProposta chiamato");
+
+            InitialContext ctx;
+            Connection conn = null;
+            PreparedStatement ps = null;
 
          try {
+            //  int utenteId = UserUtils.getLoggedId(sec);
+
+            // Debug 1: Stampa l'oggetto PropostaAcquisto per vedere se è popolato correttamente
+            System.out.println("DEBUG: Proposta ricevuta: " + proposta.toString());
+            // Controllo se richiestaOrdine è null
+       
+            if (proposta.getRichiestaOrdine() == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Richiesta non valida").build();
+          }
+
+
+            //Connessione al database e inserimento della proposta
              ctx = new InitialContext();
              DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
              conn = ds.getConnection();
 
              // Query SQL per inserire una nuova proposta
              String query = "INSERT INTO proposta_acquisto (produttore, prodotto, codice, codice_prodotto, prezzo, URL, note, stato, richiesta_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            
              ps = conn.prepareStatement(query);
+
+             // Debug 2: Stampa i valori prima di assegnarli ai parametri SQL
+             System.out.println("DEBUG: Valori da inserire nella query:");
+             System.out.println("produttore: " + proposta.getProduttore());
+             System.out.println("prodotto: " + proposta.getProdotto());
+             System.out.println("codice: " + proposta.getCodice());
+             System.out.println("Codice prodotto: " + proposta.getCodiceProdotto());
+             System.out.println("prezzo: " + proposta.getPrezzo());
+             System.out.println("url" + proposta.getUrl());
+             System.out.println("note: " + proposta.getNote());
+             System.out.println("stato" + proposta.getStatoProposta().toString());
+             System.out.println("richiesta: " + proposta.getRichiestaOrdine().getId());
+             
              ps.setString(1, proposta.getProduttore());
              ps.setString(2, proposta.getProdotto());
              ps.setString(3, proposta.getCodice());
@@ -170,8 +204,11 @@ public class ProposteRes {
              int rowsInserted = ps.executeUpdate();
 
              if (rowsInserted > 0) {
+                System.out.println("DEBUG: Inserimento riuscito");
+
                  return Response.status(Response.Status.CREATED).entity("Proposta inserita con successo").build();
              } else {
+                System.out.println("DEBUG: Inserimento non riuscito");
                  return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore durante l'inserimento della proposta").build();
              }
 
