@@ -17,9 +17,6 @@
     <div class="sixteen columns">Web Market
         <div class="subtitle">L'eCommerce facile per il tuo ente</div>
     </div>
-    <div class="logininfo">
-                <a href="login?referrer=http%3A%2F%2Flocalhost%3A8080%2FWebMarket%2F">[login]</a>
-    </div>
 </div>
             <div class="row" id="body">
 
@@ -27,8 +24,7 @@
 <div class="form-card">
     
 <h1 class='title-dark-brown'>Login</h1>
-<form method="post" action="login">
-<input type="hidden" name="login" value="true"/>
+<form id="loginForm" method="post">
 <div class="input-group">
     <label for="username" class="form-label">Username:</label>
     <input type="text" id="username" name="username" class="form-input" required>
@@ -38,9 +34,10 @@
     <input type="password" id="password" name="password" class="form-input" required>
 </div>
 <div>
-    <button class="form-button" type="submit">Login</button>
+    <button id="login-button" class="form-button" type="button">Login</button>
 </div>
 </form>
+<div id="responseMessage"></div>
 </div>
 
 
@@ -51,10 +48,8 @@
     
 </div>
         </div>
-        <script src="res/restest.js">/* */</script>
-        <script>
-            let tester = new Restest();
-        </script>
+        <script src="res/js/index.js">/* */</script>
+        
     </body>
 </html>
 
