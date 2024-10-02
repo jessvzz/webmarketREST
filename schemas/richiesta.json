@@ -1,0 +1,40 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://localhost:8080/WebMarketREST/schemas/richiesta",
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "categoria_id": {
+        "type": "integer"
+      },
+      "caratteristiche": {
+        "type": "string"
+      },
+      "note": {
+        "type": "string",
+        "maxLength": 500
+      },
+      "utente": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "tecnico": {
+        "type": "integer",
+        "minimum": 1,
+        "nullable": true
+      },
+      "data": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "stato": {
+        "type": "string",
+        "enum": ["IN_ATTESA", "PRESA_IN_CARICO", "RISOLTA", "ORDINATA"]
+      }
+    },
+    "required": ["id","categoria_id", "utente", "tecnico", "data", "stato", "caratteristiche","note"],  
+    "additionalProperties": false
+  }
