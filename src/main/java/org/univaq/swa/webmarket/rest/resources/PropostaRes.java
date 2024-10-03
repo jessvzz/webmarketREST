@@ -85,8 +85,8 @@ public class PropostaRes {
         }
     }
 
-// //modifica
-     @PUT
+         //modifica
+         @PUT
          @Consumes(MediaType.APPLICATION_JSON)
          @Produces(MediaType.APPLICATION_JSON)
          public Response modificaProposta(PropostaAcquisto prop) {
