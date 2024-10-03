@@ -29,6 +29,7 @@ import org.univaq.swa.webmarket.rest.models.Categoria;
 import org.univaq.swa.webmarket.rest.models.RichiestaOrdine;
 import org.univaq.swa.webmarket.rest.models.StatoProposta;
 import org.univaq.swa.webmarket.rest.models.StatoRichiesta;
+import org.univaq.swa.webmarket.rest.models.TipologiaUtente;
 import org.univaq.swa.webmarket.rest.models.Utente;
 import org.univaq.swa.webmarket.rest.security.Logged;
 
@@ -71,6 +72,7 @@ public class RichiesteRes {
                     int utenteId = rs.getInt("utente");
                     int tecnicoId = rs.getInt("tecnico");
                     int categoriaId = rs.getInt("categoria_id");
+
                     
                     System.out.println("utente: "+utenteId+", tecnico: "+tecnicoId+", categoria: "+categoriaId);
                     
@@ -212,8 +214,29 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
     }
     return null; 
 }
-    //Inserimento di una nuova richiesta
 
+//recupero il tecnico   
+private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLException {
+    PreparedStatement ps = conn.prepareStatement("SELECT * FROM utente WHERE id = ?");
+    ps.setInt(1, tecnicoId);        
+    ResultSet rs = ps.executeQuery();   
+
+    if(rs.next()) {
+        Utente tecnico = new Utente();
+        tecnico.setId(rs.getInt("id"));
+        tecnico.setUsername(rs.getString("username"));
+        tecnico.setEmail(rs.getString("email"));
+        tecnico.setPassword(rs.getString("password"));
+        tecnico.setTipologiaUtente(TipologiaUtente.valueOf(rs.getString("tipologia_utente")));
+        System.out.println("sono qui tecnico");
+        return tecnico;
+    }
+    return null;    
+
+}
+
+
+    //Inserimento di una nuova richiesta
     @POST
     @Logged 
     @Consumes(MediaType.APPLICATION_JSON)  
@@ -276,7 +299,7 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
                 // Se l'inserimento ha successo, restituiamo un HTTP 201 Created
                 return Response.status(Response.Status.CREATED).entity("Richiesta inserita con successo").build();
             } else {
-                // Se l'inserimento non va a buon fine
+                // Se l'inserimento non va a buon fine restituiamo un HTTP 500 Internal Server Error
                 System.out.println("DEBUG: Inserimento non riuscito");
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore durante l'inserimento della richiesta").build();
             }
@@ -490,9 +513,10 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
                          richiesta.setData(rs.getDate("data"));
                          richiesta.setNote(rs.getString("note"));
                          richiesta.setStato(StatoRichiesta.valueOf(rs.getString("stato")));
-        
+                       
                          int utenteId = rs.getInt("utente");
                          int categoriaId = rs.getInt("categoria_id");
+                         int tecnicoId = rs.getInt("tecnico");
         
                          if (utenteId > 0) {
                              Utente utente = recuperaUtente(conn, utenteId);
@@ -504,6 +528,12 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
                              richiesta.setCategoria(categoria);
                          }
         
+                         if (tecnicoId > 0) {
+                            Utente tecnico = recuperaTecnico(conn, tecnicoId);  // Recupera i dettagli del tecnico
+                            richiesta.setTecnico(tecnico);
+                        }
+
+                        
                          richiesteGestite.add(richiesta);
                      }
                  }

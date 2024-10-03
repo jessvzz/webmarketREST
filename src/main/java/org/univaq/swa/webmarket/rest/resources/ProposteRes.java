@@ -164,9 +164,9 @@ public class ProposteRes {
             System.out.println("DEBUG: Proposta ricevuta: " + proposta.toString());
             // Controllo se richiestaOrdine è null
        
-            if (proposta.getRichiestaOrdine() == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Richiesta non valida").build();
-          }
+        //     if (proposta.getRichiestaOrdine() == null) {
+        //     return Response.status(Response.Status.BAD_REQUEST).entity("Richiesta non valida").build();
+        //   }
 
 
             //Connessione al database e inserimento della proposta
@@ -186,7 +186,7 @@ public class ProposteRes {
              System.out.println("codice: " + proposta.getCodice());
              System.out.println("Codice prodotto: " + proposta.getCodiceProdotto());
              System.out.println("prezzo: " + proposta.getPrezzo());
-             System.out.println("url" + proposta.getUrl());
+             System.out.println("url:" + proposta.getUrl());
              System.out.println("note: " + proposta.getNote());
              System.out.println("stato" + proposta.getStatoProposta().toString());
              System.out.println("richiesta: " + proposta.getRichiestaOrdine().getId());
