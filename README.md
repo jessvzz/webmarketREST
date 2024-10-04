@@ -24,6 +24,7 @@
 
 - [ ]: nell'ESTRAZIONE delle LISTE, pensare a quali campi restituire in OUTPUT. ad esempio per come è ora mi restituisce tutti i campi coinvolti, tra cui i dettagli del tecnico (password compresa ecc) 
 
+-[ ]: implementare metodo per verificare se un utente è autorizzato ( isUserInRole(String role) ? )
 
 ## ALTRO
 - [ ] Contrassegnare tutto come "protected path" con @Context e @Logged
