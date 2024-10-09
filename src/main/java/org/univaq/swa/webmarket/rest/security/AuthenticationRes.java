@@ -19,9 +19,12 @@ public class AuthenticationRes {
 
         if(AuthHelpers.getInstance().authenticateUser(username, password)){
             String token = AuthHelpers.getInstance().issueToken(username, uriInfo);
-            return Response.ok(token)
-                        .cookie(new NewCookie.Builder("token").value(token).build())
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token).build();
+            String userRole = AuthHelpers.getInstance().getUserRole(username);
+            String jsonResponse = "{\"token\": \"" + token + "\", \"role\": \"" + userRole + "\"}";
+
+            return Response.ok(jsonResponse)
+                    .cookie(new NewCookie.Builder("token").value(token).build())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token).build();
         }
         return Response.status(UNAUTHORIZED).build();
     }

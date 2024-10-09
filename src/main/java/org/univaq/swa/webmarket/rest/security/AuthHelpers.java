@@ -44,6 +44,29 @@ public class AuthHelpers {
         }
         return false;
     }
+    
+    public String getUserRole(String username) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    InitialContext ctx;
+    try {
+        ctx = new InitialContext();
+        DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+        
+        try (Connection conn = ds.getConnection()) {
+            String query = "SELECT tipologia_utente FROM utente WHERE username = ?";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                return rs.getString("tipologia_utente");
+            }
+        }
+    } catch (NamingException | SQLException ex) {
+        ex.printStackTrace();
+    }
+    return null;
+}
+
 
     public static String validateToken(String token)
     {

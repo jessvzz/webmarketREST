@@ -40,9 +40,22 @@ let handleLoginButton = function () {
         "post", "rest/auth/login",
         function (callResponse, callStatus, callAuthHeader) {
             if (callStatus === 200) {
-                let token = extractTokenFromHeader(callAuthHeader);
+                // parso il json
+                let jsonResponse = JSON.parse(callResponse);
+
+                // prendo token e ruolo
+                let token = jsonResponse.token;
+                let role = jsonResponse.role;
+
                 setToken(token);
                 alert("Login eseguito con successo!");
+
+                // reindirizzo in base a utente
+                if (role === "ORDINANTE") {
+                    window.location.href = "/WebMarketREST/ordinantehomepage.html";
+                } else if (role === "TECNICO") {
+                    window.location.href = "/WebMarketREST/tecnicohomepage.html";
+                } 
             } else {
                 alert("Login fallito: " + callStatus);
                 setToken(null);
@@ -54,6 +67,7 @@ let handleLoginButton = function () {
         null
     );
 };
+
 
 
 document.getElementById("login-button").addEventListener("click", handleLoginButton);
