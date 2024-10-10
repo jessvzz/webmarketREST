@@ -25,7 +25,10 @@
 - [ ]:risolviamo lato client
 
 - [x]: nell'ESTRAZIONE delle LISTE, pensare a quali campi restituire in OUTPUT. ad esempio per come è ora mi restituisce tutti i campi coinvolti, tra cui i dettagli del tecnico (password compresa ecc) 
--[ ]: json ignore per ignorare il campo, capire se de/serializzare diversamente, prova a utilizzare un parametro di query view
+-[ ]: json ignore per ignorare il campo in maniera statica, va bene per la password.
+ capire se de/serializzare diversamente, prova a utilizzare un parametro di query view: FUNZIONA la view, il fields solo con un campo alla volta.. da fixare se serve
+
+-[ ]: fixare formato data richiesta, in output ottengo tipo un long
 
 -[ ]: implementare metodo per verificare se un utente è autorizzato ( isUserInRole(String role) ? )
 
