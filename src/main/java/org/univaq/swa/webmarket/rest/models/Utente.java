@@ -1,12 +1,13 @@
 package org.univaq.swa.webmarket.rest.models;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class Utente{
 
     private int id;
     private String username;
     private String email;
+    @JsonIgnore
     private String password;
     private TipologiaUtente tipologiaUtente;
 
