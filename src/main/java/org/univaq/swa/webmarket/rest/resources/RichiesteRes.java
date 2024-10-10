@@ -5,6 +5,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
@@ -19,7 +20,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.InitialContext;
@@ -442,10 +445,12 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
     }
     
     
-             @GET
+         @GET
          @Path("/non_assegnate")
          @Produces(MediaType.APPLICATION_JSON)
-         public Response getRichiesteNonAssegnate() {
+         public Response getRichiesteNonAssegnate(
+            @QueryParam("view") @DefaultValue("base") String view,
+             @QueryParam("fields") List<String> fields ) {
              List<RichiestaOrdine> richiesteNonAssegnate = new ArrayList<>();
              InitialContext ctx;
 
@@ -487,8 +492,63 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
                  return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore interno del server").build();
              }
 
-             return Response.ok(richiesteNonAssegnate).build();
+
+            // Filtra i dati in base a 'view' e 'fields'
+            List<Map<String, Object>> risultatiFiltrati = filtraRisultati(richiesteNonAssegnate, view, fields);
+            return Response.ok(risultatiFiltrati).build();
+
+            //  return Response.ok(richiesteNonAssegnate).build();
+            
          }
+
+            // Funzione per filtrare i dati in base a 'view' e 'fields'
+            private List<Map<String, Object>> filtraRisultati(List<RichiestaOrdine> richieste, String view, List<String> fields) {
+                List<Map<String, Object>> risultatiFiltrati = new ArrayList<>();
+
+                for (RichiestaOrdine richiesta : richieste) {
+                    Map<String, Object> risultato = new HashMap<>();
+
+                    if (fields.isEmpty()) {
+                        // Se nessun campo è specificato, usa la vista
+                        switch (view) {
+                            case "base":
+                                risultato.put("id", richiesta.getId());
+                                risultato.put("codiceRichiesta", richiesta.getCodiceRichiesta());
+                                // risultato.put("data", richiesta.getData());
+                                risultato.put("note", richiesta.getNote());
+                                break;
+                            case "dettagliata":
+                                risultato.put("id", richiesta.getId());
+                                risultato.put("codiceRichiesta", richiesta.getCodiceRichiesta());
+                                risultato.put("data", richiesta.getData());
+                                risultato.put("note", richiesta.getNote());
+                                risultato.put("stato", richiesta.getStato());
+                                risultato.put("utente", richiesta.getUtente());
+                                risultato.put("categoria", richiesta.getCategoria());
+                                break;
+                            default:
+                                throw new IllegalArgumentException("Vista non valida");
+                        }
+                    } else {
+                        // Se sono specificati i campi, restituire solo quelli 
+                        if (fields.contains("id")) risultato.put("id", richiesta.getId());
+                        if (fields.contains("codiceRichiesta")) risultato.put("codiceRichiesta", richiesta.getCodiceRichiesta());
+                        if (fields.contains("data")) risultato.put("data", richiesta.getData());
+                        if (fields.contains("note")) risultato.put("note", richiesta.getNote());
+                        if (fields.contains("stato")) risultato.put("stato", richiesta.getStato());
+                        if (fields.contains("utente")) risultato.put("utente", richiesta.getUtente());
+                        if (fields.contains("categoria")) risultato.put("categoria", richiesta.getCategoria());
+                    }
+
+                    risultatiFiltrati.add(risultato);
+                    System.out.println("Risultato: " + risultato);
+                }
+
+                return risultatiFiltrati;
+            }
+
+
+
 
          @GET
          @Path("/gestite_da_tecnico/{idtecnico}")

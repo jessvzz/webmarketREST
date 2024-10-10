@@ -2,12 +2,16 @@ package org.univaq.swa.webmarket.rest.models;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 
 
 public class RichiestaOrdine{
     private int id;
     private String note;
-    private StatoRichiesta stato; //alternativa boolean senza enum
+    private StatoRichiesta stato; 
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date data;
     private String codiceRichiesta;
     private Utente utente;
