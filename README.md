@@ -32,6 +32,10 @@
 
 -[ ]: implementare metodo per verificare se un utente è autorizzato ( isUserInRole(String role) ? )
 
+-[ ]: aggiungere logica per gestire le caratteristiche in base alla categoria selezionata, aggiungendo un controllo per assicurarmi che le caratteristiche che l'utente invia siano valide per la categoria scelta. sia lato client che server.
+
+
+
 ## ALTRO
 - [ ] Contrassegnare tutto come "protected path" con @Context e @Logged
 - [x] trova modo per far vedere categoria, utente e tecnico in richieste
