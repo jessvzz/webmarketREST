@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import org.univaq.swa.webmarket.rest.exceptions.RESTWebApplicationException;
+import org.univaq.swa.webmarket.rest.models.Caratteristica;
 import org.univaq.swa.webmarket.rest.models.Categoria;
 import org.univaq.swa.webmarket.rest.models.RichiestaOrdine;
 import org.univaq.swa.webmarket.rest.models.StatoProposta;
@@ -35,6 +36,9 @@ import org.univaq.swa.webmarket.rest.models.StatoRichiesta;
 import org.univaq.swa.webmarket.rest.models.TipologiaUtente;
 import org.univaq.swa.webmarket.rest.models.Utente;
 import org.univaq.swa.webmarket.rest.security.Logged;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Servizio REST per la gestione delle richieste di acquisto
@@ -332,6 +336,68 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
         }
     }
     
+    //endpoint per recuperare le caratteristiche di una categoria
+    @GET
+    @Path("/caratteristiche/{categoriaId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCaratteristicheByCategoria(@PathParam("categoriaId") int categoriaId) throws SQLException, NamingException, JsonProcessingException {
+    
+        // Log del parametro categoriaId
+        System.out.println("Categoria ID ricevuto: " + categoriaId);
+    
+        InitialContext ctx = new InitialContext();
+        DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+        Connection conn = ds.getConnection();
+    
+        PreparedStatement ps = conn.prepareStatement("SELECT c.id, c.nome, c.categoria_id, cat.nome AS categoria_nome, cat.padre AS categoria_padre\n" + //
+                        "FROM caratteristica c\n" + //
+                        "JOIN categoria cat ON c.categoria_id = cat.id\n" + //
+                        "WHERE c.categoria_id = ?");
+                        
+        ps.setInt(1, categoriaId);
+    
+        ResultSet rs = ps.executeQuery();
+    
+        List<Caratteristica> caratteristiche = new ArrayList<>();
+    
+        while (rs.next()) {
+            Caratteristica caratteristica = new Caratteristica();
+            caratteristica.setId(rs.getInt("id"));
+            caratteristica.setNome(rs.getString("nome"));
+    
+            // Popola l'oggetto Categoria
+            Categoria categoria = new Categoria();
+            categoria.setId(rs.getInt("categoria_id"));
+            categoria.setNome(rs.getString("categoria_nome"));
+            categoria.setPadre(rs.getInt("categoria_padre"));
+            caratteristica.setCategoria(categoria);
+    
+            caratteristiche.add(caratteristica);
+        }
+    
+        rs.close();
+        ps.close();
+        conn.close();
+    
+
+            
+        // // Aggiungi questa stampa per il JSON
+        // ObjectMapper objectMapper = new ObjectMapper();
+        // String jsonOutput = objectMapper.writeValueAsString(caratteristiche);
+        // System.out.println("JSON Output: " + jsonOutput);
+
+
+        // Debug per vedere cosa c'è nella lista caratteristiche
+        System.out.println("Lista delle caratteristiche trovate: " + caratteristiche);
+    
+
+  
+    // Restituisci la risposta
+        return Response.ok(caratteristiche).build();
+    }
+    
+
+
     //trovo richieste in attesa
     @GET
     @Path("/in_attesa")

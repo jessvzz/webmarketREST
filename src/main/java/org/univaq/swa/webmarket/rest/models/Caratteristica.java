@@ -47,4 +47,9 @@ public class Caratteristica{
     public void setCategoria(Categoria categoria) {
         this.categoria= categoria;
     }
+
+@Override
+public String toString() {
+    return "Caratteristica{id=" + id + ", nome='" + nome + "', categoria=" + categoria.getId() + "}";
+}
 }
