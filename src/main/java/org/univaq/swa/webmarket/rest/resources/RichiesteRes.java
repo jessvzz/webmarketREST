@@ -316,9 +316,7 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
             Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("!!Errore interno del server!!").build();
         } finally {
-            // Chiusura delle risorse
-            // if (ps != null) ps.close();
-            // if (conn != null) conn.close();
+
              if (ps != null) {
                  try {
                      ps.close();
@@ -338,25 +336,31 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
     
     //endpoint per recuperare le caratteristiche di una categoria
     @GET
-    @Path("/caratteristiche/{categoriaId}")
+    @Path("/categorie/{categoriaId}/caratteristiche")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getCaratteristicheByCategoria(@PathParam("categoriaId") int categoriaId) throws SQLException, NamingException, JsonProcessingException {
     
         // Log del parametro categoriaId
         System.out.println("Categoria ID ricevuto: " + categoriaId);
-    
+
+            Connection conn = null;
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+
+     try{
+
         InitialContext ctx = new InitialContext();
         DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
-        Connection conn = ds.getConnection();
+        conn = ds.getConnection();
     
-        PreparedStatement ps = conn.prepareStatement("SELECT c.id, c.nome, c.categoria_id, cat.nome AS categoria_nome, cat.padre AS categoria_padre\n" + //
+        ps = conn.prepareStatement("SELECT c.id, c.nome, c.categoria_id, cat.nome AS categoria_nome, cat.padre AS categoria_padre\n" + //
                         "FROM caratteristica c\n" + //
                         "JOIN categoria cat ON c.categoria_id = cat.id\n" + //
                         "WHERE c.categoria_id = ?");
                         
         ps.setInt(1, categoriaId);
     
-        ResultSet rs = ps.executeQuery();
+        rs = ps.executeQuery();
     
         List<Caratteristica> caratteristiche = new ArrayList<>();
     
@@ -371,30 +375,31 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
             categoria.setNome(rs.getString("categoria_nome"));
             categoria.setPadre(rs.getInt("categoria_padre"));
             caratteristica.setCategoria(categoria);
-    
+
             caratteristiche.add(caratteristica);
         }
-    
-        rs.close();
-        ps.close();
-        conn.close();
-    
-
-            
-        // // Aggiungi questa stampa per il JSON
-        // ObjectMapper objectMapper = new ObjectMapper();
-        // String jsonOutput = objectMapper.writeValueAsString(caratteristiche);
-        // System.out.println("JSON Output: " + jsonOutput);
-
 
         // Debug per vedere cosa c'è nella lista caratteristiche
         System.out.println("Lista delle caratteristiche trovate: " + caratteristiche);
-    
 
-  
-    // Restituisci la risposta
         return Response.ok(caratteristiche).build();
     }
+
+    catch (NamingException | SQLException e) {
+        Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, e);          
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore durante l'ottenimento delle caratteristiche").build();          
+    }
+
+    finally {
+        try {
+            if (rs != null) rs.close();
+            if (ps != null) ps.close();
+            if (conn != null) conn.close();
+        } catch (SQLException e) {
+            Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+}
     
 
 
