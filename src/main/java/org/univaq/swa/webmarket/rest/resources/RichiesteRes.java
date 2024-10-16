@@ -272,12 +272,10 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
             DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
             conn = ds.getConnection();
             
-            // Query SQL per l'inserimento della richiesta
             String query = "INSERT INTO richiesta_ordine (note, stato, data, utente, categoria_id) VALUES (?, ?, ?, ?, ?)";
             
             ps = conn.prepareStatement(query);
 
-            // Debug 2: Stampa i valori prima di assegnarli ai parametri SQL
             System.out.println("DEBUG: Valori da inserire nella query:");
             System.out.println("Note: " + richiesta.getNote());
             System.out.println("Stato: " + richiesta.getStato().toString());
@@ -288,7 +286,6 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
             ps.setString(2, richiesta.getStato().toString()); 
             ps.setDate(3, new java.sql.Date(richiesta.getData().getTime()));  // Conversione da java.util.Date a java.sql.Date
             ps.setInt(4, utenteId);  
-            // ps.setInt(6, richiesta.getTecnico() != null ? richiesta.getTecnico().getId() : null);  // Tecnico può essere null all'inizio
             if (richiesta.getCategoria() != null) {
                 ps.setInt(5, richiesta.getCategoria().getId());
             } else {
@@ -296,23 +293,19 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
             }
             // ps.setInt(7, richiesta.getCategoria().getId()); 
 
-            // Esecuzione della query di inserimento
             int rowsInserted = ps.executeUpdate();
             
             if (rowsInserted > 0) {
 
                 System.out.println("DEBUG: Inserimento riuscito");
 
-                // Se l'inserimento ha successo, restituiamo un HTTP 201 Created
                 return Response.status(Response.Status.CREATED).entity("Richiesta inserita con successo").build();
             } else {
-                // Se l'inserimento non va a buon fine restituiamo un HTTP 500 Internal Server Error
                 System.out.println("DEBUG: Inserimento non riuscito");
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore durante l'inserimento della richiesta").build();
             }
 
         } catch (NamingException | SQLException e) {
-            // Gestione delle eccezioni
             Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("!!Errore interno del server!!").build();
         } finally {
@@ -422,6 +415,7 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
 
                 while (rs.next()) {
                     RichiestaOrdine richiesta = new RichiestaOrdine();
+                    richiesta.setId(rs.getInt("ID"));
                     richiesta.setCodiceRichiesta(rs.getString("codice_richiesta"));
                     richiesta.setData(rs.getDate("data"));
                     richiesta.setNote(rs.getString("note"));

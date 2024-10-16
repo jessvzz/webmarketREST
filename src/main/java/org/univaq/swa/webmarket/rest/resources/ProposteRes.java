@@ -45,6 +45,7 @@ import org.univaq.swa.webmarket.rest.security.Logged;
 
 public class ProposteRes {
     
+    @GET
     @Path("/{idproposta: [0-9]+}")
     @Produces(MediaType.APPLICATION_JSON)
  
