@@ -1,5 +1,10 @@
 let setToken = function (token) {
         bearer_token = token;
+        if (token) {
+            localStorage.setItem("authToken", token);
+        } else {
+            localStorage.removeItem("authToken"); 
+        }
         let tokenf = document.getElementById("token-field");
         if (tokenf) {
             tokenf.value = token;
