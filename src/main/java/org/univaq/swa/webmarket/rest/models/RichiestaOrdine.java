@@ -104,4 +104,10 @@ public class RichiestaOrdine{
     public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }
+
+    @Override
+    public String toString() {
+        return "RichiestaOrdine [id=" + id + ", note=" + note + ", stato=" + stato + ", data=" + data + ", codiceRichiesta="
+                + codiceRichiesta + ", utente=" + utente + ", tecnico=" + tecnico + ", categoria=" + categoria + "]";
+    }     
 }

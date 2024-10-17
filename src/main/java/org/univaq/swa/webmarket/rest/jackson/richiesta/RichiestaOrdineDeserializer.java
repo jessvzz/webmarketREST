@@ -67,11 +67,11 @@ public class RichiestaOrdineDeserializer extends JsonDeserializer<RichiestaOrdin
             richiesta.setTecnico(tecnico);
         }
 
-        if (node.has("categoria")) {
-            JsonNode categoriaNode = node.get("categoria");
-            Categoria categoria = jp.getCodec().treeToValue(categoriaNode, Categoria.class);
-            richiesta.setCategoria(categoria);
-        }
+        // if (node.has("categoria")) {
+        //     JsonNode categoriaNode = node.get("categoria");
+        //     Categoria categoria = jp.getCodec().treeToValue(categoriaNode, Categoria.class);
+        //     richiesta.setCategoria(categoria);
+        // }
         
         return richiesta;
     }
