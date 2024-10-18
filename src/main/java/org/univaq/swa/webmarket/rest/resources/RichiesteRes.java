@@ -39,6 +39,8 @@ import org.univaq.swa.webmarket.rest.security.Logged;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.univaq.swa.webmarket.rest.business.RichiesteService;
+import org.univaq.swa.webmarket.rest.business.RichiesteServiceFactory;
 
 /**
  * Servizio REST per la gestione delle richieste di acquisto
@@ -53,66 +55,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class RichiesteRes {
     
+     private final RichiesteService business;
+    
+     public RichiesteRes() {
+        this.business = RichiesteServiceFactory.getRichiesteService();
+
+    }
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
         List<RichiestaOrdine> richiesteInAttesa = new ArrayList<>();
-        InitialContext ctx;
 
-        try {
-            ctx = new InitialContext();
-            DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
-
-            try (Connection conn = ds.getConnection()) {
-                PreparedStatement ps = conn.prepareStatement("SELECT * FROM richiesta_ordine");
-                ResultSet rs = ps.executeQuery();
-
-                while (rs.next()) {
-                    RichiestaOrdine richiesta = new RichiestaOrdine();
-                    richiesta.setId(rs.getInt("id"));
-                    richiesta.setCodiceRichiesta(rs.getString("codice_richiesta"));
-                    richiesta.setData(rs.getDate("data"));
-                    richiesta.setNote(rs.getString("note"));
-                    richiesta.setStato(StatoRichiesta.valueOf(rs.getString("stato")));
-                    
-                    
-                    int utenteId = rs.getInt("utente");
-                    int tecnicoId = rs.getInt("tecnico");
-                    int categoriaId = rs.getInt("categoria_id");
-
-                    
-                    System.out.println("utente: "+utenteId+", tecnico: "+tecnicoId+", categoria: "+categoriaId);
-                    
-                    if (!rs.wasNull() && utenteId > 0) {
-                        Utente utente = recuperaUtente(conn, utenteId);
-                        if (utente != null) {
-                           richiesta.setUtente(utente);
-                        }
-                    }
-
-                    if (!rs.wasNull() && tecnicoId > 0) {
-                        Utente tecnico = recuperaUtente(conn, tecnicoId);
-                        if (tecnico != null) {
-                            richiesta.setTecnico(tecnico);
-                        }
-                    }
-
-                    if (!rs.wasNull() && categoriaId > 0) {
-                        Categoria categoria = recuperaCategoria(conn, categoriaId);
-                        if (categoria != null) {
-                            richiesta.setCategoria(categoria);
-                        }
-                    }
-                    
-
-                    richiesteInAttesa.add(richiesta);
-                }
-            }
-
-        } catch (NamingException | SQLException ex) {
-            Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, ex);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore interno del server").build();
-        }
+        richiesteInAttesa = business.getAllRichieste();
 
         return Response.ok(richiesteInAttesa).build();
     }
@@ -126,121 +80,11 @@ public class RichiesteRes {
         @Context SecurityContext sec,
         @Context ContainerRequestContext req) throws RESTWebApplicationException {
     
-    RichiestaOrdine richiesta = new RichiestaOrdine();
-    InitialContext ctx;
+        RichiestaOrdine richiesta = business.getRichiesta(id);
 
-    try {
-        ctx = new InitialContext();
-        DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
-
-        try (Connection conn = ds.getConnection()) {
-            // Query per recuperare i dettagli della richiesta
-            PreparedStatement ps = conn.prepareStatement("SELECT * FROM richiesta_ordine WHERE id = ?");
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                richiesta.setId(rs.getInt("id"));
-                richiesta.setCodiceRichiesta(rs.getString("codice_richiesta"));
-                richiesta.setData(rs.getDate("data"));
-                richiesta.setNote(rs.getString("note"));
-                richiesta.setStato(StatoRichiesta.valueOf(rs.getString("stato")));
-
-                int utenteId = rs.getInt("utente");
-                int tecnicoId = rs.getInt("tecnico");
-                int categoriaId = rs.getInt("categoria_id");
-                
-                
-                //trovo utete
-                if (utenteId > 0) {
-                    Utente utente = recuperaUtente(conn, utenteId);
-                    richiesta.setUtente(utente);
-                }
-
-                //trovo tecnico
-                if (tecnicoId > 0) {
-                    Utente tecnico = recuperaUtente(conn, tecnicoId);
-                    richiesta.setTecnico(tecnico);
-                }
-
-                //trovo cat
-                if (categoriaId > 0) {
-                    Categoria categoria = recuperaCategoria(conn, categoriaId);
-                    richiesta.setCategoria(categoria);
-                }
-                
-
-            } else {
-                throw new RESTWebApplicationException(Response.Status.NOT_FOUND.getStatusCode(), "Richiesta non trovata");
-            }
-        }
-    } catch (NamingException | SQLException ex) {
-        Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, ex);
-        throw new RESTWebApplicationException(ex);
-    }
-
-    return new RichiestaRes(richiesta);
+        return new RichiestaRes(richiesta);
 }
 
-//recuperaro l'Utente
-private Utente recuperaUtente(Connection conn, int utenteId) throws SQLException {
-    PreparedStatement ps = conn.prepareStatement("SELECT * FROM utente WHERE id = ?");
-    ps.setInt(1, utenteId);
-    ResultSet rs = ps.executeQuery();
-
-    if (rs.next()) {
-        Utente utente = new Utente();
-        utente.setId(rs.getInt("id"));
-        utente.setUsername(rs.getString("username"));
-        utente.setEmail(rs.getString("email"));
-        utente.setPassword(rs.getString("password"));
-        
-        System.out.println("sono qui utente");
-        return utente;
-    }
-    return null; 
-}
-
-
-//recupero la categoria
-private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQLException {
-    PreparedStatement ps = conn.prepareStatement("SELECT * FROM categoria WHERE id = ?");
-    ps.setInt(1, categoriaId);
-    ResultSet rs = ps.executeQuery();
-
-    if (rs.next()) {
-        Categoria categoria = new Categoria();
-        categoria.setId(rs.getInt("id"));
-        categoria.setNome(rs.getString("nome"));
-        categoria.setPadre(rs.getInt("padre"));
-
-        
-        System.out.println("sono qui categoria");
-
-        return categoria;
-    }
-    return null; 
-}
-
-//recupero il tecnico   
-private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLException {
-    PreparedStatement ps = conn.prepareStatement("SELECT * FROM utente WHERE id = ?");
-    ps.setInt(1, tecnicoId);        
-    ResultSet rs = ps.executeQuery();   
-
-    if(rs.next()) {
-        Utente tecnico = new Utente();
-        tecnico.setId(rs.getInt("id"));
-        tecnico.setUsername(rs.getString("username"));
-        tecnico.setEmail(rs.getString("email"));
-        tecnico.setPassword(rs.getString("password"));
-        tecnico.setTipologiaUtente(TipologiaUtente.valueOf(rs.getString("tipologia_utente")));
-        System.out.println("sono qui tecnico");
-        return tecnico;
-    }
-    return null;    
-
-}
 
 
     //Inserimento di una nuova richiesta
@@ -401,50 +245,11 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
     @Path("/in_attesa")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getRichiesteInAttesa() {
-        List<RichiestaOrdine> richiesteInAttesa = new ArrayList<>();
-        InitialContext ctx;
+        List<RichiestaOrdine> richiesteInAttesa;
 
         try {
-            ctx = new InitialContext();
-            DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
-
-            try (Connection conn = ds.getConnection()) {
-                PreparedStatement ps = conn.prepareStatement("SELECT * FROM richiesta_ordine WHERE stato = ?");
-                ps.setString(1, StatoRichiesta.IN_ATTESA.toString());
-                ResultSet rs = ps.executeQuery();
-
-                while (rs.next()) {
-                    RichiestaOrdine richiesta = new RichiestaOrdine();
-                    richiesta.setId(rs.getInt("ID"));
-                    richiesta.setCodiceRichiesta(rs.getString("codice_richiesta"));
-                    richiesta.setData(rs.getDate("data"));
-                    richiesta.setNote(rs.getString("note"));
-                    richiesta.setStato(StatoRichiesta.valueOf(rs.getString("stato")));
-
-                    int utenteId = rs.getInt("utente");
-                    int tecnicoId = rs.getInt("tecnico");
-                    int categoriaId = rs.getInt("categoria_id");
-
-                    if (utenteId > 0) {
-                        Utente utente = recuperaUtente(conn, utenteId);
-                        richiesta.setUtente(utente);
-                    }
-
-                    if (tecnicoId > 0) {
-                        Utente tecnico = recuperaUtente(conn, tecnicoId);
-                        richiesta.setTecnico(tecnico);
-                    }
-
-                    if (categoriaId > 0) {
-                        Categoria categoria = recuperaCategoria(conn, categoriaId);
-                        richiesta.setCategoria(categoria);
-                    }
-
-                    richiesteInAttesa.add(richiesta);
-                }
-            }
-
-        } catch (NamingException | SQLException ex) {
+            richiesteInAttesa = business.getRichiesteInAttesa();
+        } catch (Exception ex) {
             Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, ex);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore interno del server").build();
         }
@@ -458,58 +263,22 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
     @Produces(MediaType.APPLICATION_JSON)
     public Response getRichiesteNonRisolte(@Context SecurityContext sec) {
         List<RichiestaOrdine> richieste = new ArrayList<>();
-        InitialContext ctx;
 
         try {
-            ctx = new InitialContext();
-            DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+            
             int utenteId = UserUtils.getLoggedId(sec);
 
-            try (Connection conn = ds.getConnection()) {
-                PreparedStatement ps = conn.prepareStatement("SELECT * FROM richiesta_ordine WHERE stato != ? AND utente = ?");
-                ps.setString(1, "RISOLTA");
-                ps.setInt(2, utenteId);
-                ResultSet rs = ps.executeQuery();
-
-                while (rs.next()) {
-                    RichiestaOrdine richiesta = new RichiestaOrdine();
-                    richiesta.setId(rs.getInt("ID"));
-                    richiesta.setCodiceRichiesta(rs.getString("codice_richiesta"));
-                    richiesta.setData(rs.getDate("data"));
-                    richiesta.setNote(rs.getString("note"));
-                    richiesta.setStato(StatoRichiesta.valueOf(rs.getString("stato")));
-
-                    int tecnicoId = rs.getInt("tecnico");
-                    int categoriaId = rs.getInt("categoria_id");
-
-                    if (utenteId > 0) {
-                        Utente utente = recuperaUtente(conn, utenteId);
-                        richiesta.setUtente(utente);
-                    }
-
-                    if (tecnicoId > 0) {
-                        Utente tecnico = recuperaUtente(conn, tecnicoId);
-                        richiesta.setTecnico(tecnico);
-                    }
-
-                    if (categoriaId > 0) {
-                        Categoria categoria = recuperaCategoria(conn, categoriaId);
-                        richiesta.setCategoria(categoria);
-                    }
-
-                    richieste.add(richiesta);
-                }
+            richieste = business.getRichiesteInCorso(utenteId);
+            } catch (Exception ex) {
+                Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, ex);
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore interno del server").build();
             }
 
-        } catch (NamingException | SQLException ex) {
-            Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, ex);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore interno del server").build();
-        }
-
-        return Response.ok(richieste).build();
+            return Response.ok(richieste).build();
     }
     
     
+        //per me si puo' togliere
          @GET
          @Path("/non_assegnate")
          @Produces(MediaType.APPLICATION_JSON)
@@ -620,56 +389,77 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
          @Produces(MediaType.APPLICATION_JSON)
          public Response getRichiesteGestiteDaTecnico(@PathParam("idtecnico") int idTecnico) {
              List<RichiestaOrdine> richiesteGestite = new ArrayList<>();
-             InitialContext ctx;
         
              try {
-                 ctx = new InitialContext();
-                 DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+                 richiesteGestite = business.getRichiesteGestiteDa(idTecnico);
         
-                 try (Connection conn = ds.getConnection()) {
-                     PreparedStatement ps = conn.prepareStatement("SELECT * FROM richiesta_ordine WHERE tecnico = ?");
-                     ps.setInt(1, idTecnico);
-                     ResultSet rs = ps.executeQuery();
-        
-                     while (rs.next()) {
-                         RichiestaOrdine richiesta = new RichiestaOrdine();
-                         richiesta.setId(rs.getInt("ID"));
-                         richiesta.setCodiceRichiesta(rs.getString("codice_richiesta"));
-                         richiesta.setData(rs.getDate("data"));
-                         richiesta.setNote(rs.getString("note"));
-                         richiesta.setStato(StatoRichiesta.valueOf(rs.getString("stato")));
-                       
-                         int utenteId = rs.getInt("utente");
-                         int categoriaId = rs.getInt("categoria_id");
-                         int tecnicoId = rs.getInt("tecnico");
-        
-                         if (utenteId > 0) {
-                             Utente utente = recuperaUtente(conn, utenteId);
-                             richiesta.setUtente(utente);
-                         }
-        
-                         if (categoriaId > 0) {
-                             Categoria categoria = recuperaCategoria(conn, categoriaId);
-                             richiesta.setCategoria(categoria);
-                         }
-        
-                         if (tecnicoId > 0) {
-                            Utente tecnico = recuperaTecnico(conn, tecnicoId);  // Recupera i dettagli del tecnico
-                            richiesta.setTecnico(tecnico);
-                        }
-
-                        
-                         richiesteGestite.add(richiesta);
-                     }
-                 }
-        
-             } catch (NamingException | SQLException ex) {
+             } catch (Exception ex) {
                  Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, ex);
                  return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore interno del server").build();
              }
         
              return Response.ok(richiesteGestite).build();
          }
+         
+              //recuperaro l'Utente
+private Utente recuperaUtente(Connection conn, int utenteId) throws SQLException {
+    PreparedStatement ps = conn.prepareStatement("SELECT * FROM utente WHERE id = ?");
+    ps.setInt(1, utenteId);
+    ResultSet rs = ps.executeQuery();
+
+    if (rs.next()) {
+        Utente utente = new Utente();
+        utente.setId(rs.getInt("id"));
+        utente.setUsername(rs.getString("username"));
+        utente.setEmail(rs.getString("email"));
+        utente.setPassword(rs.getString("password"));
+        
+        System.out.println("sono qui utente");
+        return utente;
+    }
+    return null; 
+}
+
+
+//recupero la categoria
+private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQLException {
+    PreparedStatement ps = conn.prepareStatement("SELECT * FROM categoria WHERE id = ?");
+    ps.setInt(1, categoriaId);
+    ResultSet rs = ps.executeQuery();
+
+    if (rs.next()) {
+        Categoria categoria = new Categoria();
+        categoria.setId(rs.getInt("id"));
+        categoria.setNome(rs.getString("nome"));
+        categoria.setPadre(rs.getInt("padre"));
+
+        
+        System.out.println("sono qui categoria");
+
+        return categoria;
+    }
+    return null; 
+}
+
+//recupero il tecnico   
+private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLException {
+    PreparedStatement ps = conn.prepareStatement("SELECT * FROM utente WHERE id = ?");
+    ps.setInt(1, tecnicoId);        
+    ResultSet rs = ps.executeQuery();   
+
+    if(rs.next()) {
+        Utente tecnico = new Utente();
+        tecnico.setId(rs.getInt("id"));
+        tecnico.setUsername(rs.getString("username"));
+        tecnico.setEmail(rs.getString("email"));
+        tecnico.setPassword(rs.getString("password"));
+        tecnico.setTipologiaUtente(TipologiaUtente.valueOf(rs.getString("tipologia_utente")));
+        System.out.println("sono qui tecnico");
+        return tecnico;
+    }
+    return null;    
+
+}
         
 
     }

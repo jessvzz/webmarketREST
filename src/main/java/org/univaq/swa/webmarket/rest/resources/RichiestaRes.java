@@ -26,6 +26,8 @@ import java.util.logging.Logger;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+import org.univaq.swa.webmarket.rest.business.RichiesteService;
+import org.univaq.swa.webmarket.rest.business.RichiesteServiceFactory;
 import org.univaq.swa.webmarket.rest.exceptions.RESTWebApplicationException;
 import org.univaq.swa.webmarket.rest.models.PropostaAcquisto;
 import org.univaq.swa.webmarket.rest.models.RichiestaOrdine;
@@ -38,9 +40,12 @@ import org.univaq.swa.webmarket.rest.security.Logged;
  */
 public class RichiestaRes {
     private final RichiestaOrdine richiesta;
-
+    private final RichiesteService business;
+    
     RichiestaRes(RichiestaOrdine richiesta) {
         this.richiesta = richiesta;
+        this.business = RichiesteServiceFactory.getRichiesteService();
+
     }
     
     @GET
@@ -57,14 +62,9 @@ public class RichiestaRes {
     @Path("/presa_in_carico") 
     @Produces(MediaType.APPLICATION_JSON)
     public Response presaInCarico(@Context SecurityContext sec) throws SQLException {
-        InitialContext ctx;
-        Connection conn = null;
-        PreparedStatement ps = null;
+        int rowsUpdated = 0;
 
         try {
-            ctx = new InitialContext();
-            DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
-            conn = ds.getConnection();
             
             int techId = UserUtils.getLoggedId(sec);
 
@@ -74,14 +74,8 @@ public class RichiestaRes {
                                .entity("Tecnico non autenticato.")
                                .build();
             }
-
-            String query = "UPDATE richiesta_ordine SET stato = ?, tecnico = ? WHERE id = ?";
-            ps = conn.prepareStatement(query);
-            ps.setString(1, StatoRichiesta.PRESA_IN_CARICO.toString());
-            ps.setInt(2, techId);
-            ps.setInt(3, richiesta.getId());
             
-            int rowsUpdated = ps.executeUpdate();
+            rowsUpdated = business.prendiInCarico(techId, richiesta);
             if (rowsUpdated > 0) {
                 return Response.ok("Richiesta aggiornata con successo.").build();
             } else {
@@ -89,14 +83,11 @@ public class RichiestaRes {
                                .entity("Richiesta non trovata.")
                                .build();
             }
-        } catch (SQLException | NamingException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(RichiestaRes.class.getName()).log(Level.SEVERE, null, ex);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                            .entity("Errore interno del server.")
                            .build();
-        } finally {
-            if (ps != null) ps.close();
-            if (conn != null) conn.close();
         }
     }
     
@@ -105,85 +96,22 @@ public class RichiestaRes {
     @Path("/dettagli")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDettagliRichiesta() throws SQLException {
-        InitialContext ctx;
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
         try {
-            ctx = new InitialContext();
-            DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
-            conn = ds.getConnection();
+            JsonObjectBuilder richiestaDetails = business.getDettagliRichiesta(richiesta.getId());
 
-            String query = "SELECT r.id AS richiesta_id, r.codice_richiesta, r.data AS data_richiesta, " +
-                           "r.note AS note_richiesta, r.stato AS stato_richiesta, u.username AS ordinante, " +
-                           "cat.nome AS categoria, p.produttore, p.prodotto, p.codice_prodotto, p.prezzo, " +
-                           "p.stato AS stato_proposta, p.motivazione AS motivazione_proposta, p.URL AS url_prodotto, " +
-                           "p.note AS note_proposta, o.stato AS stato_ordine, o.data AS data_ordine " +
-                           "FROM richiesta_ordine r " +
-                           "LEFT JOIN utente u ON r.utente = u.ID " +
-                           "LEFT JOIN categoria cat ON r.categoria_id = cat.ID " +
-                           "LEFT JOIN proposta_acquisto p ON r.id = p.richiesta_id " +
-                           "LEFT JOIN ordine o ON p.id = o.proposta_id " +
-                           "WHERE r.id = ?";
-
-            ps = conn.prepareStatement(query);
-            ps.setInt(1, richiesta.getId());
-            rs = ps.executeQuery();
-
-            if (rs.next()) {
-                // uso una struttura fatta con jsonObjBuilder
-                JsonObjectBuilder richiestaDetails = Json.createObjectBuilder()
-                    .add("richiesta_id", rs.getInt("richiesta_id"))
-                    .add("codice_richiesta", rs.getString("codice_richiesta"))
-                    .add("data_richiesta", rs.getDate("data_richiesta").toString())
-                    .add("note_richiesta", rs.getString("note_richiesta"))
-                    .add("stato_richiesta", rs.getString("stato_richiesta"))
-                    .add("ordinante", rs.getString("ordinante"))
-                    .add("categoria", rs.getString("categoria"));
-
-                //se prodotto è nullo non ci sta proposta
-                if (rs.getString("prodotto") != null) {
-                    JsonObjectBuilder propostaBuilder = Json.createObjectBuilder()
-                        .add("produttore", rs.getString("produttore"))
-                        .add("prodotto", rs.getString("prodotto"))
-                        .add("codice_prodotto", rs.getString("codice_prodotto"))
-                        .add("prezzo", rs.getDouble("prezzo"))
-                        .add("stato_proposta", rs.getString("stato_proposta"));
-
-                    String motivazione = rs.getString("motivazione_proposta");
-                    if (motivazione != null) {
-                        propostaBuilder.add("motivazione_proposta", motivazione);
-                    }
-
-                    String note = rs.getString("note_proposta");
-                    if (note != null) {
-                        propostaBuilder.add("note_proposta", note);
-                    }
-
-                    propostaBuilder.add("url_prodotto", rs.getString("url_prodotto"));
-
-                    richiestaDetails.add("proposta", propostaBuilder);
-                }
-
-
-                
-
+            if (richiestaDetails != null) {
                 return Response.ok(richiestaDetails.build()).build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND)
                                .entity("Dettagli della richiesta non trovati.")
                                .build();
             }
-        } catch (SQLException | NamingException ex) {
+
+        } catch (Exception ex) {
             Logger.getLogger(RichiestaRes.class.getName()).log(Level.SEVERE, null, ex);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                            .entity("Errore interno del server.")
                            .build();
-        } finally {
-            if (rs != null) rs.close();
-            if (ps != null) ps.close();
-            if (conn != null) conn.close();
         }
     }
 
@@ -193,22 +121,10 @@ public class RichiestaRes {
      @DELETE
      @Produces(MediaType.APPLICATION_JSON)
      public Response eliminaRichiesta() {
-         InitialContext ctx;
-         Connection conn = null;
-         PreparedStatement ps = null;
 
          try {
-             ctx = new InitialContext();
-             DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
-             conn = ds.getConnection();
              
-             int idRichiesta = richiesta.getId();
-             // Query SQL per eliminare la richiesta
-             String query = "DELETE FROM richiesta_ordine WHERE id = ?";
-             ps = conn.prepareStatement(query);
-             ps.setInt(1, idRichiesta);
-
-             int rowsDeleted = ps.executeUpdate();
+             int rowsDeleted = business.deleteRichiesta(richiesta.getId());
 
              if (rowsDeleted > 0) {
                  return Response.ok("Richiesta eliminata con successo").build();
@@ -216,16 +132,10 @@ public class RichiestaRes {
                  return Response.status(Response.Status.NOT_FOUND).entity("Richiesta non trovata").build();
              }
 
-         } catch (SQLException e) {
+         } catch (Exception e) {
+             Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, e);
              Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, e);
              return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore interno del server").build();
-         } catch (NamingException e) {
-             Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, e);
-             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore di connessione al database").build();
-         } finally {
-             // Chiusura delle risorse
-             if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
-             if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
          }
      }
 
