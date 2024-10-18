@@ -6,6 +6,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DefaultValue;
+import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
@@ -15,7 +16,10 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 import jakarta.ws.rs.core.UriInfo;
 import jakarta.ws.rs.container.ContainerRequestContext;
+
+import java.net.URI;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -162,10 +166,10 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
     return null;    
 
 }
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response inserisciRichiesta(RichiestaOrdine richiestaCompleta) {
+    // @POST
+    // @Consumes(MediaType.APPLICATION_JSON)
+    // @Produces(MediaType.APPLICATION_JSON)
+    // public Response inserisciRichiesta(RichiestaOrdine richiestaCompleta) {
 
     //public Response inserisciRichiesta(RichiestaCompleta richiestaCompleta) {
        // Map<Caratteristica, String> caratteristiche = new HashMap<>();
@@ -174,19 +178,81 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
        //     caratteristiche.put(caratteristicaRichiesta.getCaratteristica(), caratteristicaRichiesta.getValore());
         //}
 
-        int newId;
-        try {
-            newId = business.inserisciProva(richiestaCompleta);
+    //     int newId;
+    //     try {
+    //         newId = business.inserisciProva(richiestaCompleta);
 
-            //newId = business.inserisciNuovaRichiesta(richiestaCompleta.getRichiesta(), caratteristiche);
-        } catch (Exception ex) {
-            Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, ex);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore durante l'inserimento della richiesta").build();
+    //         //newId = business.inserisciNuovaRichiesta(richiestaCompleta.getRichiesta(), caratteristiche);
+    //     } catch (Exception ex) {
+    //         Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, ex);
+    //         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore durante l'inserimento della richiesta").build();
+    //     }
+
+    //     return Response.status(Response.Status.CREATED).entity(newId).build();
+    // }
+
+@POST
+@Logged
+@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+public Response addItem(
+        @Context ContainerRequestContext req,
+        @Context UriInfo uriinfo,
+        @Context SecurityContext sec,
+        @FormParam("note") String note,
+        @FormParam("data") Date data,
+        @FormParam("stato") String stato,
+        @FormParam("categoriaId") int categoriaId,
+        @FormParam("idcaratteristica[]") List<Integer> idcaratteristica,  // Gestisce più ID
+        @FormParam("valore[]") List<String> valore  // Gestisce più valori
+) throws SQLException, NamingException {
+
+    InitialContext ctx = new InitialContext();
+    DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+    Connection conn = ds.getConnection();
+
+    try {
+        int utenteId = UserUtils.getLoggedId(sec);
+
+        // Inserimento della richiesta
+        String query = "INSERT INTO richiesta_ordine (note, data, stato, utente, categoria_id) VALUES(?, ?, ?, ?,?)";
+        PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, note);
+        ps.setDate(2, new java.sql.Date(data.getTime()));
+        ps.setString(3, stato);
+        ps.setInt(4,utenteId);
+        ps.setInt(5, categoriaId);
+
+        int rowsInserted = ps.executeUpdate();
+        if (rowsInserted == 1) {
+            ResultSet keys = ps.getGeneratedKeys();
+            keys.next();
+            int richiestaId = keys.getInt(1);
+
+            // Inserimento delle caratteristiche associate
+            String queryCaratteristica = "INSERT INTO caratteristica_richiesta (richiesta_id, caratteristica_id, valore) VALUES(?, ?, ?)";
+            PreparedStatement psCaratteristica = conn.prepareStatement(queryCaratteristica);
+
+            for (int i = 0; i < idcaratteristica.size(); i++) {
+                psCaratteristica.setInt(1, richiestaId);
+                psCaratteristica.setInt(2, idcaratteristica.get(i));
+                psCaratteristica.setString(3, valore.get(i));
+                psCaratteristica.addBatch();  // Usa batch per ottimizzare le prestazioni
+            }
+
+            psCaratteristica.executeBatch();  // Esegue il batch
+            psCaratteristica.close();
+
+            URI uri = uriinfo.getAbsolutePathBuilder().path(String.valueOf(richiestaId)).build();
+            return Response.created(uri).build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Inserimento della richiesta fallito").build();
         }
-
-        return Response.status(Response.Status.CREATED).entity(newId).build();
+    } finally {
+        if (conn != null) {
+            conn.close();
+        }
     }
-
+}
 
 /*
     //Inserimento di una nuova richiesta
