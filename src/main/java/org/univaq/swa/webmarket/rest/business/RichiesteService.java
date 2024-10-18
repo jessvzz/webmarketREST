@@ -6,6 +6,8 @@ package org.univaq.swa.webmarket.rest.business;
 
 import jakarta.json.JsonObjectBuilder;
 import java.util.List;
+import java.util.Map;
+import org.univaq.swa.webmarket.rest.models.Caratteristica;
 import org.univaq.swa.webmarket.rest.models.RichiestaOrdine;
 
 /**
@@ -23,4 +25,6 @@ public interface RichiesteService {
     int prendiInCarico(int idTecnico, RichiestaOrdine richiesta);
     JsonObjectBuilder getDettagliRichiesta(int id);
     int deleteRichiesta(int id);
+    int inserisciNuovaRichiesta(RichiestaOrdine nuovaRichiesta, Map<Caratteristica, String> caratteristiche);
+    int inserisciProva(RichiestaOrdine nuovaRichiesta);
 }

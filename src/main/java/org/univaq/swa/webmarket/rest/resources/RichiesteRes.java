@@ -162,8 +162,33 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
     return null;    
 
 }
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response inserisciRichiesta(RichiestaOrdine richiestaCompleta) {
+
+    //public Response inserisciRichiesta(RichiestaCompleta richiestaCompleta) {
+       // Map<Caratteristica, String> caratteristiche = new HashMap<>();
+
+       // for (CaratteristicaRichiesta caratteristicaRichiesta : richiestaCompleta.getCaratteristiche()) {
+       //     caratteristiche.put(caratteristicaRichiesta.getCaratteristica(), caratteristicaRichiesta.getValore());
+        //}
+
+        int newId;
+        try {
+            newId = business.inserisciProva(richiestaCompleta);
+
+            //newId = business.inserisciNuovaRichiesta(richiestaCompleta.getRichiesta(), caratteristiche);
+        } catch (Exception ex) {
+            Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore durante l'inserimento della richiesta").build();
+        }
+
+        return Response.status(Response.Status.CREATED).entity(newId).build();
+    }
 
 
+/*
     //Inserimento di una nuova richiesta
     @POST
     @Logged 
@@ -361,7 +386,7 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
     }
 }
     
-
+*/
 
     //trovo richieste in attesa
     @GET

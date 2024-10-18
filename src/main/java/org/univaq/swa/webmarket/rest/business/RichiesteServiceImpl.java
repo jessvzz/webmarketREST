@@ -11,14 +11,17 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import org.univaq.swa.webmarket.rest.exceptions.RESTWebApplicationException;
+import org.univaq.swa.webmarket.rest.models.Caratteristica;
 import org.univaq.swa.webmarket.rest.models.Categoria;
 import org.univaq.swa.webmarket.rest.models.RichiestaOrdine;
 import org.univaq.swa.webmarket.rest.models.StatoRichiesta;
@@ -525,5 +528,127 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
         return rowsDeleted;
 
     }
+    
+    @Override
+    public int inserisciNuovaRichiesta(RichiestaOrdine nuovaRichiesta, Map<Caratteristica, String> caratteristiche) {
+        InitialContext ctx;
+        Connection conn = null;
+        PreparedStatement psRichiesta = null;
+        PreparedStatement psCaratteristicaRichiesta = null;
+        ResultSet generatedKeys = null;
+        int newId = 0;
+
+        try {
+            ctx = new InitialContext();
+            DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+            conn = ds.getConnection();
+
+            // per eseguire le operazioni in una transazione
+            conn.setAutoCommit(false);
+
+            String insertRichiestaQuery = "INSERT INTO richiesta_ordine (note, stato, data, codice_richiesta, utente, categoria_id) VALUES (?, ?, ?, ?, ?, ?)";
+            psRichiesta = conn.prepareStatement(insertRichiestaQuery, Statement.RETURN_GENERATED_KEYS);
+            psRichiesta.setString(1, nuovaRichiesta.getNote());
+            psRichiesta.setString(2, nuovaRichiesta.getStato().toString());
+            psRichiesta.setDate(3, new java.sql.Date(nuovaRichiesta.getData().getTime()));
+            psRichiesta.setString(4, nuovaRichiesta.getCodiceRichiesta());
+            psRichiesta.setInt(5, nuovaRichiesta.getUtente().getId());
+            psRichiesta.setInt(6, nuovaRichiesta.getCategoria().getId());
+
+            int rowsInserted = psRichiesta.executeUpdate();
+
+            if (rowsInserted > 0) {
+                generatedKeys = psRichiesta.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    newId = generatedKeys.getInt(1);
+                }
+            }
+
+            String insertCaratteristicaRichiestaQuery = "INSERT INTO caratteristica_richiesta (richiesta_id, caratteristica_id, valore) VALUES (?, ?, ?)";
+            psCaratteristicaRichiesta = conn.prepareStatement(insertCaratteristicaRichiestaQuery);
+
+             for (Map.Entry<Caratteristica, String> entry : caratteristiche.entrySet()) {
+                psCaratteristicaRichiesta.setInt(1, newId);
+                psCaratteristicaRichiesta.setInt(2, entry.getKey().getId());
+                psCaratteristicaRichiesta.setString(3, entry.getValue());
+                psCaratteristicaRichiesta.executeUpdate();
+            }
+
+            conn.commit();
+
+        } catch (SQLException | NamingException ex) {
+            //rollback
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException e) {
+                    Logger.getLogger(RichiesteServiceImpl.class.getName()).log(Level.SEVERE, null, e);
+                }
+            }
+            Logger.getLogger(RichiesteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (generatedKeys != null) generatedKeys.close();
+                if (psRichiesta != null) psRichiesta.close();
+                if (psCaratteristicaRichiesta != null) psCaratteristicaRichiesta.close();
+                if (conn != null) conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(RichiesteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return newId;
+    }
+
+    @Override
+    public int inserisciProva(RichiestaOrdine nuovaRichiesta) {
+        InitialContext ctx;
+        Connection conn = null;
+        PreparedStatement psRichiesta = null;
+        ResultSet generatedKeys = null;
+        int newId = 0;
+
+        try {
+            ctx = new InitialContext();
+            DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+            conn = ds.getConnection();
+
+            System.out.println("richiesta: "+nuovaRichiesta.getNote()+"____"+nuovaRichiesta.getStato());
+
+            String insertRichiestaQuery = "INSERT INTO richiesta_ordine (note, stato, data, codice_richiesta, utente, categoria_id) VALUES (?, ?, ?, ?, ?, ?)";
+            psRichiesta = conn.prepareStatement(insertRichiestaQuery, Statement.RETURN_GENERATED_KEYS);
+            psRichiesta.setString(1, nuovaRichiesta.getNote());
+            psRichiesta.setString(2, nuovaRichiesta.getStato().toString());
+            psRichiesta.setDate(3, new java.sql.Date(nuovaRichiesta.getData().getTime()));
+            psRichiesta.setString(4, nuovaRichiesta.getCodiceRichiesta());
+            psRichiesta.setLong(5, nuovaRichiesta.getUtente().getId());
+            psRichiesta.setInt(6, nuovaRichiesta.getCategoria().getId());
+
+            int rowsInserted = psRichiesta.executeUpdate();
+
+            if (rowsInserted > 0) {
+                generatedKeys = psRichiesta.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    newId = generatedKeys.getInt(1);
+                }
+            }
+
+           
+
+        } catch (SQLException | NamingException ex) {
+           
+            Logger.getLogger(RichiesteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (generatedKeys != null) generatedKeys.close();
+                if (psRichiesta != null) psRichiesta.close();
+                if (conn != null) conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(RichiesteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return newId;    }
+
     
 }

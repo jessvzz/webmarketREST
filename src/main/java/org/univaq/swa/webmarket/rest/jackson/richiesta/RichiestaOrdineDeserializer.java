@@ -35,8 +35,8 @@ public class RichiestaOrdineDeserializer extends JsonDeserializer<RichiestaOrdin
         }
         
         if (node.has("stato")) {
-            JsonNode statoNode = node.get("stato");
-            StatoRichiesta stato = jp.getCodec().treeToValue(statoNode, StatoRichiesta.class);
+            String statoStr = node.get("stato").asText();
+            StatoRichiesta stato = StatoRichiesta.valueOf(statoStr);
             richiesta.setStato(stato);
         }
 
@@ -67,11 +67,11 @@ public class RichiestaOrdineDeserializer extends JsonDeserializer<RichiestaOrdin
             richiesta.setTecnico(tecnico);
         }
 
-        // if (node.has("categoria")) {
-        //     JsonNode categoriaNode = node.get("categoria");
-        //     Categoria categoria = jp.getCodec().treeToValue(categoriaNode, Categoria.class);
-        //     richiesta.setCategoria(categoria);
-        // }
+         if (node.has("categoria")) {
+             JsonNode categoriaNode = node.get("categoria");
+             Categoria categoria = jp.getCodec().treeToValue(categoriaNode, Categoria.class);
+             richiesta.setCategoria(categoria);
+         }
         
         return richiesta;
     }
