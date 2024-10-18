@@ -320,12 +320,54 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
 
         return richieste;
     }
+
     
-    //per me si puo' togliere
     @Override
     public List<RichiestaOrdine> getRichiesteNonAssegnate() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+             List<RichiestaOrdine> richiesteNonAssegnate = new ArrayList<>();
+             InitialContext ctx;
+
+             try {
+                 ctx = new InitialContext();
+                 DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+
+                 try (Connection conn = ds.getConnection()) {
+                     PreparedStatement ps = conn.prepareStatement("SELECT * FROM richiesta_ordine WHERE tecnico IS NULL OR tecnico = 0");
+                     ResultSet rs = ps.executeQuery();
+
+                     while (rs.next()) {
+                         RichiestaOrdine richiesta = new RichiestaOrdine();
+                         richiesta.setId(rs.getInt("ID"));
+                         richiesta.setCodiceRichiesta(rs.getString("codice_richiesta"));
+                         richiesta.setData(rs.getDate("data"));
+                         richiesta.setNote(rs.getString("note"));
+                         richiesta.setStato(StatoRichiesta.valueOf(rs.getString("stato")));
+
+                         int utenteId = rs.getInt("utente");
+                         int categoriaId = rs.getInt("categoria_id");
+
+                         if (utenteId > 0) {
+                             Utente utente = recuperaUtente(conn, utenteId);
+                             richiesta.setUtente(utente);
+                        }
+
+                         if (categoriaId > 0) {
+                             Categoria categoria = recuperaCategoria(conn, categoriaId);
+                             richiesta.setCategoria(categoria);
+                         }
+
+                         richiesteNonAssegnate.add(richiesta);
+                     }
+                 }
+
+             } catch (NamingException | SQLException ex) {
+                 Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, ex);
+                 
+             }
+
+            return richiesteNonAssegnate;
+            
+         }
 
     @Override
     public List<RichiestaOrdine> getRichiesteGestiteDa(int idTecnico) {

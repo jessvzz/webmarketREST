@@ -426,108 +426,23 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
     }
     
     
-        //per me si puo' togliere
-         @GET
-         @Path("/non_assegnate")
-         @Produces(MediaType.APPLICATION_JSON)
-         public Response getRichiesteNonAssegnate(
-            @QueryParam("view") @DefaultValue("base") String view,
-             @QueryParam("fields") List<String> fields ) {
-             List<RichiestaOrdine> richiesteNonAssegnate = new ArrayList<>();
-             InitialContext ctx;
+    @GET
+    @Path("/non_assegnate")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getRichiesteNonAssegnate() {
+        List<RichiestaOrdine> richiesteNonAssegnate = new ArrayList<>();
 
-             try {
-                 ctx = new InitialContext();
-                 DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+            try  {
+               
+                   richiesteNonAssegnate = business.getRichiesteNonAssegnate();
+        } catch (Exception ex) {
+            Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore interno del server").build();
+        }
 
-                 try (Connection conn = ds.getConnection()) {
-                     PreparedStatement ps = conn.prepareStatement("SELECT * FROM richiesta_ordine WHERE tecnico IS NULL OR tecnico = 0");
-                     ResultSet rs = ps.executeQuery();
+           return Response.ok(richiesteNonAssegnate).build();
+    }
 
-                     while (rs.next()) {
-                         RichiestaOrdine richiesta = new RichiestaOrdine();
-                         richiesta.setId(rs.getInt("ID"));
-                         richiesta.setCodiceRichiesta(rs.getString("codice_richiesta"));
-                         richiesta.setData(rs.getDate("data"));
-                         richiesta.setNote(rs.getString("note"));
-                         richiesta.setStato(StatoRichiesta.valueOf(rs.getString("stato")));
-
-                         int utenteId = rs.getInt("utente");
-                         int categoriaId = rs.getInt("categoria_id");
-
-                         if (utenteId > 0) {
-                             Utente utente = recuperaUtente(conn, utenteId);
-                             richiesta.setUtente(utente);
-                        }
-
-                         if (categoriaId > 0) {
-                             Categoria categoria = recuperaCategoria(conn, categoriaId);
-                             richiesta.setCategoria(categoria);
-                         }
-
-                         richiesteNonAssegnate.add(richiesta);
-                     }
-                 }
-
-             } catch (NamingException | SQLException ex) {
-                 Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, ex);
-                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore interno del server").build();
-             }
-
-
-            // Filtra i dati in base a 'view' e 'fields'
-            List<Map<String, Object>> risultatiFiltrati = filtraRisultati(richiesteNonAssegnate, view, fields);
-            return Response.ok(risultatiFiltrati).build();
-
-            //  return Response.ok(richiesteNonAssegnate).build();
-            
-         }
-
-            // Funzione per filtrare i dati in base a 'view' e 'fields'
-            private List<Map<String, Object>> filtraRisultati(List<RichiestaOrdine> richieste, String view, List<String> fields) {
-                List<Map<String, Object>> risultatiFiltrati = new ArrayList<>();
-
-                for (RichiestaOrdine richiesta : richieste) {
-                    Map<String, Object> risultato = new HashMap<>();
-
-                    if (fields.isEmpty()) {
-                        // Se nessun campo è specificato, usa la vista
-                        switch (view) {
-                            case "base":
-                                risultato.put("id", richiesta.getId());
-                                risultato.put("codiceRichiesta", richiesta.getCodiceRichiesta());
-                                // risultato.put("data", richiesta.getData());
-                                risultato.put("note", richiesta.getNote());
-                                break;
-                            case "dettagliata":
-                                risultato.put("id", richiesta.getId());
-                                risultato.put("codiceRichiesta", richiesta.getCodiceRichiesta());
-                                risultato.put("data", richiesta.getData());
-                                risultato.put("note", richiesta.getNote());
-                                risultato.put("stato", richiesta.getStato());
-                                risultato.put("utente", richiesta.getUtente());
-                                risultato.put("categoria", richiesta.getCategoria());
-                                break;
-                            default:
-                                throw new IllegalArgumentException("Vista non valida");
-                        }
-                    } else {
-                        // Se sono specificati i campi, restituire solo quelli 
-                        if (fields.contains("id")) risultato.put("id", richiesta.getId());
-                        if (fields.contains("codiceRichiesta")) risultato.put("codiceRichiesta", richiesta.getCodiceRichiesta());
-                        if (fields.contains("data")) risultato.put("data", richiesta.getData());
-                        if (fields.contains("note")) risultato.put("note", richiesta.getNote());
-                        if (fields.contains("stato")) risultato.put("stato", richiesta.getStato());
-                        if (fields.contains("utente")) risultato.put("utente", richiesta.getUtente());
-                        if (fields.contains("categoria")) risultato.put("categoria", richiesta.getCategoria());
-                    }
-
-                    risultatiFiltrati.add(risultato);
-                    System.out.println("Risultato: " + risultato);
-                }
-
-                return risultatiFiltrati;
-            }
 
 
 
