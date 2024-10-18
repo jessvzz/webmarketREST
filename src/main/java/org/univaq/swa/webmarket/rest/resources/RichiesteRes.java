@@ -19,6 +19,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +30,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import org.univaq.swa.webmarket.rest.exceptions.RESTWebApplicationException;
 import org.univaq.swa.webmarket.rest.models.Caratteristica;
+import org.univaq.swa.webmarket.rest.models.CaratteristicaRichiesta;
 import org.univaq.swa.webmarket.rest.models.Categoria;
 import org.univaq.swa.webmarket.rest.models.RichiestaOrdine;
 import org.univaq.swa.webmarket.rest.models.StatoProposta;
@@ -36,7 +38,7 @@ import org.univaq.swa.webmarket.rest.models.StatoRichiesta;
 import org.univaq.swa.webmarket.rest.models.TipologiaUtente;
 import org.univaq.swa.webmarket.rest.models.Utente;
 import org.univaq.swa.webmarket.rest.security.Logged;
-
+import org.univaq.swa.webmarket.rest.models.RichiestaCompleta;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.univaq.swa.webmarket.rest.business.RichiesteService;
@@ -86,6 +88,81 @@ public class RichiesteRes {
 }
 
 
+//recupero la caratteristica
+
+private CaratteristicaRichiesta recuperaCaratteristicaRichiesta(Connection conn, int caratteristicaRicId) throws SQLException {
+    PreparedStatement ps = conn.prepareStatement("SELECT * FROM caratteristica_richiesta WHERE id = ?");
+    ps.setInt(1, caratteristicaRicId);
+    ResultSet rs = ps.executeQuery();
+
+    if (rs.next()) {
+        CaratteristicaRichiesta caratteristica = new CaratteristicaRichiesta();
+        caratteristica.setId(rs.getInt("id"));
+        caratteristica.setRichiestaOrdine(recuperaRichiestaOrdine(conn, rs.getInt("richiesta_id")));
+        caratteristica.setCaratteristica(recuperaCaratteristica(conn, rs.getInt("caratteristica_id")));
+        caratteristica.setValore(rs.getString("valore"));
+        System.out.println("sono qui caratteristica");
+        return caratteristica;
+    }
+    return null; 
+}
+
+
+private Caratteristica recuperaCaratteristica(Connection conn, int caratteristicaId) throws SQLException {
+    PreparedStatement ps = conn.prepareStatement("SELECT * FROM caratteristica WHERE id = ?");
+    ps.setInt(1, caratteristicaId);
+    ResultSet rs = ps.executeQuery();
+
+    if (rs.next()) {
+        Caratteristica caratteristica = new Caratteristica();
+        caratteristica.setId(rs.getInt("id"));
+        caratteristica.setNome(rs.getString("nome"));
+        Categoria categoria = recuperaCategoria(conn, rs.getInt("categoria_id"));
+        caratteristica.setCategoria(categoria);
+        System.out.println("sono qui caratteristica");
+        return caratteristica;
+    }
+    return null; 
+}
+
+private RichiestaOrdine recuperaRichiestaOrdine(Connection conn, int richiestaId) throws SQLException {
+    PreparedStatement ps = conn.prepareStatement("SELECT * FROM richiesta_ordine WHERE id = ?");
+    ps.setInt(1, richiestaId);
+    ResultSet rs = ps.executeQuery();
+
+    if (rs.next()) {
+        RichiestaOrdine richiesta = new RichiestaOrdine();
+        richiesta.setId(rs.getInt("id"));
+        richiesta.setCodiceRichiesta(rs.getString("codice_richiesta"));
+        richiesta.setData(rs.getDate("data"));
+        richiesta.setNote(rs.getString("note"));
+        richiesta.setStato(StatoRichiesta.valueOf(rs.getString("stato")));
+        System.out.println("sono qui richiesta");
+        return richiesta;
+    }
+    return null;
+}
+
+//recupero il tecnico   
+private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLException {
+    PreparedStatement ps = conn.prepareStatement("SELECT * FROM utente WHERE id = ?");
+    ps.setInt(1, tecnicoId);        
+    ResultSet rs = ps.executeQuery();   
+
+    if(rs.next()) {
+        Utente tecnico = new Utente();
+        tecnico.setId(rs.getInt("id"));
+        tecnico.setUsername(rs.getString("username"));
+        tecnico.setEmail(rs.getString("email"));
+        tecnico.setPassword(rs.getString("password"));
+        tecnico.setTipologiaUtente(TipologiaUtente.valueOf(rs.getString("tipologia_utente")));
+        System.out.println("sono qui tecnico");
+        return tecnico;
+    }
+    return null;    
+
+}
+
 
     //Inserimento di una nuova richiesta
     @POST
@@ -93,7 +170,7 @@ public class RichiesteRes {
     @Consumes(MediaType.APPLICATION_JSON)  
     
     public Response inserisciRichiesta(
-            RichiestaOrdine richiesta,  // Oggetto RichiestaOrdine ricevuto dal client
+            RichiestaCompleta richiestaCompleta,  // Oggetto Richiesta+Caratteristiche ricevuto dal client
             @Context UriInfo uriinfo,  // UriInfo per ottenere informazioni sulla richiesta
             @Context SecurityContext sec,  // Per gestire la sicurezza
             @Context ContainerRequestContext req) throws RESTWebApplicationException, SQLException, ClassNotFoundException, NamingException {
@@ -104,46 +181,86 @@ public class RichiesteRes {
                 
         InitialContext ctx;
         Connection conn = null;
-        PreparedStatement ps = null;
+        PreparedStatement psRichiesta = null;
+        PreparedStatement psCaratteristica = null;
+
         try {
-            int utenteId = UserUtils.getLoggedId(sec);
+                    int utenteId = UserUtils.getLoggedId(sec);
 
-            // Debug 1: Stampa l'oggetto RichiestaOrdine per vedere se è popolato correttamente
-           System.out.println("DEBUG: RichiestaOrdine ricevuta: " + richiesta.toString());
+                    // Estrai la richiesta e le caratteristiche dalla RichiestaCompleta
+                    RichiestaOrdine richiesta = richiestaCompleta.getRichiesta();
+                    List<CaratteristicaRichiesta> caratteristiche = richiestaCompleta.getCaratteristiche();
 
-            // Inizializzazione del contesto JNDI e recupero del DataSource
-            ctx = new InitialContext();
-            DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
-            conn = ds.getConnection();
-            
-            String query = "INSERT INTO richiesta_ordine (note, stato, data, utente, categoria_id) VALUES (?, ?, ?, ?, ?)";
-            
-            ps = conn.prepareStatement(query);
+                    // Debug 1: Stampa l'oggetto RichiestaOrdine per vedere se è popolato correttamente
+                    System.out.println("DEBUG: RichiestaOrdine ricevuta: " + richiesta.toString());
 
-            System.out.println("DEBUG: Valori da inserire nella query:");
-            System.out.println("Note: " + richiesta.getNote());
-            System.out.println("Stato: " + richiesta.getStato().toString());
-            System.out.println("Data: " + richiesta.getData());
-            System.out.println("Categoria ID: " + (richiesta.getCategoria() != null ? richiesta.getCategoria().getId() : "NULL"));
+                    // Debug 2: Stampa la lista delle caratteristiche per vedere se è popolata correttamente
+                    //  System.out.println("DEBUG: Caratteristiche ricevute: " + caratteristiche.toString());
+                    
 
-            ps.setString(1, richiesta.getNote());
-            ps.setString(2, richiesta.getStato().toString()); 
-            ps.setDate(3, new java.sql.Date(richiesta.getData().getTime()));  // Conversione da java.util.Date a java.sql.Date
-            ps.setInt(4, utenteId);  
-            if (richiesta.getCategoria() != null) {
-                ps.setInt(5, richiesta.getCategoria().getId());
-            } else {
-                ps.setNull(5, java.sql.Types.INTEGER);
-            }
-            // ps.setInt(7, richiesta.getCategoria().getId()); 
+                    // Inizializzazione del contesto JNDI e recupero del DataSource
+                    ctx = new InitialContext();
+                    DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+                    conn = ds.getConnection();
+                    
+                    String query = "INSERT INTO richiesta_ordine (note, stato, data, utente, categoria_id) VALUES (?, ?, ?, ?, ?)";
+                    
+                    psRichiesta = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
-            int rowsInserted = ps.executeUpdate();
-            
-            if (rowsInserted > 0) {
+                    System.out.println("DEBUG: Valori da inserire nella query:");
+                    System.out.println("Note: " + richiesta.getNote());
+                    System.out.println("Stato: " + richiesta.getStato().toString());
+                    System.out.println("Data: " + richiesta.getData());
+                    System.out.println("Categoria ID: " + (richiesta.getCategoria() != null ? richiesta.getCategoria().getId() : "NULL"));
 
-                System.out.println("DEBUG: Inserimento riuscito");
+                    psRichiesta.setString(1, richiesta.getNote());
+                    psRichiesta.setString(2, richiesta.getStato().toString()); 
+                    psRichiesta.setDate(3, new java.sql.Date(richiesta.getData().getTime()));  // Conversione da java.util.Date a java.sql.Date
+                    psRichiesta.setInt(4, utenteId);  
+                    if (richiesta.getCategoria() != null) {
+                        psRichiesta.setInt(5, richiesta.getCategoria().getId());
+                    } else {
+                        psRichiesta.setNull(5, java.sql.Types.INTEGER);
+                    }
 
-                return Response.status(Response.Status.CREATED).entity("Richiesta inserita con successo").build();
+                    int rowsInserted = psRichiesta.executeUpdate();
+                    
+                    if (rowsInserted > 0) {
+
+                        System.out.println("DEBUG: Inserimento riuscito della richiestaOrdine");
+
+                    // Recupera l'ID generato per la richiesta appena inserita
+                    ResultSet generatedKeys = psRichiesta.getGeneratedKeys();
+                    int richiestaId = -1;
+                    if (generatedKeys.next()) {
+                        richiestaId = generatedKeys.getInt(1);
+                    }
+                    System.out.println("DEBUG: ID generato per la richiesta: " + richiestaId);
+
+                    // Inserimento delle caratteristiche
+                    String queryCaratteristica = "INSERT INTO caratteristica_richiesta (richiesta_id, caratteristica_id, valore) VALUES (?, ?, ?)";
+                    psCaratteristica = conn.prepareStatement(queryCaratteristica);
+
+                    for (CaratteristicaRichiesta caratteristica : caratteristiche) {
+                        psCaratteristica.setInt(1, richiestaId);
+                        if (caratteristica.getCaratteristica() != null) {
+                            psCaratteristica.setInt(2, caratteristica.getCaratteristica().getId());
+                        }
+                        psCaratteristica.setString(3, caratteristica.getValore());
+
+                        System.out.println("DEBUG: Inserimento riuscito della caratteristica: " + caratteristica.getCaratteristica().getId() + " - " + caratteristica.getValore());
+                    }
+                    
+                    int rowsInsertedCaratteristiche = psCaratteristica.executeUpdate();
+                    if (rowsInsertedCaratteristiche > 0) {
+                        System.out.println("DEBUG: Inserimento caratteristiche riuscito");
+                    } else {    
+                        System.out.println("DEBUG: Inserimento caratteristiche non riuscito");
+                    }
+                    
+                    
+            return Response.status(Response.Status.CREATED).entity("Richiesta inserita con successo").build();
+
             } else {
                 System.out.println("DEBUG: Inserimento non riuscito");
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore durante l'inserimento della richiesta").build();
@@ -153,21 +270,27 @@ public class RichiesteRes {
             Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("!!Errore interno del server!!").build();
         } finally {
-
-             if (ps != null) {
-                 try {
-                     ps.close();
-                 } catch (SQLException e) {
-                     Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, e);
-                 }
-             }
-             if (conn != null) {
-                 try {
-                     conn.close();
-                 } catch (SQLException e) {
-                     Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, e);
-                 }
-             }
+            if (psRichiesta != null) {
+                try {
+                    psRichiesta.close();
+                } catch (SQLException e) {
+                    Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, e);
+                }
+            }
+            if (psCaratteristica != null) {
+                try {
+                    psCaratteristica.close();
+                } catch (SQLException e) {
+                    Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, e);
+                }
+            }
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, e);
+                }
+            }
         }
     }
     
@@ -441,25 +564,7 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
     return null; 
 }
 
-//recupero il tecnico   
-private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLException {
-    PreparedStatement ps = conn.prepareStatement("SELECT * FROM utente WHERE id = ?");
-    ps.setInt(1, tecnicoId);        
-    ResultSet rs = ps.executeQuery();   
 
-    if(rs.next()) {
-        Utente tecnico = new Utente();
-        tecnico.setId(rs.getInt("id"));
-        tecnico.setUsername(rs.getString("username"));
-        tecnico.setEmail(rs.getString("email"));
-        tecnico.setPassword(rs.getString("password"));
-        tecnico.setTipologiaUtente(TipologiaUtente.valueOf(rs.getString("tipologia_utente")));
-        System.out.println("sono qui tecnico");
-        return tecnico;
-    }
-    return null;    
-
-}
         
 
     }

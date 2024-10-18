@@ -212,7 +212,7 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
             throw new RESTWebApplicationException(ex);
         }
 
-        return new RichiestaOrdine();  
+        return richiesta;  
     }
 
     @Override

@@ -48,8 +48,8 @@ public class Caratteristica{
         this.categoria= categoria;
     }
 
-@Override
-public String toString() {
-    return "Caratteristica{id=" + id + ", nome='" + nome + "', categoria=" + categoria.getId() + "}";
-}
+// @Override
+// public String toString() {
+//     return "Caratteristica{id=" + id + ", nome='" + nome + "', categoria=" + categoria.getId() + "}";
+// }
 }

@@ -56,4 +56,15 @@ public class CaratteristicaRichiesta{
     public void setValore(String valore) {
         this.valore = valore;
     }
+
+
+    @Override
+    public String toString() {
+        return "CaratteristicaRichiesta{" +
+                "id=" + id +
+                ", richiestaOrdine=" + richiestaOrdine.getId() +
+                ", caratteristica=" + caratteristica.getId() +
+                ", valore='" + valore + '\'' +
+                '}';
+    }
 }
