@@ -16,10 +16,12 @@ import java.util.logging.Logger;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+import org.univaq.swa.webmarket.rest.exceptions.RESTWebApplicationException;
 import org.univaq.swa.webmarket.rest.models.PropostaAcquisto;
 import org.univaq.swa.webmarket.rest.models.StatoProposta;
 import org.univaq.swa.webmarket.rest.resources.PropostaRes;
 import org.univaq.swa.webmarket.rest.resources.ProposteRes;
+import org.univaq.swa.webmarket.rest.resources.RichiesteRes;
 import org.univaq.swa.webmarket.rest.resources.UserUtils;
 
 /**
@@ -36,15 +38,14 @@ public class ProposteServiceImpl implements ProposteService{
         try {
             ctx = new InitialContext();
             DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
-            Connection conn = ds.getConnection();
+            try (Connection conn = ds.getConnection()) {
             
             PreparedStatement ps = conn.prepareStatement("Select * FROM proposta_acquisto WHERE id = ?");
             ps.setInt(1, id);
             
             ResultSet rs = ps.executeQuery();
             
-            rs.next();
-                
+            if (rs.next()) {                
             proposta.setProduttore(rs.getString("produttore"));
             proposta.setProdotto(rs.getString("prodotto"));
             proposta.setCodice(rs.getString("codice"));
@@ -57,14 +58,15 @@ public class ProposteServiceImpl implements ProposteService{
             proposta.setMotivazione(rs.getString("motivazione"));
             proposta.setId(rs.getInt("id")); 
             
-            ps.close();
+            } else {
+                    throw new RESTWebApplicationException(Response.Status.NOT_FOUND.getStatusCode(), "Proposta non trovata");
+                }
 
         
-            
-        } catch (NamingException ex) {
-            Logger.getLogger(ProposteRes.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(ProposteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }   
+        } catch (NamingException | SQLException ex) {
+            Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RESTWebApplicationException(ex);
         }
         
         return proposta;
@@ -111,7 +113,7 @@ public class ProposteServiceImpl implements ProposteService{
        }
 
     @Override
-    public int inserisciProposta(PropostaAcquisto proposta, int utenteId) {
+    public int inserisciProposta(PropostaAcquisto proposta) {
             InitialContext ctx;
             Connection conn = null;
             PreparedStatement ps = null;
@@ -123,21 +125,20 @@ public class ProposteServiceImpl implements ProposteService{
              DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
              conn = ds.getConnection();
 
-             String query = "INSERT INTO proposta_acquisto (produttore, prodotto, codice, codice_prodotto, prezzo, URL, note, stato, richiesta_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+             String query = "INSERT INTO proposta_acquisto (produttore, prodotto, codice_prodotto, prezzo, URL, note, stato, richiesta_id, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             
              ps = conn.prepareStatement(query);
 
              
              ps.setString(1, proposta.getProduttore());
              ps.setString(2, proposta.getProdotto());
-             ps.setString(3, proposta.getCodice());
-             ps.setString(4, proposta.getCodiceProdotto());
-             ps.setFloat(5, proposta.getPrezzo());
-             ps.setString(6, proposta.getUrl());
-             ps.setString(7, proposta.getNote());
-             ps.setString(8, proposta.getStatoProposta().toString());
-             ps.setInt(9, proposta.getRichiestaOrdine().getId()); // ID della richiesta associata
-
+             ps.setString(3, proposta.getCodiceProdotto());
+             ps.setFloat(4, proposta.getPrezzo());
+             ps.setString(5, proposta.getUrl());
+             ps.setString(6, proposta.getNote());
+             ps.setString(7,"IN_ATTESA");
+             ps.setInt(8, proposta.getRichiestaOrdine().getId());
+             ps.setDate(9, new java.sql.Date(System.currentTimeMillis()));
              rowsInserted = ps.executeUpdate();
 
          } catch (SQLException | NamingException e) {
@@ -152,7 +153,7 @@ public class ProposteServiceImpl implements ProposteService{
     }
 
     @Override
-    public int approvaProposta(int id, PropostaAcquisto proposta) {
+    public int approvaProposta(int id) {
         InitialContext ctx;
         Connection conn = null;
         PreparedStatement ps = null;
@@ -167,7 +168,7 @@ public class ProposteServiceImpl implements ProposteService{
             String query = "UPDATE proposta_acquisto SET stato = ? WHERE ID = ?";
             ps = conn.prepareStatement(query);
             ps.setString(1, StatoProposta.ACCETTATO.toString());
-            ps.setInt(2, proposta.getId());
+            ps.setInt(2, id);
             
             rowsUpdated = ps.executeUpdate();
             
@@ -186,7 +187,43 @@ public class ProposteServiceImpl implements ProposteService{
     }
 
     @Override
-    public int modificaProposta(PropostaAcquisto prop) {
+    public int rifiutaProposta(int id, String motivazione) {
+        InitialContext ctx;
+        Connection conn = null;
+        PreparedStatement ps = null;
+        int rowsUpdated = 0;
+
+        try {
+            ctx = new InitialContext();
+            DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+            conn = ds.getConnection();
+
+
+            String query = "UPDATE proposta_acquisto SET stato = ?, motivazione = ? WHERE ID = ?";
+            ps = conn.prepareStatement(query);
+            ps.setString(1, StatoProposta.RIFIUTATO.toString());
+            ps.setString(2, motivazione);
+
+            ps.setInt(3, id);
+            
+            rowsUpdated = ps.executeUpdate();
+            
+        } catch (SQLException | NamingException ex) {
+            Logger.getLogger(PropostaRes.class.getName()).log(Level.SEVERE, null, ex);
+           
+        } finally {
+            try {
+                if (ps != null) ps.close();
+                if (conn != null) conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(ProposteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } 
+        return rowsUpdated;
+    }
+
+    @Override
+    public int modificaProposta(PropostaAcquisto prop, int idProposta) {
              InitialContext ctx;
              Connection conn = null;
              PreparedStatement ps = null;
@@ -196,10 +233,9 @@ public class ProposteServiceImpl implements ProposteService{
                  ctx = new InitialContext();
                  DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
                  conn = ds.getConnection();
-                 int idProposta = prop.getId();
 
                  // Query SQL per aggiornare una proposta esistente
-                 String query = "UPDATE proposta_acquisto SET produttore = ?, prodotto = ?, codice_prodotto = ?, prezzo = ?, URL = ?, note = ?, stato = ? WHERE id = ?";
+                 String query = "UPDATE proposta_acquisto SET produttore = ?, prodotto = ?, codice_prodotto = ?, prezzo = ?, URL = ?, note = ? WHERE id = ?";
                  ps = conn.prepareStatement(query);
                  ps.setString(1, prop.getProduttore());
                  ps.setString(2, prop.getProdotto());
@@ -207,8 +243,7 @@ public class ProposteServiceImpl implements ProposteService{
                  ps.setFloat(4, prop.getPrezzo());
                  ps.setString(5, prop.getUrl());
                  ps.setString(6, prop.getNote());
-                 ps.setString(7, prop.getStatoProposta().toString());
-                 ps.setInt(8, idProposta);
+                 ps.setInt(7, idProposta);
                  
                  rowsUpdated = ps.executeUpdate();
 

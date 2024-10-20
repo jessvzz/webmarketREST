@@ -5,11 +5,13 @@
 package org.univaq.swa.webmarket.rest.resources;
 
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -22,6 +24,8 @@ import java.util.logging.Logger;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+import org.univaq.swa.webmarket.rest.business.ProposteService;
+import org.univaq.swa.webmarket.rest.business.ProposteServiceFactory;
 import org.univaq.swa.webmarket.rest.exceptions.RESTWebApplicationException;
 import org.univaq.swa.webmarket.rest.models.PropostaAcquisto;
 import org.univaq.swa.webmarket.rest.models.StatoProposta;
@@ -33,9 +37,13 @@ import org.univaq.swa.webmarket.rest.models.StatoRichiesta;
  */
 public class PropostaRes {
     private final PropostaAcquisto proposta;
+    private final ProposteService business;
+
 
     PropostaRes(PropostaAcquisto proposta) {
         this.proposta = proposta;
+        this.business = ProposteServiceFactory.getProposteService();
+
     }
     
     @GET
@@ -51,22 +59,9 @@ public class PropostaRes {
     @Path("/approva") 
     @Produces(MediaType.APPLICATION_JSON)
     public Response approve(@Context SecurityContext sec) throws SQLException {
-        InitialContext ctx;
-        Connection conn = null;
-        PreparedStatement ps = null;
-
-        try {
-            ctx = new InitialContext();
-            DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
-            conn = ds.getConnection();
-
-
-            String query = "UPDATE proposta_acquisto SET stato = ? WHERE ID = ?";
-            ps = conn.prepareStatement(query);
-            ps.setString(1, StatoProposta.ACCETTATO.toString());
-            ps.setInt(2, proposta.getId());
-            
-            int rowsUpdated = ps.executeUpdate();
+        int rowsUpdated = 0;
+        try{
+            rowsUpdated = business.approvaProposta(proposta.getId());
             if (rowsUpdated > 0) {
                 return Response.ok("Proposta aggiornata con successo.").build();
             } else {
@@ -74,15 +69,34 @@ public class PropostaRes {
                                .entity("Proposta non trovata.")
                                .build();
             }
-        } catch (SQLException | NamingException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(PropostaRes.class.getName()).log(Level.SEVERE, null, ex);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                            .entity("Errore interno del server.")
                            .build();
-        } finally {
-            if (ps != null) ps.close();
-            if (conn != null) conn.close();
-        }
+        } 
+    }
+    
+    @PUT
+    @Path("/rifiuta") 
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response reject(@FormParam("motivazione") String motivazione, @Context SecurityContext sec) throws SQLException {
+        int rowsUpdated = 0;
+        try{
+            rowsUpdated = business.rifiutaProposta(proposta.getId(), motivazione);
+            if (rowsUpdated > 0) {
+                return Response.ok("Proposta aggiornata con successo.").build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND)
+                               .entity("Proposta non trovata.")
+                               .build();
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(PropostaRes.class.getName()).log(Level.SEVERE, null, ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                           .entity("Errore interno del server.")
+                           .build();
+        } 
     }
 
          //modifica
@@ -90,29 +104,11 @@ public class PropostaRes {
          @Consumes(MediaType.APPLICATION_JSON)
          @Produces(MediaType.APPLICATION_JSON)
          public Response modificaProposta(PropostaAcquisto prop) {
-             InitialContext ctx;
-             Connection conn = null;
-             PreparedStatement ps = null;
+             int rowsUpdated = 0;
 
              try {
-                 ctx = new InitialContext();
-                 DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
-                 conn = ds.getConnection();
-                 int idProposta = proposta.getId();
-
-                 // Query SQL per aggiornare una proposta esistente
-                 String query = "UPDATE proposta_acquisto SET produttore = ?, prodotto = ?, codice_prodotto = ?, prezzo = ?, URL = ?, note = ?, stato = ? WHERE id = ?";
-                 ps = conn.prepareStatement(query);
-                 ps.setString(1, prop.getProduttore());
-                 ps.setString(2, prop.getProdotto());
-                 ps.setString(3, prop.getCodiceProdotto());
-                 ps.setFloat(4, prop.getPrezzo());
-                 ps.setString(5, prop.getUrl());
-                 ps.setString(6, prop.getNote());
-                 ps.setString(7, prop.getStatoProposta().toString());
-                 ps.setInt(8, idProposta); // ID della proposta da aggiornare
-
-                 int rowsUpdated = ps.executeUpdate();
+                 
+                 rowsUpdated = business.modificaProposta(prop, proposta.getId());
 
                  if (rowsUpdated > 0) {
                      return Response.ok("Proposta modificata con successo").build();
@@ -120,14 +116,10 @@ public class PropostaRes {
                      return Response.status(Response.Status.NOT_FOUND).entity("Proposta non trovata").build();
                  }
 
-             } catch (SQLException | NamingException e) {
+             } catch (Exception e) {
                  Logger.getLogger(ProposteRes.class.getName()).log(Level.SEVERE, null, e);
                  return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore interno del server").build();
-             } finally {
-                 // Chiusura delle risorse
-                 if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
-                 if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
-             }
+             } 
          }
     
 }
