@@ -7,7 +7,9 @@ package org.univaq.swa.webmarket.rest.business;
 import jakarta.json.Json;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.ws.rs.core.Response;
+import java.net.URI;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -572,125 +574,55 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
     }
     
     @Override
-    public int inserisciNuovaRichiesta(RichiestaOrdine nuovaRichiesta, Map<Caratteristica, String> caratteristiche) {
-        InitialContext ctx;
-        Connection conn = null;
-        PreparedStatement psRichiesta = null;
-        PreparedStatement psCaratteristicaRichiesta = null;
-        ResultSet generatedKeys = null;
-        int newId = 0;
+    public int inserisciNuovaRichiesta(int userId, String note, Date data, String stato, int categoriaId, List<Integer> idcaratteristica, List<String> valore) throws SQLException, NamingException{
+        InitialContext ctx = new InitialContext();
+        DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+        Connection conn = ds.getConnection();
 
         try {
-            ctx = new InitialContext();
-            DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
-            conn = ds.getConnection();
 
-            // per eseguire le operazioni in una transazione
-            conn.setAutoCommit(false);
+            String query = "INSERT INTO richiesta_ordine (note, data, stato, utente, categoria_id) VALUES(?, ?, ?, ?,?)";
+            PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, note);
+            ps.setDate(2, new java.sql.Date(data.getTime()));
+            ps.setString(3, stato);
+            ps.setInt(4,userId);
+            ps.setInt(5, categoriaId);
 
-            String insertRichiestaQuery = "INSERT INTO richiesta_ordine (note, stato, data, codice_richiesta, utente, categoria_id) VALUES (?, ?, ?, ?, ?, ?)";
-            psRichiesta = conn.prepareStatement(insertRichiestaQuery, Statement.RETURN_GENERATED_KEYS);
-            psRichiesta.setString(1, nuovaRichiesta.getNote());
-            psRichiesta.setString(2, nuovaRichiesta.getStato().toString());
-            psRichiesta.setDate(3, new java.sql.Date(nuovaRichiesta.getData().getTime()));
-            psRichiesta.setString(4, nuovaRichiesta.getCodiceRichiesta());
-            psRichiesta.setInt(5, nuovaRichiesta.getUtente().getId());
-            psRichiesta.setInt(6, nuovaRichiesta.getCategoria().getId());
 
-            int rowsInserted = psRichiesta.executeUpdate();
+            int rowsInserted = ps.executeUpdate();
+            if (rowsInserted == 1) {
+            ResultSet keys = ps.getGeneratedKeys();
+            keys.next();
+            int richiestaId = keys.getInt(1);
 
-            if (rowsInserted > 0) {
-                generatedKeys = psRichiesta.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    newId = generatedKeys.getInt(1);
-                }
+            // Inserimento delle caratteristiche associate
+            String queryCaratteristica = "INSERT INTO caratteristica_richiesta (richiesta_id, caratteristica_id, valore) VALUES(?, ?, ?)";
+            PreparedStatement psCaratteristica = conn.prepareStatement(queryCaratteristica);
+
+            for (int i = 0; i < idcaratteristica.size(); i++) {
+                psCaratteristica.setInt(1, richiestaId);
+                psCaratteristica.setInt(2, idcaratteristica.get(i));
+                psCaratteristica.setString(3, valore.get(i));
+                psCaratteristica.addBatch();  // Usa batch per ottimizzare le prestazioni
             }
 
-            String insertCaratteristicaRichiestaQuery = "INSERT INTO caratteristica_richiesta (richiesta_id, caratteristica_id, valore) VALUES (?, ?, ?)";
-            psCaratteristicaRichiesta = conn.prepareStatement(insertCaratteristicaRichiestaQuery);
+            psCaratteristica.executeBatch();  // Esegue il batch
+            psCaratteristica.close();
 
-             for (Map.Entry<Caratteristica, String> entry : caratteristiche.entrySet()) {
-                psCaratteristicaRichiesta.setInt(1, newId);
-                psCaratteristicaRichiesta.setInt(2, entry.getKey().getId());
-                psCaratteristicaRichiesta.setString(3, entry.getValue());
-                psCaratteristicaRichiesta.executeUpdate();
-            }
-
-            conn.commit();
-
-        } catch (SQLException | NamingException ex) {
-            //rollback
-            if (conn != null) {
-                try {
-                    conn.rollback();
-                } catch (SQLException e) {
-                    Logger.getLogger(RichiesteServiceImpl.class.getName()).log(Level.SEVERE, null, e);
-                }
-            }
-            Logger.getLogger(RichiesteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                if (generatedKeys != null) generatedKeys.close();
-                if (psRichiesta != null) psRichiesta.close();
-                if (psCaratteristicaRichiesta != null) psCaratteristicaRichiesta.close();
-                if (conn != null) conn.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(RichiesteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            
+            return richiestaId;
+        } else {
+            return 0;
         }
-
-        return newId;
+    } finally {
+        if (conn != null) {
+            conn.close();
+        }
+    }
     }
 
-    @Override
-    public int inserisciProva(RichiestaOrdine nuovaRichiesta) {
-        InitialContext ctx;
-        Connection conn = null;
-        PreparedStatement psRichiesta = null;
-        ResultSet generatedKeys = null;
-        int newId = 0;
-
-        try {
-            ctx = new InitialContext();
-            DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
-            conn = ds.getConnection();
-
-            System.out.println("richiesta: "+nuovaRichiesta.getNote()+"____"+nuovaRichiesta.getStato());
-
-            String insertRichiestaQuery = "INSERT INTO richiesta_ordine (note, stato, data, codice_richiesta, utente, categoria_id) VALUES (?, ?, ?, ?, ?, ?)";
-            psRichiesta = conn.prepareStatement(insertRichiestaQuery, Statement.RETURN_GENERATED_KEYS);
-            psRichiesta.setString(1, nuovaRichiesta.getNote());
-            psRichiesta.setString(2, nuovaRichiesta.getStato().toString());
-            psRichiesta.setDate(3, new java.sql.Date(nuovaRichiesta.getData().getTime()));
-            psRichiesta.setString(4, nuovaRichiesta.getCodiceRichiesta());
-            psRichiesta.setLong(5, nuovaRichiesta.getUtente().getId());
-            psRichiesta.setInt(6, nuovaRichiesta.getCategoria().getId());
-
-            int rowsInserted = psRichiesta.executeUpdate();
-
-            if (rowsInserted > 0) {
-                generatedKeys = psRichiesta.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    newId = generatedKeys.getInt(1);
-                }
-            }
-
-           
-
-        } catch (SQLException | NamingException ex) {
-           
-            Logger.getLogger(RichiesteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                if (generatedKeys != null) generatedKeys.close();
-                if (psRichiesta != null) psRichiesta.close();
-                if (conn != null) conn.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(RichiesteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-        return newId;    }
+    
 
     
 }

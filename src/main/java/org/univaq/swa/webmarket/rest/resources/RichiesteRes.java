@@ -206,52 +206,16 @@ public Response addItem(
         @FormParam("valore[]") List<String> valore  // Gestisce più valori
 ) throws SQLException, NamingException {
 
-    InitialContext ctx = new InitialContext();
-    DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
-    Connection conn = ds.getConnection();
-
-    try {
         int utenteId = UserUtils.getLoggedId(sec);
-
-        // Inserimento della richiesta
-        String query = "INSERT INTO richiesta_ordine (note, data, stato, utente, categoria_id) VALUES(?, ?, ?, ?,?)";
-        PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-        ps.setString(1, note);
-        ps.setDate(2, new java.sql.Date(data.getTime()));
-        ps.setString(3, stato);
-        ps.setInt(4,utenteId);
-        ps.setInt(5, categoriaId);
-
-        int rowsInserted = ps.executeUpdate();
-        if (rowsInserted == 1) {
-            ResultSet keys = ps.getGeneratedKeys();
-            keys.next();
-            int richiestaId = keys.getInt(1);
-
-            // Inserimento delle caratteristiche associate
-            String queryCaratteristica = "INSERT INTO caratteristica_richiesta (richiesta_id, caratteristica_id, valore) VALUES(?, ?, ?)";
-            PreparedStatement psCaratteristica = conn.prepareStatement(queryCaratteristica);
-
-            for (int i = 0; i < idcaratteristica.size(); i++) {
-                psCaratteristica.setInt(1, richiestaId);
-                psCaratteristica.setInt(2, idcaratteristica.get(i));
-                psCaratteristica.setString(3, valore.get(i));
-                psCaratteristica.addBatch();  // Usa batch per ottimizzare le prestazioni
-            }
-
-            psCaratteristica.executeBatch();  // Esegue il batch
-            psCaratteristica.close();
-
+        int richiestaId = business.inserisciNuovaRichiesta(utenteId, note, data, stato, categoriaId, idcaratteristica, valore);
+        
+        if (richiestaId > 0){
             URI uri = uriinfo.getAbsolutePathBuilder().path(String.valueOf(richiestaId)).build();
             return Response.created(uri).build();
         } else {
             return Response.status(Response.Status.BAD_REQUEST).entity("Inserimento della richiesta fallito").build();
         }
-    } finally {
-        if (conn != null) {
-            conn.close();
-        }
-    }
+    
 }
 
 /*

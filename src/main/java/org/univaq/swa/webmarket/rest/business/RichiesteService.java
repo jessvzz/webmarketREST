@@ -5,8 +5,14 @@
 package org.univaq.swa.webmarket.rest.business;
 
 import jakarta.json.JsonObjectBuilder;
+import jakarta.ws.rs.FormParam;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.SecurityContext;
+import java.sql.Date;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import javax.naming.NamingException;
 import org.univaq.swa.webmarket.rest.models.Caratteristica;
 import org.univaq.swa.webmarket.rest.models.RichiestaOrdine;
 
@@ -25,6 +31,5 @@ public interface RichiesteService {
     int prendiInCarico(int idTecnico, RichiestaOrdine richiesta);
     JsonObjectBuilder getDettagliRichiesta(int id);
     int deleteRichiesta(int id);
-    int inserisciNuovaRichiesta(RichiestaOrdine nuovaRichiesta, Map<Caratteristica, String> caratteristiche);
-    int inserisciProva(RichiestaOrdine nuovaRichiesta);
+    int inserisciNuovaRichiesta(int userId, String note, Date data, String stato, int categoriaId, List<Integer> idcaratteristica, List<String> valore) throws SQLException, NamingException;
 }
