@@ -21,7 +21,7 @@ $(document).ready(function () {
 
             data.forEach(function (richiesta) {
                 const richiestaHTML = `
-                    <a href="dettaglio_richiesta_ord?n=${richiesta.id}" class="a-cards">
+                    <a href="dettaglio_richiesta_ord.html?n=${richiesta.id}" class="a-cards">
                         <div class="richiesta-container card-row-skyblue" data-stato="${richiesta.stato}" data-codice="${richiesta.codiceRichiesta}">
                             <div class="card-row-content">
                                 <p class="card-row-text">Codice: ${richiesta.codiceRichiesta}</p>
@@ -36,10 +36,12 @@ $(document).ready(function () {
                                 <p class="card-row-text">${richiesta.stato}</p>
                             </div>
                         </div>
+                         <button class="delete-button" data-id="${richiesta.id}">Elimina</button>
                     </a>
                 `;
                 container.append(richiestaHTML);
             });
+
         },
         error: function (xhr) {
             if (xhr.status === 401) {
@@ -48,6 +50,8 @@ $(document).ready(function () {
                 alert("Errore durante il caricamento delle richieste.");
             }
         }
+
+
     });
 
     // filtro stato richieste
@@ -62,4 +66,32 @@ $(document).ready(function () {
             }
         });
     });
+
+    // Gestione click del pulsante "Elimina"
+$(document).on('click', '.delete-button', function () {
+    const richiestaId = $(this).data('id');
+    const confirmed = confirm("Sei sicuro di voler eliminare questa richiesta?");
+
+    if (confirmed) {
+        $.ajax({
+            url: `/WebMarketREST/rest/richieste/${richiestaId}`, // Assicurati che questo sia l'URL corretto per l'eliminazione
+            method: "DELETE",
+            headers: {
+                "Authorization": "Bearer " + token
+            },
+            success: function () {
+                alert("Richiesta eliminata con successo.");
+                location.reload(); // Ricarica la pagina per mostrare le modifiche
+            },
+            error: function (xhr) {
+                if (xhr.status === 401) {
+                    alert("Si prega di effettuare l'accesso.");
+                } else {
+                    alert("Errore durante l'eliminazione della richiesta.");
+                }
+            }
+        });
+    }
+});
+
 });

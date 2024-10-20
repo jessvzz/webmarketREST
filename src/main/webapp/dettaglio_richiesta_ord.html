@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="res/default.css">
+    <title>Dettaglio Richiesta</title>
+</head>
+<body>
+    <div class="container mx-auto p-5">
+        <h1 class="text-2xl font-bold mb-4">Dettaglio Richiesta</h1>
+        <div class="bg-white shadow-md rounded p-4">
+            <h2 class="text-xl font-semibold">Codice Richiesta: <span id="richiestaCodice"></span></h2>
+            <p class="mt-2"><strong>Categoria:</strong> <span id="richiestaCategoria"></span></p>
+            <p><strong>Data:</strong> <span id="richiestaData"></span></p>
+            <p><strong>Stato:</strong> <span id="richiestaStato"></span></p>
+            <button class="delete-button mt-4" id="deleteButton">Elimina Richiesta</button>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="res/js/dettaglio_ord_richiesta.js"></script>
+</body>
+</html>

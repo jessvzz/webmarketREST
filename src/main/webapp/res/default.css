@@ -1770,4 +1770,20 @@ dovete chiamarlo in un altro modo, sennò si sminchiano cose già fatte
     transform: translateY(-5px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); 
 }
+
+.delete-button {
+    background-color: #FF4D4D; 
+    color: white; 
+    border: none;
+    padding: 4px 8px; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    transition: background-color 0.3s; 
+    font-size: 0.9rem; 
+    margin-left: 10px;
+}
+
+.delete-button:hover {
+    background-color: #FF1A1A; 
+}
  
