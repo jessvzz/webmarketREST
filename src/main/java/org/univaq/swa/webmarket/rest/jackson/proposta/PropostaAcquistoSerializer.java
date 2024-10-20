@@ -20,7 +20,9 @@ import org.univaq.swa.webmarket.rest.models.PropostaAcquisto;
 public class PropostaAcquistoSerializer extends JsonSerializer<PropostaAcquisto> {
     @Override
     public void serialize(PropostaAcquisto item, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
-        jgen.writeStartObject(); // {
+        try{
+        jgen.writeStartObject();
+         // {
         jgen.writeNumberField("id", item.getId());
         jgen.writeStringField("codice", item.getCodice());
         jgen.writeStringField("codiceProdotto", item.getCodiceProdotto());
@@ -33,9 +35,19 @@ public class PropostaAcquistoSerializer extends JsonSerializer<PropostaAcquisto>
         jgen.writeObjectField("richiestaOrdine", item.getRichiestaOrdine());
         jgen.writeObjectField("stato", item.getStatoProposta());
 
-        java.sql.Date sqlDate = item.getData();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); //in caso questo poi lo cambiamo
-        String formattedDate = sdf.format(sqlDate);
-        jgen.writeStringField("data", formattedDate);
+        if (item.getData() != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String formattedDate = sdf.format(item.getData());
+            jgen.writeStringField("data", formattedDate);
+        } else {
+            jgen.writeNullField("data");
+        }
+
+
         jgen.writeEndObject(); // }
+        } catch(Exception e) {
+        System.err.println("Errore durante la serializzazione: " + e.getMessage());
+        e.printStackTrace();
+        throw new IOException("Errore durante la serializzazione", e);
+    }
     }}

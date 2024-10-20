@@ -30,6 +30,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import org.univaq.swa.webmarket.rest.business.ProposteService;
+import org.univaq.swa.webmarket.rest.business.ProposteServiceFactory;
+import org.univaq.swa.webmarket.rest.business.RichiesteService;
+import org.univaq.swa.webmarket.rest.business.RichiesteServiceFactory;
 import org.univaq.swa.webmarket.rest.exceptions.RESTWebApplicationException;
 import org.univaq.swa.webmarket.rest.models.PropostaAcquisto;
 import org.univaq.swa.webmarket.rest.models.StatoProposta;
@@ -44,7 +48,12 @@ import org.univaq.swa.webmarket.rest.security.Logged;
 @Path("/proposte")
 
 public class ProposteRes {
+    private final ProposteService business;
     
+     public ProposteRes() {
+        this.business = ProposteServiceFactory.getProposteService();
+
+    }
     @GET
     @Path("/{idproposta: [0-9]+}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -59,38 +68,7 @@ public class ProposteRes {
         
         PropostaAcquisto proposta = new PropostaAcquisto();
         
-        InitialContext ctx;
-        try {
-            ctx = new InitialContext();
-            DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
-            Connection conn = ds.getConnection();
-            
-            PreparedStatement ps = conn.prepareStatement("Select * FROM proposta_acquisto WHERE id = ?");
-            ps.setInt(1, idproposta);
-            
-            ResultSet rs = ps.executeQuery();
-            
-            rs.next();
-                
-            proposta.setProduttore(rs.getString("produttore"));
-            proposta.setProdotto(rs.getString("prodotto"));
-            proposta.setCodice(rs.getString("codice"));
-            proposta.setCodiceProdotto(rs.getString("codice_prodotto"));
-            proposta.setPrezzo(rs.getFloat("prezzo")); 
-            proposta.setUrl(rs.getString("URL"));
-            proposta.setNote(rs.getString("note"));
-            proposta.setStatoProposta(StatoProposta.valueOf(rs.getString("stato")));
-            proposta.setData(rs.getDate("data"));
-            proposta.setMotivazione(rs.getString("motivazione"));
-            proposta.setId(rs.getInt("id")); 
-            
-            ps.close();
-
-        
-            
-        } catch (NamingException ex) {
-            Logger.getLogger(ProposteRes.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        proposta = business.getProposta(idproposta);
         
         return new PropostaRes(proposta);
     }
@@ -131,7 +109,7 @@ public class ProposteRes {
                 proposta.setStatoProposta(StatoProposta.valueOf(rs.getString("stato")));
                 proposta.setData(rs.getDate("data"));
                 proposta.setMotivazione(rs.getString("motivazione"));
-                proposta.setId(rs.getInt("richiesta_id"));
+                proposta.setId(rs.getInt("id"));
                 proposte.add(proposta);              
             }
             
@@ -152,7 +130,6 @@ public class ProposteRes {
         @Context SecurityContext sec,  // Per gestire la sicurezza
         @Context ContainerRequestContext req) throws RESTWebApplicationException, SQLException, ClassNotFoundException, NamingException {
         
-            System.out.println("Metodo inserisciProposta chiamato");
 
             InitialContext ctx;
             Connection conn = null;
