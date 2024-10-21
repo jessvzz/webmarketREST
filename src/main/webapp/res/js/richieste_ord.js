@@ -21,7 +21,7 @@ $(document).ready(function () {
 
             data.forEach(function (richiesta) {
                 const richiestaHTML = `
-                    <a href="dettaglio_richiesta_ord.html?n=${richiesta.id}" class="a-cards">
+                    <a href="dettaglio_richiesta.html" class="a-cards" data-id="${richiesta.id}">
                         <div class="richiesta-container card-row-skyblue" data-stato="${richiesta.stato}" data-codice="${richiesta.codiceRichiesta}">
                             <div class="card-row-content">
                                 <p class="card-row-text">Codice: ${richiesta.codiceRichiesta}</p>
@@ -36,11 +36,16 @@ $(document).ready(function () {
                                 <p class="card-row-text">${richiesta.stato}</p>
                             </div>
                         </div>
-                         <button class="delete-button" data-id="${richiesta.id}">Elimina</button>
                     </a>
                 `;
                 container.append(richiestaHTML);
             });
+            $(".a-cards").on('click', function (event) {
+                    event.preventDefault(); 
+                    const richiestaId = $(this).data('id');
+                    localStorage.setItem("richiestaId", richiestaId);
+                    window.location.href = "dettaglio_richiesta.html";
+                });
 
         },
         error: function (xhr) {

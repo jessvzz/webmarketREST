@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="it">
+    <head>
+        <title>WebMarket</title>
+        <link rel="stylesheet" href="res/normalize.css" type="text/css"/>        
+        <link rel="stylesheet" href="res/grid.css" type="text/css"/>
+        <link rel="stylesheet" href="res/default.css" type="text/css"/> 
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+        <!-- Importa jQuery -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header-container" id="header">
+                <div class="sixteen columns">Web Market
+                    <div class="subtitle">L'eCommerce facile per il tuo ente</div>
+                </div>
+                <div class="logininfo">
+                    <a href="logout?referrer=http%3A%2F%2Flocalhost%3A8080%2FWebMarket%2Fdettaglio_richiesta_ord%3Fn%3D16" style="color: black;">
+                        <img class="tiny-logo" src="images/logout.svg" alt="Log Out" />
+                    </a>
+                </div>
+            </div>
+            <div class="row" id="body">
+                <div>
+                    <div class="container-beige">
+                        <div class="nav-container">
+                            <div class="home-card" style="background-color: #90D5FE;">
+                                <a href="homepageordinante">
+                                    <img src="images/home-svg.svg" alt="icona home" class="home-icon">
+                                </a>
+                            </div>
+                            <a href="richieste_ordinante">
+                                <h3 style="color: #0D99FF; margin-left: 10px;">> Richieste Effettuate</h3>
+                            </a>
+                            <h3 style="color: #0D99FF; margin-left: 10px;">> Richiesta #<span id="codice_richiesta">2DkxP1iMS4</span></h3>
+                        </div>
+                        <div class="container-proposta">
+                            <div class="container-info-proposta">
+                                <h1 class="hi-text"> Richiesta #<span id="codice_richiesta_title">2DkxP1iMS4</span></h1>
+                                <div id="stato_richiesta" class="badge-stato w-1/5 py-2 px-3 rounded-md text-base font-semibold text-center">
+                                    IN_ATTESA
+                                </div> 
+                            </div>
+                            <br>
+                            <div class="container-skyblue-proposta shadow-lg">
+                                <div class="row-tecnico">
+                                    <div class="form-group-tecnico">
+                                        <label>Categoria:</label>
+                                        <div id="categoria" class="grey-row flex flex-wrap justify-center gap-4">Notebook</div>
+                                    </div>
+                                </div>
+                                <div class="row-tecnico">
+                                    <div class="form-group-tecnico">
+                                        <label>Data:</label>
+                                        <div id="data_richiesta" class="grey-row flex flex-wrap justify-center gap-4">Oct 20, 2024</div>
+                                    </div>
+                                </div>
+                                <div class="row-tecnico">
+                                    <div class="form-group-tecnico">
+                                        <label>Note:</label>
+                                        <div id="note_richiesta" class="grey-row flex flex-wrap justify-center gap-4">urgent</div>
+                                    </div>
+                                </div>
+                                <div class="row-tecnico">
+                                    <div class="form-group-tecnico">
+                                        <label>Proposte:</label>
+                                        <div class="proposte-container flex flex-wrap justify-center gap-4" id="proposte">
+                                            <div class="proposta-card empty">Nessuna proposta disponibile.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="footer">
+                <div class="sixteen columns">Contatti: webmarket.univaq@outlook.com | Page compiled on 21/10/2024 16:52:36</div>   
+            </div>
+        </div>
+        
+       <script src="res/js/dettaglio_richiesta.js"></script>
+    </body>
+</html>
