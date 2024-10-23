@@ -58,6 +58,37 @@
     $('#accetta-button').on('click', function () {
         approvaProposta();
     });
+    
+    $('#rifiuta-btn').on('click', function () {
+        var motivazione = prompt("Inserisci una motivazione per il rifiuto:");
+
+        if (!motivazione) {
+            alert("Devi inserire una motivazione per rifiutare la proposta.");
+            return; 
+        }
+
+        $.ajax({
+            url: `/WebMarketREST/rest/proposte/${propostaId}/rifiuta`,
+            method: "PUT",
+            headers: {
+                "Authorization": "Bearer " + token,
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            dataType: "text",
+
+            data: { 
+                motivazione: motivazione
+            },
+            success: function (response) {
+                alert("Proposta rifiutata con successo.");
+                window.location.href = "proposte.html";
+            },
+            error: function (xhr, status, error) {
+                console.error('Errore:', error);
+                alert("Errore durante il rifiuto della proposta.");
+            }
+        });
+    });
         
 
 
