@@ -97,10 +97,10 @@ public class RichiestaRes {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDettagliRichiesta() throws SQLException {
         try {
-            JsonObjectBuilder richiestaDetails = business.getDettagliRichiesta(richiesta.getId());
+            RichiestaOrdine richiestaDetails = business.getDettagliRichiesta(richiesta.getId());
 
             if (richiestaDetails != null) {
-                return Response.ok(richiestaDetails.build()).build();
+                return Response.ok(richiestaDetails).build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND)
                                .entity("Dettagli della richiesta non trovati.")

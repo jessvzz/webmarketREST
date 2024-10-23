@@ -3,6 +3,7 @@ package org.univaq.swa.webmarket.rest.models;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import java.util.List;
 
 
 
@@ -17,6 +18,8 @@ public class RichiestaOrdine{
     private Utente utente;
     private Utente tecnico;
     private Categoria categoria;
+    private List<PropostaAcquisto> proposte;
+
 
     // Costruttori
     public RichiestaOrdine() {
@@ -28,9 +31,10 @@ public class RichiestaOrdine{
         utente = null;
         tecnico = null;
         categoria = null;
+        proposte = null;
     }
 
-    public RichiestaOrdine(int id, String note, StatoRichiesta stato, Date data, String codiceRichiesta, Utente utente, Utente tecnico, Categoria categoria) {
+    public RichiestaOrdine(int id, String note, StatoRichiesta stato, Date data, String codiceRichiesta, Utente utente, Utente tecnico, Categoria categoria, List<PropostaAcquisto> proposte) {
         this.id = id;
         this.note = note;
         this.stato = stato;
@@ -39,6 +43,16 @@ public class RichiestaOrdine{
         this.utente = utente;
         this.tecnico = tecnico;
         this.categoria = categoria;
+        this.proposte = proposte;
+
+    }
+    
+    public List<PropostaAcquisto> getProposte() {
+        return proposte;
+    }
+
+    public void setProposte(List<PropostaAcquisto> proposte) {
+        this.proposte = proposte;
     }
 
     public int getId() {

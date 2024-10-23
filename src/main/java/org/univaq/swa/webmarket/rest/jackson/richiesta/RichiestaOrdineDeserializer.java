@@ -5,13 +5,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import org.univaq.swa.webmarket.rest.models.RichiestaOrdine;
 import org.univaq.swa.webmarket.rest.models.StatoRichiesta;
 import org.univaq.swa.webmarket.rest.models.Utente;
 import org.univaq.swa.webmarket.rest.models.Categoria;
+import org.univaq.swa.webmarket.rest.models.PropostaAcquisto;
 
 public class RichiestaOrdineDeserializer extends JsonDeserializer<RichiestaOrdine> {
     @Override
@@ -72,6 +76,19 @@ public class RichiestaOrdineDeserializer extends JsonDeserializer<RichiestaOrdin
              Categoria categoria = jp.getCodec().treeToValue(categoriaNode, Categoria.class);
              richiesta.setCategoria(categoria);
          }
+         
+         if (node.has("proposte")) {
+            JsonNode proposteNode = node.get("proposte");
+            ObjectMapper mapper = new ObjectMapper();
+            
+            List<PropostaAcquisto> proposte = new ArrayList<>();
+            for (JsonNode propostaNode : proposteNode) {
+                PropostaAcquisto proposta = mapper.treeToValue(propostaNode, PropostaAcquisto.class);
+                proposte.add(proposta);
+            }
+            richiesta.setProposte(proposte);
+        }
+
         
         return richiesta;
     }

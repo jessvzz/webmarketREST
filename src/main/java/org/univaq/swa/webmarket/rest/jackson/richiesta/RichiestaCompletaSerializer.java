@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
+import java.util.List;
 import org.univaq.swa.webmarket.rest.models.CaratteristicaRichiesta;
+import org.univaq.swa.webmarket.rest.models.PropostaAcquisto;
 import org.univaq.swa.webmarket.rest.models.RichiestaCompleta;
 
 public class RichiestaCompletaSerializer extends JsonSerializer<RichiestaCompleta> {
@@ -24,6 +26,7 @@ public class RichiestaCompletaSerializer extends JsonSerializer<RichiestaComplet
             }
             jgen.writeEndArray();
         }
+        
         
         jgen.writeEndObject(); 
     }

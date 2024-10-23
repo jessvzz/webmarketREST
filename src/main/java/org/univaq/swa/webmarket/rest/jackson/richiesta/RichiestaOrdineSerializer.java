@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.List;
+import org.univaq.swa.webmarket.rest.models.PropostaAcquisto;
 import org.univaq.swa.webmarket.rest.models.RichiestaOrdine;
 
 public class RichiestaOrdineSerializer extends JsonSerializer<RichiestaOrdine> {
@@ -33,6 +35,17 @@ public class RichiestaOrdineSerializer extends JsonSerializer<RichiestaOrdine> {
         // if (item.getUtente() != null) {
         jgen.writeObjectField("categoria", item.getCategoria());
         // }
+        
+        List<PropostaAcquisto> proposte = item.getProposte();
+        if (proposte != null && !proposte.isEmpty()) {
+            jgen.writeArrayFieldStart("proposte");
+            for (PropostaAcquisto proposta : proposte) {
+                jgen.writeObject(proposta);
+            }
+            jgen.writeEndArray();
+        } else {
+            jgen.writeNullField("proposte");
+        }
         jgen.writeEndObject(); // }
     }
 }

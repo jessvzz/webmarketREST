@@ -25,7 +25,9 @@ import javax.sql.DataSource;
 import org.univaq.swa.webmarket.rest.exceptions.RESTWebApplicationException;
 import org.univaq.swa.webmarket.rest.models.Caratteristica;
 import org.univaq.swa.webmarket.rest.models.Categoria;
+import org.univaq.swa.webmarket.rest.models.PropostaAcquisto;
 import org.univaq.swa.webmarket.rest.models.RichiestaOrdine;
+import org.univaq.swa.webmarket.rest.models.StatoProposta;
 import org.univaq.swa.webmarket.rest.models.StatoRichiesta;
 import org.univaq.swa.webmarket.rest.models.TipologiaUtente;
 import org.univaq.swa.webmarket.rest.models.Utente;
@@ -460,83 +462,113 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
     }
 
     @Override
-    public JsonObjectBuilder getDettagliRichiesta(int id) {
+    public RichiestaOrdine getDettagliRichiesta(int id) {
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
+        RichiestaOrdine richiesta = null;
+        List<PropostaAcquisto> proposte = new ArrayList<>();
 
         try {
             InitialContext ctx = new InitialContext();
             DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
             conn = ds.getConnection();
 
-            String query = "SELECT r.id AS richiesta_id, r.codice_richiesta, r.data AS data_richiesta, " +
-                           "r.note AS note_richiesta, r.stato AS stato_richiesta, u.username AS ordinante, " +
-                           "cat.nome AS categoria, p.produttore, p.prodotto, p.codice_prodotto, p.prezzo, " +
-                           "p.stato AS stato_proposta, p.motivazione AS motivazione_proposta, p.URL AS url_prodotto, " +
-                           "p.note AS note_proposta, o.stato AS stato_ordine, o.data AS data_ordine " +
-                           "FROM richiesta_ordine r " +
-                           "LEFT JOIN utente u ON r.utente = u.ID " +
-                           "LEFT JOIN categoria cat ON r.categoria_id = cat.ID " +
-                           "LEFT JOIN proposta_acquisto p ON r.id = p.richiesta_id " +
-                           "LEFT JOIN ordine o ON p.id = o.proposta_id " +
-                           "WHERE r.id = ?";
+            String query = "SELECT \n" +
+            "    ro.ID AS richiesta_id,\n" +
+            "    ro.note AS richiesta_note,\n" +
+            "    ro.stato AS richiesta_stato,\n" +
+            "    ro.data AS richiesta_data,\n" +
+            "    ro.codice_richiesta,\n" +
+            "    ro.utente AS richiesta_utente,\n" +
+            "    ro.tecnico AS richiesta_tecnico,\n" +
+            "    ro.categoria_id AS richiesta_categoria_id,\n" +
+            "\n" +
+            "    pa.ID AS proposta_id,\n" +
+            "    pa.produttore,\n" +
+            "    pa.prodotto,\n" +
+            "    pa.codice,\n" +
+            "    pa.codice_prodotto,\n" +
+            "    pa.prezzo,\n" +
+            "    pa.URL,\n" +
+            "    pa.note AS proposta_note,\n" +
+            "    pa.stato AS proposta_stato,\n" +
+            "    pa.data AS proposta_data,\n" +
+            "    pa.motivazione\n" +
+            "FROM richiesta_ordine ro\n" +
+            "JOIN proposta_acquisto pa ON ro.ID = pa.richiesta_id\n" +
+            "WHERE ro.ID = ?;";
 
             ps = conn.prepareStatement(query);
             ps.setInt(1, id);
             rs = ps.executeQuery();
 
-            if (rs.next()) {
-                JsonObjectBuilder richiestaDetails = Json.createObjectBuilder()
-                    .add("richiesta_id", rs.getInt("richiesta_id"))
-                    .add("codice_richiesta", rs.getString("codice_richiesta"))
-                    .add("data_richiesta", rs.getDate("data_richiesta").toString())
-                    .add("note_richiesta", rs.getString("note_richiesta"))
-                    .add("stato_richiesta", rs.getString("stato_richiesta"))
-                    .add("ordinante", rs.getString("ordinante"))
-                    .add("categoria", rs.getString("categoria"));
+            while (rs.next()) {
+                if (richiesta == null) {
+                    richiesta = new RichiestaOrdine();
+                    richiesta.setId(rs.getInt("richiesta_id"));
+                    richiesta.setNote(rs.getString("richiesta_note"));
+                    richiesta.setStato(StatoRichiesta.valueOf(rs.getString("richiesta_stato")));
+                    richiesta.setData(rs.getDate("richiesta_data"));
+                    richiesta.setCodiceRichiesta(rs.getString("codice_richiesta"));
 
-                if (rs.getString("prodotto") != null) {
-                    JsonObjectBuilder propostaBuilder = Json.createObjectBuilder()
-                        .add("produttore", rs.getString("produttore"))
-                        .add("prodotto", rs.getString("prodotto"))
-                        .add("codice_prodotto", rs.getString("codice_prodotto"))
-                        .add("prezzo", rs.getDouble("prezzo"))
-                        .add("stato_proposta", rs.getString("stato_proposta"));
-
-                    String motivazione = rs.getString("motivazione_proposta");
-                    if (motivazione != null) {
-                        propostaBuilder.add("motivazione_proposta", motivazione);
-                    }
-
-                    String note = rs.getString("note_proposta");
-                    if (note != null) {
-                        propostaBuilder.add("note_proposta", note);
-                    }
-
-                    propostaBuilder.add("url_prodotto", rs.getString("url_prodotto"));
-
-                    richiestaDetails.add("proposta", propostaBuilder);
+                         int utenteId = rs.getInt("richiesta_utente");
+                         int categoriaId = rs.getInt("richiesta_categoria_id");
+                         int tecnicoId = rs.getInt("richiesta_tecnico");
+        
+                         if (utenteId > 0) {
+                             Utente utente = recuperaUtente(conn, utenteId);
+                             richiesta.setUtente(utente);
+                         }
+        
+                         if (categoriaId > 0) {
+                             Categoria categoria = recuperaCategoria(conn, categoriaId);
+                             richiesta.setCategoria(categoria);
+                         }
+        
+                         if (tecnicoId > 0) {
+                            Utente tecnico = recuperaTecnico(conn, tecnicoId);
+                            richiesta.setTecnico(tecnico);
+                        }
                 }
 
-                return richiestaDetails;
+                if (rs.getInt("proposta_id") != 0) {
+                    PropostaAcquisto proposta = new PropostaAcquisto();
+                    proposta.setId(rs.getInt("proposta_id"));
+                    proposta.setProduttore(rs.getString("produttore"));
+                    proposta.setProdotto(rs.getString("prodotto"));
+                    proposta.setCodice(rs.getString("codice"));
+                    proposta.setPrezzo(rs.getFloat("prezzo"));
+                    proposta.setUrl(rs.getString("URL"));
+                    proposta.setStatoProposta(StatoProposta.valueOf(rs.getString("proposta_stato")));
+                    proposta.setData(rs.getDate("proposta_data"));
+                    proposta.setNote(rs.getString("proposta_note"));
+                    proposta.setMotivazione(rs.getString("motivazione"));
+
+                    proposte.add(proposta); 
+                }
             }
 
+            if (richiesta != null) {
+                richiesta.setProposte(proposte); 
+            }
 
-        } catch (NamingException ex) {
-            Logger.getLogger(RichiesteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(RichiesteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             try {
                 if (rs != null) rs.close();
                 if (ps != null) ps.close();
                 if (conn != null) conn.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(RichiesteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-        }return null;
-}
+        }
+
+        return richiesta;
+    }
+
+
 
     @Override
     public int deleteRichiesta(int id) {
