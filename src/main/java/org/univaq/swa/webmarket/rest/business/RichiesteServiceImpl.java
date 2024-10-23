@@ -496,7 +496,7 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
             "    pa.data AS proposta_data,\n" +
             "    pa.motivazione\n" +
             "FROM richiesta_ordine ro\n" +
-            "JOIN proposta_acquisto pa ON ro.ID = pa.richiesta_id\n" +
+            "LEFT JOIN proposta_acquisto pa ON ro.ID = pa.richiesta_id\n" +
             "WHERE ro.ID = ?;";
 
             ps = conn.prepareStatement(query);

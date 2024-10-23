@@ -61,6 +61,7 @@
                     $('#proposte').html('<div class="proposta-card empty">Nessuna proposta disponibile.</div>');
                 }
                 },
+               
                 error: function (xhr, status, error) {
                     console.error('Errore:', error);
                     alert('Errore nel caricamento dei dettagli della richiesta.');

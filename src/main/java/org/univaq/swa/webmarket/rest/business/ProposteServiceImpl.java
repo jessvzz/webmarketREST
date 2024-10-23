@@ -73,7 +73,7 @@ public class ProposteServiceImpl implements ProposteService{
     }
 
     @Override
-    public List<PropostaAcquisto> getAll() {
+    public List<PropostaAcquisto> getAll(int userId) {
         List<PropostaAcquisto> proposte = new ArrayList<>();
         
         InitialContext ctx;
@@ -82,7 +82,14 @@ public class ProposteServiceImpl implements ProposteService{
             DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
             Connection conn = ds.getConnection();
             
-            PreparedStatement ps = conn.prepareStatement("Select * FROM proposta_acquisto");
+            String sql = "SELECT p.* " +
+                     "FROM proposta_acquisto p " +
+                     "JOIN richiesta_ordine r ON p.richiesta_id = r.id " +
+                     "WHERE (r.utente = ? OR r.tecnico = ?) AND p.stato = 'IN_ATTESA'";
+        
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, userId);
+            ps.setInt(2, userId);
             
             ResultSet rs = ps.executeQuery();
             

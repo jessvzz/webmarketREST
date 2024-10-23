@@ -71,6 +71,8 @@ public class ProposteRes {
     }
     
     @GET
+    @Path("/in_attesa")
+    @Logged
     @Produces(MediaType.APPLICATION_JSON)
     public Response getProposals(
             @Context UriInfo uriinfo,
@@ -78,11 +80,11 @@ public class ProposteRes {
             @Context SecurityContext sec,
             @Context ContainerRequestContext req)
             throws RESTWebApplicationException, SQLException, ClassNotFoundException, NamingException {
-        
+        int userId = UserUtils.getLoggedId(sec);
         List<PropostaAcquisto> proposte = new ArrayList<>();
         
         InitialContext ctx;
-        proposte = business.getAll();
+        proposte = business.getAll(userId);
         
         return Response.ok(proposte).build();
     }
