@@ -124,13 +124,17 @@ public class RichiestaRes {
 
          try {
              
-             int rowsDeleted = business.deleteRichiesta(richiesta.getId());
+            int rowsDeleted = business.deleteRichiesta(richiesta.getId());
 
-             if (rowsDeleted > 0) {
-                 return Response.ok("Richiesta eliminata con successo").build();
-             } else {
-                 return Response.status(Response.Status.NOT_FOUND).entity("Richiesta non trovata").build();
-             }
+            if (rowsDeleted > 0) {
+                JsonObjectBuilder jsonResponse = Json.createObjectBuilder();
+                jsonResponse.add("message", "Richiesta eliminata con successo.");
+                return Response.ok(jsonResponse.build()).build();
+            } else {
+                JsonObjectBuilder jsonResponse = Json.createObjectBuilder();
+                jsonResponse.add("error", "Richiesta non trovata.");
+                return Response.status(Response.Status.NOT_FOUND).entity(jsonResponse.build()).build();
+            }
 
          } catch (Exception e) {
              Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, e);

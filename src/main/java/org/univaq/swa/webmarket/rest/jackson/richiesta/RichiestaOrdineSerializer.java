@@ -43,9 +43,7 @@ public class RichiestaOrdineSerializer extends JsonSerializer<RichiestaOrdine> {
                 jgen.writeObject(proposta);
             }
             jgen.writeEndArray();
-        } else {
-            jgen.writeNullField("proposte");
-        }
+        } 
         jgen.writeEndObject(); // }
     }
 }

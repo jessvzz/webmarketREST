@@ -67,6 +67,29 @@
                 }
             });
         }
+        
+        $('#eliminaRichiesta').click(function () {
+        if (confirm("Sei sicuro di voler eliminare questa richiesta?")) {
+            $.ajax({
+                url: `/WebMarketREST/rest/richieste/${richiestaId}`,
+                method: "DELETE",
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                success: function (response) {
+                    window.location.href = "richieste.html";
+                },
+                error: function (xhr, status, error) {
+                    console.error('Errore:', error);
+                    const errorMessage = xhr.responseJSON ? xhr.responseJSON.error : 'Errore nell\'eliminazione della richiesta.';
+                    alert(errorMessage);
+                }
+            });
+        }
+    });
+
 
         caricaDettagliRichiesta();
+        
+        
     });
