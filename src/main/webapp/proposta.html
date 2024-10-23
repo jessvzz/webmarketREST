@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="it" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>WebMarket</title>
+        <link rel="stylesheet" href="res/normalize.css" type="text/css"/>        
+        <link rel="stylesheet" href="res/grid.css" type="text/css"/>
+        <link rel="stylesheet" href="res/default.css" type="text/css"/> 
+        
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+
+    </head>
+    <body>
+        <div class="container">
+            <div class="header-container" id="header">
+    <div class="sixteen columns">Web Market
+        <div class="subtitle">L'eCommerce facile per il tuo ente</div>
+    </div>
+    <div class="logininfo">
+            <img class="tiny-logo" src="images/logout.svg" alt="Log Out" />
+    </div>
+</div>
+            <div class="row" id="body">
+
+                <div >
+<div class="container-beige  mx-auto p-4 md:p-6 lg:p-8">
+    <div class="nav-container flex items-center space-x-2">
+        <div class="home-card flex justify-center items-center" style="background-color:#1E88E5;">
+            <a href="ordinantehomepage.html">
+                <img src="images/home-svg.svg" alt="icona home" class="home-icon"/> 
+            </a>
+        </div>
+
+        <h3 class="text-lg ml-2 font-semibold" style="color:#1E88E5; margin-left: 10px;">
+            <a href="proposte.html">&gt; Proposte</a>
+        </h3>
+
+        <h3 class="text-lg ml-2 font-semibold" style="color:#1E88E5; margin-left: 10px;">> Dettaglio Proposta #y6PbeGBzGA</h3> 
+
+
+    </div>
+    
+    <div class="container-proposta">
+        <div class="container-info-proposta">
+            <h1 class="hi-text" id="codice"> Proposta #y6PbeGBzGA</h1>
+            <div class="badge-stato w-1/5 py-2 px-3 rounded-md text-base font-semibold text-center" data-stato="IN_ATTESA" style="display: inline-block; font-weight: bold;">
+                IN_ATTESA
+            </div> 
+        <br/>
+
+        </div>
+    
+
+        <div class="container-salm-proposta p-4 shadow-lg">
+            <div class="row-tecnico">
+                <div class="form-group-tecnico">
+                    <label class="block text-gray-700 font-bold">Nome produttore:</label>
+                    <div class="grey-row" id="produttore"></div>
+                </div>
+            </div>
+            <div class="row-tecnico">
+                <div class="form-group-tecnico">
+                    <label class="block text-gray-700 font-bold">Nome prodotto:</label>
+                    <div class="grey-row" id="prodotto"></div>
+                </div>
+            </div>
+            <div class="row-tecnico">
+                <div class="form-group-tecnico">
+                    <label class="block text-gray-700 font-bold">Codice prodotto:</label>
+                    <div class="grey-row" id="codiceProdotto"></div>
+                </div>
+            </div>
+            <div class="row-tecnico">
+                <div class="form-group-tecnico">
+                    <label class="block text-gray-700 font-bold">Prezzo:</label>
+                    <div class="grey-row" id="prezzo"></div>
+                </div>
+            </div>
+            <div class="row-tecnico">
+                <div class="form-group-tecnico">
+                    <label class="block text-gray-700 font-bold">URL:</label>
+                    <div class="grey-row"><a id="url-link" href="#">Visualizza</a></div>
+                </div>
+            </div>
+            <div class="row-tecnico">
+                <div class="form-group-tecnico">
+                    <label class="block text-gray-700 font-bold" id="note">Note:</label>
+                    <div class="grey-row"><i>Colore bianco, misura 120x60 cm</i></div>
+                </div>
+            </div>
+            <br/>
+        </div>
+
+
+        <div class="flex space-x-4">              
+                <button id="accetta-button" type="submit"  class="green-button  hover:bg-green-600 text-white px-4 py-2 rounded-md shadow-lg">ACCETTA</button>
+            <div>
+
+                <div class="orange-button hover:bg-orange-600 text-white px-4 py-2 rounded-md shadow-lg">
+                <a href="motiva_rifiuto?n=2">RIFIUTA</a>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+                </div>
+            </div>
+<div class="row" id="footer">
+    <div class="sixteen columns">Contatti: webmarket.univaq@outlook.com | Page compiled on 23/10/2024 15:59:57</div>   
+    
+</div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+       <script src="res/js/proposta.js"></script>
+
+    </body>
+</html>

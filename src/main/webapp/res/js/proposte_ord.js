@@ -20,8 +20,8 @@ $(document).ready(function () {
 
                     data.forEach(function (proposta) {
                         var cardHtml = `
-                            <a href="dettaglio_proposta_ord?n=${proposta.id}" class="a-cards">
-                                <div class="card-row-salm proposta-container" data-stato="${proposta.stato}" data-codice="${proposta.codice}">
+                                <a href="proposta.html" class="a-cards" data-id="${proposta.id}">                                
+                                    <div class="card-row-salm proposta-container" data-stato="${proposta.stato}" data-codice="${proposta.codice}">
                                     <div class="card-row-content mb-2">
                                         <p class="card-row-text">Codice: ${proposta.codice}</p>
                                     </div>
@@ -38,6 +38,12 @@ $(document).ready(function () {
 
                         proposteContainer.append(cardHtml);
                     });
+                    $(".a-cards").on('click', function (event) {
+                    event.preventDefault(); 
+                    const propostaId = $(this).data('id');
+                    localStorage.setItem("propostaId", propostaId);
+                    window.location.href = "proposta.html";
+                });
                 },
                 error: function (xhr, status, error) {
                     console.error('Errore nel caricamento delle proposte:', error);
