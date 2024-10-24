@@ -3,6 +3,8 @@ package org.univaq.swa.webmarket.rest.models;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 
 
@@ -10,6 +12,7 @@ public class Categoria{
 
     private int id;
     private String nome;
+    @JsonIgnore
     private Integer padre; //  permette valori nulli
     private List<Caratteristica> caratteristiche;
 

@@ -20,6 +20,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 import jakarta.ws.rs.core.UriInfo;
+
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -94,9 +96,9 @@ public class ProposteRes {
      @Logged
      @Consumes(MediaType.APPLICATION_JSON)
      public Response inserisciProposta(
-        PropostaAcquisto proposta, //oggetto Proposta ricevuto in formato JSON dal client
-        @Context UriInfo uriinfo,  // UriInfo per ottenere informazioni sulla richiesta
-        @Context SecurityContext sec,  // Per gestire la sicurezza
+        PropostaAcquisto proposta, 
+        @Context UriInfo uriinfo, 
+        @Context SecurityContext sec, 
         @Context ContainerRequestContext req) throws RESTWebApplicationException, SQLException, ClassNotFoundException, NamingException {
         
 
@@ -106,7 +108,9 @@ public class ProposteRes {
              if (rowsInserted > 0) {
                 System.out.println("DEBUG: Inserimento riuscito");
 
-                 return Response.status(Response.Status.CREATED).entity("Proposta inserita con successo").build();
+                URI uri = uriinfo.getAbsolutePathBuilder().path(String.valueOf(rowsInserted)).build();
+                //  return Response.status(Response.Status.CREATED).entity("Proposta inserita con successo").build();
+                return Response.created(uri).build();
              } else {
                 System.out.println("DEBUG: Inserimento non riuscito");
                  return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore durante l'inserimento della proposta").build();

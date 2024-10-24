@@ -34,9 +34,9 @@ public class CategoriaDeserializer extends JsonDeserializer<Categoria> {
         }
         
         // da capire quale usare
-        if (node.has("padre")) {
-            c.setPadre(node.get("padre").asInt());
-        }
+        // if (node.has("padre")) {
+        //     c.setPadre(node.get("padre").asInt());
+        // }
         /*
         if (node.has("padre")) {
             JsonNode ne = node.get("padre");
