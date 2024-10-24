@@ -235,24 +235,50 @@ public class ProposteServiceImpl implements ProposteService{
              Connection conn = null;
              PreparedStatement ps = null;
              int rowsUpdated = 0;
+             ResultSet rs = null;
+
 
              try {
                  ctx = new InitialContext();
                  DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
                  conn = ds.getConnection();
+                 
+                String selectQuery = "SELECT produttore, prodotto, codice_prodotto, prezzo, URL, note FROM proposta_acquisto WHERE id = ?";
+                ps = conn.prepareStatement(selectQuery);
+                ps.setInt(1, idProposta);
+                rs = ps.executeQuery();
 
-                 // Query SQL per aggiornare una proposta esistente
+                if (rs.next()) {
+                    String produttore = rs.getString("produttore");
+                    String prodotto = rs.getString("prodotto");
+                    String codiceProdotto = rs.getString("codice_prodotto");
+                    float prezzo = rs.getFloat("prezzo");
+                    String url = rs.getString("URL");
+                    String note = rs.getString("note");
+
+                    if(prop.getUrl().equals("")) System.out.println("null");
+                    else System.out.println("no null");
+
+                    produttore = (!prop.getProduttore().equals("")) ? prop.getProduttore() : produttore;
+                    prodotto = (!prop.getProdotto().equals("")) ? prop.getProdotto() : prodotto;
+                    codiceProdotto = (!prop.getCodiceProdotto().equals("")) ? prop.getCodiceProdotto() : codiceProdotto;
+                    prezzo = (prop.getPrezzo() != 0) ? prop.getPrezzo() : prezzo;
+                    url = (!prop.getUrl().equals("")) ? prop.getUrl() : url;
+                    note = (!prop.getNote().equals("")) ? prop.getNote() : note;
+                
+
                  String query = "UPDATE proposta_acquisto SET produttore = ?, prodotto = ?, codice_prodotto = ?, prezzo = ?, URL = ?, note = ? WHERE id = ?";
                  ps = conn.prepareStatement(query);
-                 ps.setString(1, prop.getProduttore());
-                 ps.setString(2, prop.getProdotto());
-                 ps.setString(3, prop.getCodiceProdotto());
-                 ps.setFloat(4, prop.getPrezzo());
-                 ps.setString(5, prop.getUrl());
-                 ps.setString(6, prop.getNote());
+                 ps.setString(1, produttore);
+                 ps.setString(2, prodotto);
+                 ps.setString(3, codiceProdotto);
+                 ps.setFloat(4, prezzo);
+                 ps.setString(5, url);
+                 ps.setString(6, note);
                  ps.setInt(7, idProposta);
                  
                  rowsUpdated = ps.executeUpdate();
+                }
 
                  
              } catch (SQLException | NamingException e) {
