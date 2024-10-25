@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -465,8 +466,12 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
+        PreparedStatement ps2 = null;
+        ResultSet rs2 = null;
         RichiestaOrdine richiesta = null;
         List<PropostaAcquisto> proposte = new ArrayList<>();
+        Map<String, String> caratteristiche = new HashMap<>();
+
 
         try {
             InitialContext ctx = new InitialContext();
@@ -547,9 +552,25 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
                     proposte.add(proposta); 
                 }
             }
+            String query2 = "SELECT c.nome AS caratteristica, cr.valore AS valore FROM caratteristica_richiesta cr RIGHT JOIN caratteristica c ON cr.caratteristica_id=c.ID WHERE cr.richiesta_id = ? ";
+            ps2 = conn.prepareStatement(query2);
+            ps2.setInt(1, id);
+            rs2 = ps2.executeQuery();
+            
+            while (rs2.next()) {
+                
+                    String caratteristica = rs2.getString("caratteristica");
+                    String valore = rs2.getString("valore");
 
+                    if (caratteristica != null && valore != null) {
+                        caratteristiche.put(caratteristica, valore);
+                    }
+                
+                }
+            
             if (richiesta != null) {
-                richiesta.setProposte(proposte); 
+                richiesta.setProposte(proposte);
+                richiesta.setCaratteristiche(caratteristiche);
             }
 
         } catch (Exception e) {

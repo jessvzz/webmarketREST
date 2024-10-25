@@ -3,7 +3,9 @@ package org.univaq.swa.webmarket.rest.models;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 
@@ -19,6 +21,8 @@ public class RichiestaOrdine{
     private Utente tecnico;
     private Categoria categoria;
     private List<PropostaAcquisto> proposte;
+    private Map<String, String> caratteristiche = new HashMap<>();
+
 
 
     // Costruttori
@@ -32,9 +36,10 @@ public class RichiestaOrdine{
         tecnico = null;
         categoria = null;
         proposte = null;
+        caratteristiche =null;
     }
 
-    public RichiestaOrdine(int id, String note, StatoRichiesta stato, Date data, String codiceRichiesta, Utente utente, Utente tecnico, Categoria categoria, List<PropostaAcquisto> proposte) {
+    public RichiestaOrdine(int id, String note, StatoRichiesta stato, Date data, String codiceRichiesta, Utente utente, Utente tecnico, Categoria categoria, List<PropostaAcquisto> proposte, Map<String, String> caratteristiche) {
         this.id = id;
         this.note = note;
         this.stato = stato;
@@ -44,7 +49,7 @@ public class RichiestaOrdine{
         this.tecnico = tecnico;
         this.categoria = categoria;
         this.proposte = proposte;
-
+        this.caratteristiche = caratteristiche;
     }
     
     public List<PropostaAcquisto> getProposte() {
@@ -117,6 +122,13 @@ public class RichiestaOrdine{
 
     public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
+    }
+    public Map<String, String> getCaratteristiche() {
+        return caratteristiche;
+    }
+
+    public void setCaratteristiche(Map<String, String> caratteristiche) {
+        this.caratteristiche = caratteristiche;
     }
 
     @Override

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 import org.univaq.swa.webmarket.rest.models.PropostaAcquisto;
 import org.univaq.swa.webmarket.rest.models.RichiestaOrdine;
 
@@ -44,6 +45,15 @@ public class RichiestaOrdineSerializer extends JsonSerializer<RichiestaOrdine> {
             }
             jgen.writeEndArray();
         } 
+        
+        Map<String, String> caratteristiche = item.getCaratteristiche();
+        if (caratteristiche != null && !caratteristiche.isEmpty()) {
+            jgen.writeObjectFieldStart("caratteristiche");
+            for (Map.Entry<String, String> entry : caratteristiche.entrySet()) {
+                jgen.writeStringField(entry.getKey(), entry.getValue());
+            }
+            jgen.writeEndObject();
+        }
         jgen.writeEndObject(); // }
     }
 }
