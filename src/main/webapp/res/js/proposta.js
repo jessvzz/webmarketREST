@@ -22,6 +22,8 @@
                     $('#codiceProdotto').text(data.codiceProdotto);
                     $('#prezzo').text(data.prezzo);
                     $('#note').text(data.note);
+                    $('#codiceRichiesta').text("Richiesta #"+data.richiestaOrdine.codiceRichiesta);
+
                     var url = data.url;
                     $('#url-link').attr('href', url);
                 },
