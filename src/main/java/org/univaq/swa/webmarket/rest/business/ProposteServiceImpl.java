@@ -146,7 +146,13 @@ public class ProposteServiceImpl implements ProposteService{
              ps.setString(5, proposta.getUrl());
              ps.setString(6, proposta.getNote());
              ps.setString(7,"IN_ATTESA");
+
+             if (proposta.getRichiestaOrdine() == null) {
+                throw new IllegalArgumentException("RichiestaOrdine mancante nella proposta.");
+            }
+            else{
              ps.setInt(8, proposta.getRichiestaOrdine().getId());
+            }
              ps.setDate(9, new java.sql.Date(System.currentTimeMillis()));
              
              rowsInserted = ps.executeUpdate();
