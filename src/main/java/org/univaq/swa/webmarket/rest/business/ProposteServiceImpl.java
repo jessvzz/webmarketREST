@@ -47,23 +47,29 @@ public class ProposteServiceImpl implements ProposteService{
             ResultSet rs = ps.executeQuery();
             
             if (rs.next()) {                
-            proposta.setProduttore(rs.getString("produttore"));
-            proposta.setProdotto(rs.getString("prodotto"));
-            proposta.setCodice(rs.getString("codice"));
-            proposta.setCodiceProdotto(rs.getString("codice_prodotto"));
-            proposta.setPrezzo(rs.getFloat("prezzo")); 
-            proposta.setUrl(rs.getString("URL"));
-            proposta.setNote(rs.getString("note"));
-            proposta.setStatoProposta(StatoProposta.valueOf(rs.getString("stato")));
-            proposta.setData(rs.getDate("data"));
-            proposta.setMotivazione(rs.getString("motivazione"));
-            proposta.setId(rs.getInt("id")); 
-            
-            } else {
-                    throw new RESTWebApplicationException(Response.Status.NOT_FOUND.getStatusCode(), "Proposta non trovata");
-                }
+                proposta.setProduttore(rs.getString("produttore"));
+                proposta.setProdotto(rs.getString("prodotto"));
+                proposta.setCodice(rs.getString("codice"));
+                proposta.setCodiceProdotto(rs.getString("codice_prodotto"));
+                proposta.setPrezzo(rs.getFloat("prezzo")); 
+                proposta.setUrl(rs.getString("URL"));
+                proposta.setNote(rs.getString("note"));
+                proposta.setStatoProposta(StatoProposta.valueOf(rs.getString("stato")));
+                proposta.setData(rs.getDate("data"));
+                proposta.setMotivazione(rs.getString("motivazione"));
+                proposta.setId(rs.getInt("id")); 
+                
+                int richiestaId = rs.getInt("richiesta_id");
 
-        
+                if(richiestaId > 0){
+                    RichiesteService richiesteService = RichiesteServiceFactory.getRichiesteService();
+                    proposta.setRichiestaOrdine(richiesteService.getRichiesta(richiestaId));
+                
+                } else {
+                        throw new RESTWebApplicationException(Response.Status.NOT_FOUND.getStatusCode(), "Proposta non trovata");
+                    }
+
+                }
             }   
         } catch (NamingException | SQLException ex) {
             Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, ex);
@@ -71,6 +77,7 @@ public class ProposteServiceImpl implements ProposteService{
         }
         
         return proposta;
+    
     }
 
     @Override
