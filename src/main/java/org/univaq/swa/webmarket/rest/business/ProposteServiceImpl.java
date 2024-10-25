@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -125,6 +126,7 @@ public class ProposteServiceImpl implements ProposteService{
             Connection conn = null;
             PreparedStatement ps = null;
             int rowsInserted = 0;
+            int propostaId = 0; 
 
          try {
 
@@ -134,7 +136,7 @@ public class ProposteServiceImpl implements ProposteService{
 
              String query = "INSERT INTO proposta_acquisto (produttore, prodotto, codice_prodotto, prezzo, URL, note, stato, richiesta_id, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             
-             ps = conn.prepareStatement(query);
+             ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
              
              ps.setString(1, proposta.getProduttore());
@@ -146,7 +148,16 @@ public class ProposteServiceImpl implements ProposteService{
              ps.setString(7,"IN_ATTESA");
              ps.setInt(8, proposta.getRichiestaOrdine().getId());
              ps.setDate(9, new java.sql.Date(System.currentTimeMillis()));
+             
              rowsInserted = ps.executeUpdate();
+             
+            if (rowsInserted == 1) {
+                // Recupera l'ID generato
+                ResultSet keys = ps.getGeneratedKeys();
+                if (keys.next()) {
+                propostaId = keys.getInt(1);  // Ottieni l'ID della proposta appena inserita
+                }
+            }
 
          } catch (SQLException | NamingException e) {
              Logger.getLogger(ProposteRes.class.getName()).log(Level.SEVERE, null, e);
@@ -155,7 +166,7 @@ public class ProposteServiceImpl implements ProposteService{
              if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
              if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
          }    
-        return rowsInserted;
+        return propostaId;
 
     }
 

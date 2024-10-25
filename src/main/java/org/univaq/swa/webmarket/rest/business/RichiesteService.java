@@ -23,7 +23,6 @@ import org.univaq.swa.webmarket.rest.models.RichiestaOrdine;
 public interface RichiesteService {
     List<RichiestaOrdine> getAllRichieste();
     RichiestaOrdine getRichiesta(int id);
-    //String addRichiesta(RichiestaOrdine richiesta);
     List<RichiestaOrdine> getRichiesteInAttesa();
     List<RichiestaOrdine> getRichiesteInCorso(int idUtente);
     List<RichiestaOrdine> getRichiesteNonAssegnate();
