@@ -26,7 +26,7 @@ $(document).ready(function () {
                                         <p class="card-row-text">Codice: ${proposta.codice}</p>
                                     </div>
                                     <div class="card-row-content mb-2">
-                                        <p class="card-row-text">Categoria: ${proposta.categoria}</p>
+                                        <p class="card-row-text">Prodotto: ${proposta.prodotto}</p>
                                     </div>
                                     <div class="card-row-content mb-2">
                                         <p class="card-row-text">Data: ${new Date(proposta.data).toLocaleDateString()}</p>

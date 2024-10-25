@@ -134,7 +134,6 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
         Categoria categoria = new Categoria();
         categoria.setId(rs.getInt("id"));
         categoria.setNome(rs.getString("nome"));
-        categoria.setPadre(rs.getInt("padre"));
 
         
         System.out.println("sono qui categoria");

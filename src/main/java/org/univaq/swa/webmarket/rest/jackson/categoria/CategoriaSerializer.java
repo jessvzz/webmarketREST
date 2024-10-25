@@ -22,7 +22,6 @@ public class CategoriaSerializer extends JsonSerializer<Categoria> {
         jgen.writeStartObject(); // {
         jgen.writeNumberField("id", item.getId());
         jgen.writeStringField("nome", item.getNome());
-        jgen.writeObjectField("padre", item.getPadre());
         jgen.writeEndObject(); // }
     }
 }
