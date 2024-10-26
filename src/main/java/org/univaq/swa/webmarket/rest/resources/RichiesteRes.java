@@ -77,7 +77,7 @@ public class RichiesteRes {
 
 
 
-
+/*
 @POST
 @Logged
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -105,7 +105,29 @@ public Response addItem(
     
 }
 
+*/
+    
+    @POST
+    @Logged
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response addItem(
+            @Context ContainerRequestContext req,
+            @Context UriInfo uriinfo,
+            @Context SecurityContext sec,
+            RichiestaOrdine richiesta
+    ) throws SQLException, NamingException {
 
+            int utenteId = UserUtils.getLoggedId(sec);
+            int richiestaId = business.inserisciNuovaRichiesta(richiesta, utenteId);
+
+            if (richiestaId > 0){
+                URI uri = uriinfo.getAbsolutePathBuilder().path(String.valueOf(richiestaId)).build();
+                return Response.created(uri).build();
+            } else {
+                return Response.status(Response.Status.BAD_REQUEST).entity("Inserimento della richiesta fallito").build();
+            }
+
+    }
 
     //trovo richieste in attesa
     @GET

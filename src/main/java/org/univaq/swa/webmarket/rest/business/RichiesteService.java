@@ -31,4 +31,5 @@ public interface RichiesteService {
     RichiestaOrdine getDettagliRichiesta(int id);
     int deleteRichiesta(int id);
     int inserisciNuovaRichiesta(int userId, String note, Date data, String stato, int categoriaId, List<Integer> idcaratteristica, List<String> valore) throws SQLException, NamingException;
+    int inserisciNuovaRichiesta(RichiestaOrdine richiesta, int userId) throws SQLException, NamingException;
 }

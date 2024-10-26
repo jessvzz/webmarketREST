@@ -675,6 +675,76 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
     }
 
     
+    @Override
+    public int inserisciNuovaRichiesta(RichiestaOrdine richiesta, int userId) throws SQLException, NamingException{
+        InitialContext ctx = new InitialContext();
+        DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+        Connection conn = ds.getConnection();
+
+        try {
+
+            String query = "INSERT INTO richiesta_ordine (note, data, stato, utente, categoria_id) VALUES(?, ?, ?, ?,?)";
+            PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, richiesta.getNote());
+            ps.setDate(2, new java.sql.Date(richiesta.getData().getTime()));
+            ps.setString(3, richiesta.getStato().toString());
+            ps.setInt(4,userId);
+            ps.setInt(5, richiesta.getCategoria().getId());
+
+
+            int rowsInserted = ps.executeUpdate();
+            if (rowsInserted == 1) {
+            ResultSet keys = ps.getGeneratedKeys();
+            keys.next();
+            int richiestaId = keys.getInt(1);
+            
+            String queryCaratteristicaId = "SELECT ID FROM caratteristica WHERE nome = ?";
+            PreparedStatement psCaratteristicaId = conn.prepareStatement(queryCaratteristicaId);
+
+            // Inserimento delle caratteristiche associate
+            String queryCaratteristica = "INSERT INTO caratteristica_richiesta (richiesta_id, caratteristica_id, valore) VALUES(?, ?, ?)";
+            PreparedStatement psCaratteristica = conn.prepareStatement(queryCaratteristica);
+            
+            Map<String, String> caratteristiche = richiesta.getCaratteristiche();
+            if (caratteristiche != null) {
+
+            for (Map.Entry<String, String> entry : richiesta.getCaratteristiche().entrySet()) 
+            {
+                String nomeCaratteristica = entry.getKey();
+                String valoreCaratteristica = entry.getValue();
+                
+                psCaratteristicaId.setString(1, nomeCaratteristica);
+                ResultSet rsCaratteristica = psCaratteristicaId.executeQuery();
+
+                if (rsCaratteristica.next()) {
+                    int caratteristicaId = rsCaratteristica.getInt("ID");
+
+                psCaratteristica.setInt(1, richiestaId);
+                psCaratteristica.setInt(2, caratteristicaId);
+                psCaratteristica.setString(3,valoreCaratteristica);
+                psCaratteristica.addBatch();  
+            }
+                 rsCaratteristica.close();
+            }
+            }
+
+            psCaratteristica.executeBatch();
+            psCaratteristicaId.close();
+            psCaratteristica.close();
+
+            
+            return richiestaId;
+        } else {
+            return 0;
+        }
+    } finally {
+        if (conn != null) {
+            conn.close();
+        }
+    }
+    }
+
+    
 
     
 }

@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.univaq.swa.webmarket.rest.models.RichiestaOrdine;
 import org.univaq.swa.webmarket.rest.models.StatoRichiesta;
 import org.univaq.swa.webmarket.rest.models.Utente;
@@ -87,6 +89,18 @@ public class RichiestaOrdineDeserializer extends JsonDeserializer<RichiestaOrdin
                 proposte.add(proposta);
             }
             richiesta.setProposte(proposte);
+        }
+         
+         if (node.has("caratteristiche")) {
+            Map<String, String> caratteristiche = new HashMap<>();
+            JsonNode caratteristicheNode = node.get("caratteristiche");
+
+            caratteristicheNode.fields().forEachRemaining(entry -> {
+                String nome = entry.getKey();
+                String valore = entry.getValue().asText();
+                caratteristiche.put(nome, valore);
+            });
+            richiesta.setCaratteristiche(caratteristiche);
         }
 
         
