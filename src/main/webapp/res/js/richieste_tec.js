@@ -21,6 +21,7 @@ $(document).ready(function () {
 
             data.forEach(function (richiesta) {
                 const richiestaHTML = `
+                 <a href="dettaglio_richiestaTecnico.html" class="a-cards" data-id="${richiesta.id}">
                         <div class="richiesta-container card-row-skyblue" data-stato="${richiesta.stato}" data-codice="${richiesta.codiceRichiesta}">
                             <div class="card-row-content">
                                 <p class="card-row-text">Codice: ${richiesta.codiceRichiesta}</p>
@@ -42,7 +43,7 @@ $(document).ready(function () {
                     event.preventDefault(); 
                     const richiestaId = $(this).data('id');
                     localStorage.setItem("richiestaId", richiestaId);
-                    window.location.href = "dettaglio_richiesta.html";
+                    window.location.href = "dettaglio_richiestaTecnico.html";
                 });
 
         },

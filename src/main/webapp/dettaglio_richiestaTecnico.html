@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <title>WebMarcket - Dettaglio Richiesta</title>
+    <!-- <link rel="stylesheet" href="res/normalize.css" type="text/css"/>         -->
+    <link rel="stylesheet" href="res/grid.css" type="text/css"/>
+    <link rel="stylesheet" href="res/default.css" type="text/css"/> 
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+
+</head>
+<body>
+    <div class="container">
+        <div class="header-container"id="header">
+                <div class="sixteen columns">Web Market
+                    <div class="subtitle">L'eCommerce facile per il tuo ente</div>
+                </div>
+                <div class="logininfo">
+                    <button id="logout-btn">
+                    <img class="tiny-logo" src="images/logout.svg" alt="Log Out" />
+                    </button>
+                </div>
+            </div>
+            <div class="row" id="body">
+                <div>
+                    <div class="container-beige">
+                        <div class="nav-container">
+                            <div class="home-card" style="background-color: #90D5FE;">
+                                <a href="tecnicohomepage.html">
+                                    <img src="images/home-svg.svg" alt="icona home" class="home-icon">
+                                </a>
+                            </div>
+                            <a href="richiesteInAttesa.html">
+                                <h3 style="color: #0D99FF; margin-left: 10px;">> Richieste in Attesa</h3>
+                            </a>
+                            <h3 style="color: #0D99FF; margin-left: 10px;">> Richiesta #<span id="codice_richiesta">2DkxP1iMS4</span></h3>
+                        </div>
+                </div>
+
+                <div class="container-skyblue-proposta shadow-lg">
+                    <div class="row-tecnico">
+                        <div class="form-group-tecnico">
+                            <label>Categoria:</label>
+                            <div id="categoria" class="grey-row flex flex-wrap justify-center gap-4"></div>
+                        </div>
+                    </div>
+                    <div class="row-tecnico">
+                        <div class="form-group-tecnico">
+                            <label>Data:</label>
+                            <div id="data_richiesta" class="grey-row flex flex-wrap justify-center gap-4"></div>
+                        </div>
+                    </div>
+                    <div class="row-tecnico">
+                        <div class="form-group-tecnico">
+                            <label>Note:</label>
+                            <div id="note_richiesta" class="grey-row flex flex-wrap justify-center gap-4"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                    <div class="flex justify-center my-4">
+                        <button id="prendiInCarico" class="bg-red-500 text-white py-2 px-4 rounded">
+                             Prendi in Carico
+                        </button>
+                    </div>
+
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="res/js/dettaglio_richiestaTecnico.js"></script> <!-- Script per caricare il dettaglio -->
+    <script src="res/js/logout.js"></script>
+</body>
+</html>

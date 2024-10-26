@@ -2,6 +2,12 @@ $(document).ready(function () {
     var token = localStorage.getItem("authToken"); //mi sono salvata il token nel localstorage che genio
     var idTecnico = localStorage.getItem("idTecnico");
 
+    if (!idTecnico) {
+        alert("Errore.");
+        window.location.href = "tecnicohomepage.html";
+        return;
+    }
+    
     console.log('token: '+ token);
     console.log('ID Tecnico:', idTecnico);
     //formatto data
