@@ -1,15 +1,26 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebMarket - Compila Proposta</title>
-    <link rel="stylesheet" href="res/default.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="res/js/compilaProposta.js"></script> 
+    <link rel="stylesheet" href="res/normalize.css" type="text/css"/>        
+    <link rel="stylesheet" href="res/grid.css" type="text/css"/>
+    <link rel="stylesheet" href="res/default.css" type="text/css"/> 
+    
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
 </head>
 <body>
-
+    <div class="container">
+        <div class="header-container" id="header">
+            <div class="sixteen columns">Web Market
+                <div class="subtitle">L'eCommerce facile per il tuo ente</div>
+            </div>
+            <div class="logininfo">
+                <button id="logout-btn">
+                <img class="tiny-logo" src="images/logout.svg" alt="Log Out" />
+                </button>
+            </div>
+        </div>
     <div class="container-beige">
         <div class="nav-container">
             <div class="home-card" style="background-color: #5D54BE;">
@@ -79,6 +90,15 @@
             </form>
         </div>
     </div>
+    <div class="row" id="footer">
+        <div class="sixteen columns">Contatti: webmarket.univaq@outlook.com</div>   
+        
+    </div>
 </div>
+
 </body>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="res/js/compilaProposta.js"></script> 
+<script src="res/js/logout.js"></script>
 </html>
