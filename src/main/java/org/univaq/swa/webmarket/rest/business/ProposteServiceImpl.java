@@ -65,7 +65,7 @@ public class ProposteServiceImpl implements ProposteService{
                     RichiesteService richiesteService = RichiesteServiceFactory.getRichiesteService();
                     proposta.setRichiestaOrdine(richiesteService.getRichiesta(richiestaId));
                 
-                } else {
+                 } else {
                         throw new RESTWebApplicationException(Response.Status.NOT_FOUND.getStatusCode(), "Proposta non trovata");
                     }
 
@@ -114,7 +114,17 @@ public class ProposteServiceImpl implements ProposteService{
                 proposta.setStatoProposta(StatoProposta.valueOf(rs.getString("stato")));
                 proposta.setData(rs.getDate("data"));
                 proposta.setMotivazione(rs.getString("motivazione"));
-                proposta.setId(rs.getInt("richiesta_id"));
+                proposta.setId(rs.getInt("id"));
+               
+                int richiestaId = rs.getInt("richiesta_id");
+
+                if(richiestaId > 0){
+                    RichiesteService richiesteService = RichiesteServiceFactory.getRichiesteService();
+                    proposta.setRichiestaOrdine(richiesteService.getRichiesta(richiestaId));
+                
+                 } else {
+                        throw new RESTWebApplicationException(Response.Status.NOT_FOUND.getStatusCode(), "Proposta non trovata");
+                    }
                 proposte.add(proposta);              
             }
             
