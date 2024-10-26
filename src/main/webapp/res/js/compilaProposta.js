@@ -10,6 +10,12 @@ $(document).ready(function () {
         return;
     }
 
+    if (!token) {
+        alert("Errore: autenticazione non valida. Per favore effettua nuovamente il login.");
+        window.location.href = "index.html";
+        return;
+    }
+
     // Gestisci il submit della form
     $('#propostaForm').submit(function (event) {
         event.preventDefault(); // Evita il refresh della pagina
