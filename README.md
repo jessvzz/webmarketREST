@@ -5,4 +5,5 @@
 - [x] dettagli richiesta --> da metterci anche le caratteristiche
 - [x] nei GET delle proposte la richiesta è sempre null
 - [x] rivedere POST della proposta
-- [ ] ENDPOINT richieste/gestite_da da rivedere
+- [x] ENDPOINT richieste/gestite_da da rivedere
+- [ ] Gestire sessione scaduta --> deve rimandare al login
