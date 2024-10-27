@@ -8,6 +8,12 @@
             return;
         }
 
+        if (!token) {
+            alert("Errore: token non trovato. Per favore, effettua nuovamente il login.");
+            window.location.href = "index.html"; // Reindirizza alla pagina di login se il token non è presente
+            return;
+        }
+
         function caricaDettagliRichiesta() {
             $.ajax({
                 url: `/WebMarketREST/rest/richieste/${richiestaId}/dettagli`,
@@ -62,9 +68,14 @@
                 }
                 },
                
-                error: function (xhr, status, error) {
-                    console.error('Errore:', error);
-                    alert('Errore nel caricamento dei dettagli della richiesta.');
+                error: function (xhr) {
+                    if (xhr.status === 401) {
+                        alert("Si prega di effettuare l'accesso.");
+                    window.location.href = "index.html";
+                    return;   }
+        
+                    else {  alert("Errore durante il caricamento dettagli delle richieste.");
+                    }
                 }
             });
         }
@@ -80,10 +91,14 @@
                 success: function (response) {
                     window.location.href = "richieste.html";
                 },
-                error: function (xhr, status, error) {
-                    console.error('Errore:', error);
-                    const errorMessage = xhr.responseJSON ? xhr.responseJSON.error : 'Errore nell\'eliminazione della richiesta.';
-                    alert(errorMessage);
+                error: function (xhr) {
+                    if (xhr.status === 401) {
+                        alert("Si prega di effettuare l'accesso.");
+                    window.location.href = "index.html";
+                    return;   }
+        
+                    else {  alert("Errore durante il l'eliminazione delle richieste.");
+                    }
                 }
             });
         }

@@ -1,29 +1,45 @@
-document.getElementById("deleteRequestForm").addEventListener("submit", function (event) {
-    event.preventDefault(); 
-    const requestId = document.getElementById("requestId").value;
-    const token = localStorage.getItem("token"); // Assicurati di recuperare il token dal local storage
+$(document).ready(function () {
+    // Gestisce il submit del form di eliminazione della richiesta
 
-    if (requestId && token) {
-        sendDeleteRequest(requestId, token);
-    } else {
-        document.getElementById("responseMessage").innerText = "ID richiesta o token mancante.";
-    }
-});
+     $('#deleteRequestForm').submit(function (event) {
+        event.preventDefault(); // Evita il refresh della pagina
 
-function sendDeleteRequest(requestId, token) {
-    const url = `rest/richieste/${requestId}`; 
+        // Recupera l'ID della richiesta dal form
+        const requestId = $('#requestId').val();
 
-    let xhr = new XMLHttpRequest();
-    xhr.open("DELETE", url, true);
-    xhr.setRequestHeader("Authorization", "Bearer " + token);
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                document.getElementById("responseMessage").innerText = "Richiesta eliminata con successo!";
-            } else {
-                document.getElementById("responseMessage").innerText = "Errore nell'eliminazione: " + xhr.status;
-            }
+        // Verifica che l'ID della richiesta sia presente
+        if (!requestId) {
+            alert("Errore: nessuna richiesta selezionata.");
+            window.location.href = "tecnicohomepage.html";
+            return;
         }
-    };
-    xhr.send();
-}
+
+        if (!token) {
+            alert("Errore: token non trovato. Per favore, effettua nuovamente il login.");
+            window.location.href = "index.html"; // Reindirizza alla pagina di login se il token non è presente
+            return;
+        }
+        
+    
+        // Invia la richiesta di eliminazione al server
+        $.ajax({
+            url: `/WebMarketREST/rest/richieste/${requestId}`,
+            method: "DELETE",
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("authToken")
+            },
+            success: function () {
+                $('#responseMessage').text("Richiesta eliminata con successo!");
+            },
+            error: function (xhr, status, error) {
+                if (xhr.status === 401) {
+                    alert("Si prega di effettuare l'accesso.");
+                window.location.href = "index.html";
+                return;   }
+    
+                else {  alert("Errore durante l'eliminazione.");
+                }
+            }
+        });
+    });
+});

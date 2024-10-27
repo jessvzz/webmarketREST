@@ -1,6 +1,12 @@
 $(document).ready(function () {
-    var token = localStorage.getItem("authToken"); //mi sono salvata il token nel localstorage che genio
+    var token = localStorage.getItem("authToken"); 
     console.log('token: '+ token);
+
+    if (!token) {
+        alert("Errore: token non trovato. Per favore, effettua nuovamente il login.");
+        window.location.href = "index.html"; // Reindirizza alla pagina di login se il token non è presente
+        return;
+    }
 
     //formatto data
     function formatDate(dateString) {
@@ -51,9 +57,12 @@ $(document).ready(function () {
         error: function (xhr) {
             if (xhr.status === 401) {
                 alert("Si prega di effettuare l'accesso.");
-            } else {
-                alert("Errore durante il caricamento delle richieste.");
-            }
+            window.location.href = "index.html";
+            return;   }
+
+            else {  alert("Errore durante il caricamento delle richieste.");
+            }             
+            
         }
 
 
@@ -88,11 +97,13 @@ $(document).on('click', '.delete-button', function () {
                 alert("Richiesta eliminata con successo.");
                 location.reload(); // Ricarica la pagina per mostrare le modifiche
             },
-            error: function (xhr) {
+            error: function (xhr, status, error) {
                 if (xhr.status === 401) {
                     alert("Si prega di effettuare l'accesso.");
-                } else {
-                    alert("Errore durante l'eliminazione della richiesta.");
+                window.location.href = "index.html";
+                return;   }
+    
+                else {  alert("Errore durante l'eliminazione della richiesta.");
                 }
             }
         });

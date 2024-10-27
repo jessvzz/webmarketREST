@@ -34,9 +34,14 @@ $(document).ready(function() {
                 $('#note').val(data.note || "Nessuna nota inserita");
 
             },
-            error: function(xhr, status, error) {
-                console.error('Errore:', error);
-                alert('Errore nel caricamento dei dettagli della proposta.');
+            error: function (xhr) {
+                if (xhr.status === 401) {
+                    alert("Si prega di effettuare l'accesso.");
+                window.location.href = "index.html";
+                return;   }
+    
+                else {  alert("Errore durante il caricamento dei dettagli della proposta.");
+                }
             }
         });
     }

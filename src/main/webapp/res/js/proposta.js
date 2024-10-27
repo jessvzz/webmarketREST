@@ -1,10 +1,17 @@
     $(document).ready(function () {
         var token = localStorage.getItem("authToken"); 
+        console.log('token: '+ token);
         var propostaId = localStorage.getItem("propostaId");
 
         if (!propostaId) {
             alert("Errore: Nessuna richiesta selezionata.");
             window.location.href = "ordinantehomepage.html";
+            return;
+        }
+
+        if (!token) {
+            alert("Errore: token non trovato. Per favore, effettua nuovamente il login.");
+            window.location.href = "index.html"; // Reindirizza alla pagina di login se il token non è presente
             return;
         }
 
@@ -29,9 +36,14 @@
                 },
      
                
-                error: function (xhr, status, error) {
-                    console.error('Errore:', error);
-                    alert('Errore nel caricamento dei dettagli della richiesta.');
+                error: function (xhr) {
+                    if (xhr.status === 401) {
+                        alert("Si prega di effettuare l'accesso.");
+                    window.location.href = "index.html";
+                    return;   }
+        
+                    else {  alert("Errore durante il caricamento delle richieste.");
+                    }
                 }
             });
         }
@@ -50,9 +62,14 @@
                 alert("Proposta approvata con successo.");
                 window.location.href = "proposte.html";
             },
-            error: function (xhr, status, error) {
-                console.error('Errore:', error);
-                alert("Errore durante l'approvazione della proposta.");
+            error: function (xhr) {
+                if (xhr.status === 401) {
+                    alert("Si prega di effettuare l'accesso.");
+                window.location.href = "index.html";
+                return;   }
+    
+                else {  alert("Errore durante l'approvazione della proposta.");
+                }
             }
         });
     }
@@ -85,9 +102,14 @@
                 alert("Proposta rifiutata con successo.");
                 window.location.href = "proposte.html";
             },
-            error: function (xhr, status, error) {
-                console.error('Errore:', error);
-                alert("Errore durante il rifiuto della proposta.");
+            error: function (xhr) {
+                if (xhr.status === 401) {
+                    alert("Si prega di effettuare l'accesso.");
+                window.location.href = "index.html";
+                return;   }
+    
+                else {  alert("Errore durante il rifiuto della proposta.");
+                }
             }
         });
     });

@@ -68,9 +68,14 @@ $(document).ready(function() {
             }
             },
            
-            error: function (xhr, status, error) {
-                console.error('Errore:', error);
-                alert('Errore nel caricamento dei dettagli della richiesta.');
+            error: function (xhr) {
+                if (xhr.status === 401) {
+                    alert("Si prega di effettuare l'accesso.");
+                window.location.href = "index.html";
+                return;   }
+    
+                else {  alert("Errore durante il caricamento dettaglio richieste.");
+                }
             }
         });
     }
