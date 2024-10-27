@@ -25,12 +25,13 @@ $(document).ready(function() {
             },
             success: function(data) {
                 $('#codice').text(data.codice);
-                $('#produttore').text(data.produttore);
-                $('#prodotto').text(data.prodotto);
-                $('#codice_prodotto').text(data.codiceProdotto);
-                $('#prezzo').text(`${data.prezzo}`);
+                $('#produttore').val(data.produttore);
+                $('#prodotto').val(data.prodotto);
+                $('#codice_prodotto').val(data.codiceProdotto);
+                $('#prezzo').val(`${data.prezzo}`);
                 $('#url_link').attr('href', data.url);
-                $('#note').text(data.note || "Nessuna nota inserita");
+                $('#url_input').val(data.url);
+                $('#note').val(data.note || "Nessuna nota inserita");
 
             },
             error: function(xhr, status, error) {
@@ -41,4 +42,51 @@ $(document).ready(function() {
     }
 
     caricaDettagliProposta();
+    
+    // segnando i punti in cui ho dovuto pensare troppo ed ho pianto
+    
+    $('#prendiInCarico').click(function() {
+        $('#url_link').hide();
+        $('#url_input').show();
+        
+        $('input').prop('disabled', false);
+        $('#prendiInCarico').hide();
+        $('#salvaModifiche').show();
+    });
+
+    $('#salvaModifiche').click(function() {
+        const propostaAggiornata = {
+            produttore: $('#produttore').val(),
+            prodotto: $('#prodotto').val(),
+            codiceProdotto: $('#codice_prodotto').val(),
+            prezzo: parseFloat($('#prezzo').val()),
+            url: $('#url_input').val(),
+            note: $('#note').val()
+        };
+
+        $.ajax({
+            url: `/WebMarketREST/rest/proposte/${propostaId}`,
+            method: "PUT",
+            headers: {
+                "Authorization": "Bearer " + token,
+                "Content-Type": "application/json"
+            },
+            data: JSON.stringify(propostaAggiornata),
+             dataType: "text", 
+            success: function(response) {
+                alert("Modifiche salvate con successo.");
+                $('input').prop('disabled', true);
+                
+                $('#url_link').attr('href', $('#url_input').val()).show();
+                $('#url_input').hide();
+                $('#prendiInCarico').show();
+                $('#salvaModifiche').hide();
+                caricaDettagliProposta();
+            },
+            error: function(xhr, status, error) {
+                console.error('Errore:', error);
+                alert('Errore nel salvataggio delle modifiche.');
+            }
+        });
+    });
 });

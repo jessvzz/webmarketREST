@@ -43,41 +43,49 @@
                     <div class="row-tecnico">
                         <div class="form-group-tecnico">
                             <label>Nome produttore:</label>
-                            <div id="produttore" class="grey-row"></div>
+                            <input id="produttore" class="grey-row" disabled/>
                         </div>
                     </div>
                     <div class="row-tecnico">
                         <div class="form-group-tecnico">
                             <label>Nome prodotto:</label>
-                            <div id="prodotto" class="grey-row"></div>
+                            <input id="prodotto" class="grey-row" disabled/>
                         </div>
                     </div>
                     <div class="row-tecnico">
                         <div class="form-group-tecnico">
                             <label>Codice prodotto:</label>
-                            <div id="codice_prodotto" class="grey-row"></div>
+                            <input id="codice_prodotto" class="grey-row" disabled/>
                         </div>
                     </div>
                     <div class="row-tecnico">
                         <div class="form-group-tecnico">
                             <label>Prezzo:</label>
-                            <div id="prezzo" class="grey-row"></div>
+                            <input id="prezzo" class="grey-row" disabled/>
                         </div>
                     </div>
                     <div class="row-tecnico">
                         <div class="form-group-tecnico">
                             <label>URL:</label>
-                            <div id="url" class="grey-row"><a href="#" target="_blank" id="url_link">Visualizza</a></div>
+                            <div id="url" class="grey-row">
+                                <a href="#" target="_blank" id="url_link">Visualizza</a>
+                                <input type="text" id="url_input" class="hidden grey-row" />
+
+                            </div>
                         </div>
                     </div>
                     <div class="row-tecnico">
                         <div class="form-group-tecnico">
                             <label>Note:</label>
-                            <div id="note" class="grey-row"></div>
+                            <input id="note" class="grey-row" disabled/>
                         </div>
                     </div>
                    
 
+                    </div>
+                    <div class="flex justify-center my-4">
+                        <button id="prendiInCarico" class="bg-red-500 text-white py-2 px-4 rounded">Modifica</button>
+                        <button id="salvaModifiche" class="bg-green-500 text-white py-2 px-4 rounded" style="display:none">Salva</button>
                     </div>
                 </div>
                 
@@ -86,5 +94,9 @@
     
         <script src="res/js/dettaglio_propostaTecnico.js"></script>
         <script src="res/js/logout.js"></script>
+        <div class="row" id="footer">
+    <div class="sixteen columns">Contatti: webmarket.univaq@outlook.com</div>   
+    
+</div>
     </body>
     </html>
