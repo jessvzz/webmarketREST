@@ -81,13 +81,13 @@ $(document).ready(function() {
     }
 
 
-    $('#prendiInCarico').click(function () {
-         // Salva l'ID della richiesta in localStorage per usarlo nella form di proposta
-    localStorage.setItem("richiestaId", richiestaId);
+    // $('#prendiInCarico').click(function () {
+    //      // Salva l'ID della richiesta in localStorage per usarlo nella form di proposta
+    // localStorage.setItem("richiestaId", richiestaId);
 
-    // Reindirizza alla pagina della form di proposta
-    window.location.href = "compilaProposta.html";
-    });
+    // // Reindirizza alla pagina della form di proposta
+    // window.location.href = "compilaProposta.html";
+    // });
 
 
     caricaDettagliRichiesta();
