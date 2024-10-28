@@ -7,6 +7,7 @@ package org.univaq.swa.webmarket.rest.resources;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -57,7 +58,7 @@ public class PropostaRes {
         return Response.ok(proposta).build();
     }
     
-    @PUT
+    @PATCH
     @Logged
     @Path("/approva") 
     @Produces(MediaType.APPLICATION_JSON)
@@ -80,7 +81,7 @@ public class PropostaRes {
         } 
     }
     
-    @PUT
+    @PATCH
     @Logged
     @Path("/rifiuta") 
     @Produces(MediaType.APPLICATION_JSON)

@@ -52,7 +52,7 @@
         function approvaProposta() {
         $.ajax({
             url: `/WebMarketREST/rest/proposte/${propostaId}/approva`,
-            method: "PUT",
+            method: "PATCH",
             headers: {
                 "Authorization": "Bearer " + token,
                 "Content-Type": "application/json"
@@ -88,7 +88,7 @@
 
         $.ajax({
             url: `/WebMarketREST/rest/proposte/${propostaId}/rifiuta`,
-            method: "PUT",
+            method: "PATCH",
             headers: {
                 "Authorization": "Bearer " + token,
                 "Content-Type": "application/x-www-form-urlencoded"

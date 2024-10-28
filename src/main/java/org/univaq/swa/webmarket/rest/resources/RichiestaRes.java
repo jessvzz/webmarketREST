@@ -9,6 +9,7 @@ import jakarta.json.JsonObjectBuilder;
 import jakarta.websocket.server.PathParam;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -58,7 +59,7 @@ public class RichiestaRes {
         return Response.ok(richiesta).build();
     }
 
-    @PUT
+    @PATCH
     @Logged
     @Path("/presa_in_carico") 
     @Produces(MediaType.APPLICATION_JSON)
