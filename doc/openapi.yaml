@@ -164,71 +164,112 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/GeneralError'
-  /rest/events/{uid}/participants:
+          
+  /rest/richieste/{uid}/dettagli:
     parameters:
-      - $ref: '#/components/parameters/EventUID'
+      - $ref: '#/components/parameters/RichiestaUID'
     get:
-      operationId: listParticipants
-      description: retrieves the list of participants for an event
+      operationId: getDettagliRichiesta
+      description: dettagli di una richiesta
       tags:
-        - Event
-        - Event properties
+        - Richiesta
+        - Richiesta properties
       responses:
         '200':
-          description: Participants list
+          description: Dettagli richiesta
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participant'
+                $ref: '#/components/schemas/RichiestaOrdine'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/GeneralError'
+    
+  /rest/proposte:
+    get:
+      operationId: getProposte
+      description: Proposte a cui ha accesso un tecnico/ordinante
+      tags:
+        - Proposte collection
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List di Proposte
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/ProposteAcquistoList'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/GeneralError'
     post:
-      operationId: addParticipant
-      description: adds a participant to an event
+      operationId: addProposta
+      description: adds a new Proposta
       tags:
-        - Event
-        - Event properties
+        - Proposte collection
       security:
         - bearerAuth: []
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Participant'
+              $ref: '#/components/schemas/PropostaAcquisto'
       responses:
         '201':
           $ref: '#/components/responses/SuccessfulInsert'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
-        '404':
-          $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/GeneralError'
-  /rest/events/{uid}/participants/{partid}:
-    parameters:
-      - $ref: '#/components/parameters/EventUID'
-      - $ref: '#/components/parameters/ParticipantID'
-    delete:
-      operationId: deleteParticipant
-      description: removes a participant from an event (given the email address)
+  /rest/proposte/in_attesa: 
+     get:
+      operationId: getProposteInAttesa
+      description: >-
+        trova tutte le proposte in attesa di essere accettate/rifiutate da un ordinante
       tags:
-        - Event
-        - Event properties
+        - Proposte collection
       security:
         - bearerAuth: []
       responses:
-        '204':
-          description: Participant deleted
+        '200':
+          description: Lista di proposte in attesa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProposteAcquistoList'
+        '500':
+          $ref: '#/components/responses/GeneralError'
+  
+  /rest/proposte/{uid}: 
+     parameters: 
+      - $ref: '#/components/parameters/PropostaUID'
+     get:
+      operationId: getProposta 
+      description: trova la proposta 
+      
+      tags:
+        - Proposta
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: info Proposta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropostaAcquisto'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/GeneralError'
+    
   /rest/auth/login:
     post:
       operationId: doLogin
@@ -369,13 +410,12 @@ components:
       required: true
       schema:
        $ref: '#/components/schemas/uid'
-    ParticipantID:
-      name: partid
+    PropostaUID:
+      name: uid
       in: path
       required: true
       schema:
-        type: string
-        format: email
+       $ref: '#/components/schemas/uid'
   schemas:
     uid:
       type: integer
@@ -495,6 +535,15 @@ components:
               $ref: '#/components/schemas/RichiestaOrdine'
       additionalProperties: false
 
+    ProposteAcquistoList:
+      type: object
+      properties:
+        proposte:
+            type: array
+            items:
+              $ref: '#/components/schemas/PropostaAcquisto'
+      additionalProperties: false
+      
     Categoria:
       type: object
       properties:
@@ -523,5 +572,3 @@ components:
           - uid
           - nome
           - categoria
-
-        
