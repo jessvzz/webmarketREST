@@ -1,8 +1,11 @@
 # TO DO LIST
-- [ ] Contrassegnare tutto come "protected path" con @Logged
-- [ ] semplice client tecnico
+- [ ]: cambiare tutte le response (soprattutto quelle che rispondono con html)
+- [ ]: togliere amministratore db 
+- [ ]: Pulsante "prendi in carico" da fixare.
+- [x] Contrassegnare tutto come "protected path" con @Logged
+- [x] semplice client tecnico
 - [x] dettagli richiesta --> da metterci anche le caratteristiche
 - [x] nei GET delle proposte la richiesta è sempre null
 - [x] rivedere POST della proposta
 - [x] ENDPOINT richieste/gestite_da da rivedere
-- [ ] Gestire sessione scaduta --> deve rimandare al login
+- [x] Gestire sessione scaduta --> deve rimandare al login
