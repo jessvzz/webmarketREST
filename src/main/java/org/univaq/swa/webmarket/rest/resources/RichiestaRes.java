@@ -102,7 +102,7 @@ public class RichiestaRes {
             RichiestaOrdine richiestaDetails = business.getDettagliRichiesta(richiesta.getId());
 
             if (richiestaDetails != null) {
-                return Response.ok(richiestaDetails).build();
+                return Response.noContent().build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND)
                                .entity("Dettagli della richiesta non trovati.")
@@ -131,7 +131,7 @@ public class RichiestaRes {
 
             if (rowsDeleted > 0) {
                 
-                return Response.ok("Richiesta eliminata con successo").build();
+                return Response.noContent().build();
             } else {
                 
                 return Response.status(Response.Status.NOT_FOUND).entity("Richiesta non trovata").build();
