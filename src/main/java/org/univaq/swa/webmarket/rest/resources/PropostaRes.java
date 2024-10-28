@@ -30,6 +30,7 @@ import org.univaq.swa.webmarket.rest.exceptions.RESTWebApplicationException;
 import org.univaq.swa.webmarket.rest.models.PropostaAcquisto;
 import org.univaq.swa.webmarket.rest.models.StatoProposta;
 import org.univaq.swa.webmarket.rest.models.StatoRichiesta;
+import org.univaq.swa.webmarket.rest.security.Logged;
 
 /**
  *
@@ -47,15 +48,17 @@ public class PropostaRes {
     }
     
     @GET
+    @Logged
     @Produces("application/json")
     public Response getItem() {
-        if (proposta == null) {
+        if (proposta.getId() == 0) {
             throw new RESTWebApplicationException(Response.Status.NOT_FOUND.getStatusCode(), "Proposta non trovata.");
         }
         return Response.ok(proposta).build();
     }
     
     @PUT
+    @Logged
     @Path("/approva") 
     @Produces(MediaType.APPLICATION_JSON)
     public Response approve(@Context SecurityContext sec) throws SQLException {
@@ -78,6 +81,7 @@ public class PropostaRes {
     }
     
     @PUT
+    @Logged
     @Path("/rifiuta") 
     @Produces(MediaType.APPLICATION_JSON)
     public Response reject(@FormParam("motivazione") String motivazione, @Context SecurityContext sec) throws SQLException {
@@ -99,8 +103,8 @@ public class PropostaRes {
         } 
     }
 
-         //modifica
          @PUT
+         @Logged
          @Consumes(MediaType.APPLICATION_JSON)
          @Produces(MediaType.APPLICATION_JSON)
          public Response modificaProposta(PropostaAcquisto prop) {

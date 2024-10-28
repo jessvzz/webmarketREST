@@ -19,7 +19,6 @@ $(document).ready(function () {
             success: function () {
                 localStorage.removeItem("authToken");
 
-                alert("Logout effettuato con successo.");
                 window.location.href = "index.html";
             },
             error: function (xhr, status, error) {

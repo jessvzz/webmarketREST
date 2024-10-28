@@ -49,6 +49,7 @@ public class RichiestaRes {
     }
     
     @GET
+    @Logged
     @Produces("application/json")
     public Response getItem() {
         if (richiesta == null) {
@@ -93,6 +94,7 @@ public class RichiestaRes {
     
     
     @GET
+    @Logged
     @Path("/dettagli")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDettagliRichiesta() throws SQLException {
@@ -119,6 +121,7 @@ public class RichiestaRes {
     
     //cancellazione
      @DELETE
+     @Logged
      @Produces(MediaType.APPLICATION_JSON)
      public Response eliminaRichiesta() {
 
@@ -127,13 +130,11 @@ public class RichiestaRes {
             int rowsDeleted = business.deleteRichiesta(richiesta.getId());
 
             if (rowsDeleted > 0) {
-                JsonObjectBuilder jsonResponse = Json.createObjectBuilder();
-                jsonResponse.add("message", "Richiesta eliminata con successo.");
-                return Response.ok(jsonResponse.build()).build();
+                
+                return Response.ok("Richiesta eliminata con successo").build();
             } else {
-                JsonObjectBuilder jsonResponse = Json.createObjectBuilder();
-                jsonResponse.add("error", "Richiesta non trovata.");
-                return Response.status(Response.Status.NOT_FOUND).entity(jsonResponse.build()).build();
+                
+                return Response.status(Response.Status.NOT_FOUND).entity("Richiesta non trovata").build();
             }
 
          } catch (Exception e) {

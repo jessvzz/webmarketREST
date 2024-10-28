@@ -86,10 +86,29 @@ public class ProposteRes {
         List<PropostaAcquisto> proposte = new ArrayList<>();
         
         InitialContext ctx;
+        proposte = business.getAllInAttesa(userId);
+        
+        return Response.ok(proposte).build();
+    }
+    
+    @GET
+    @Logged
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllProposals(
+            @Context UriInfo uriinfo,
+            //iniettiamo elementi di contesto utili per la verifica d'accesso
+            @Context SecurityContext sec,
+            @Context ContainerRequestContext req)
+            throws RESTWebApplicationException, SQLException, ClassNotFoundException, NamingException {
+        int userId = UserUtils.getLoggedId(sec);
+        List<PropostaAcquisto> proposte = new ArrayList<>();
+        
+        InitialContext ctx;
         proposte = business.getAll(userId);
         
         return Response.ok(proposte).build();
     }
+
 
     //inserimento
      @POST

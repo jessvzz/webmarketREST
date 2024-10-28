@@ -14,6 +14,8 @@ import org.univaq.swa.webmarket.rest.models.PropostaAcquisto;
 public interface ProposteService {
     PropostaAcquisto getProposta(int id);
     List<PropostaAcquisto> getAll(int userId);
+    List<PropostaAcquisto> getAllInAttesa(int userId);
+
     int inserisciProposta(PropostaAcquisto proposta);
     int approvaProposta(int id);
     int rifiutaProposta(int id, String motivazione);

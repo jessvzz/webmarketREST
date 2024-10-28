@@ -53,7 +53,6 @@ let handleLoginButton = function () {
                 let role = jsonResponse.role;
 
                 setToken(token);
-                alert("Login eseguito con successo!");
 
                 // reindirizzo in base a utente
                 if (role === "ORDINANTE") {

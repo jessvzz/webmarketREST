@@ -81,7 +81,7 @@ public class ProposteServiceImpl implements ProposteService{
     }
 
     @Override
-    public List<PropostaAcquisto> getAll(int userId) {
+    public List<PropostaAcquisto> getAllInAttesa(int userId) {
         List<PropostaAcquisto> proposte = new ArrayList<>();
         
         InitialContext ctx;
@@ -94,6 +94,63 @@ public class ProposteServiceImpl implements ProposteService{
                      "FROM proposta_acquisto p " +
                      "JOIN richiesta_ordine r ON p.richiesta_id = r.id " +
                      "WHERE (r.utente = ? OR r.tecnico = ?) AND p.stato = 'IN_ATTESA'";
+        
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, userId);
+            ps.setInt(2, userId);
+            
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                
+                PropostaAcquisto proposta = new PropostaAcquisto();
+                proposta.setProduttore(rs.getString("produttore"));
+                proposta.setProdotto(rs.getString("prodotto"));
+                proposta.setCodice(rs.getString("codice"));
+                proposta.setCodiceProdotto(rs.getString("codice_prodotto"));
+                proposta.setPrezzo(rs.getFloat("prezzo"));
+                proposta.setUrl(rs.getString("URL"));
+                proposta.setNote(rs.getString("note"));
+                proposta.setStatoProposta(StatoProposta.valueOf(rs.getString("stato")));
+                proposta.setData(rs.getDate("data"));
+                proposta.setMotivazione(rs.getString("motivazione"));
+                proposta.setId(rs.getInt("id"));
+               
+                int richiestaId = rs.getInt("richiesta_id");
+
+                if(richiestaId > 0){
+                    RichiesteService richiesteService = RichiesteServiceFactory.getRichiesteService();
+                    proposta.setRichiestaOrdine(richiesteService.getRichiesta(richiestaId));
+                
+                 } else {
+                        throw new RESTWebApplicationException(Response.Status.NOT_FOUND.getStatusCode(), "Proposta non trovata");
+                    }
+                proposte.add(proposta);              
+            }
+            
+        } catch (NamingException ex) {
+            Logger.getLogger(ProposteRes.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(ProposteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return proposte;
+       }
+
+     @Override
+    public List<PropostaAcquisto> getAll(int userId) {
+        List<PropostaAcquisto> proposte = new ArrayList<>();
+        
+        InitialContext ctx;
+        try {
+            ctx = new InitialContext();
+            DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+            Connection conn = ds.getConnection();
+            
+            String sql = "SELECT p.* " +
+                     "FROM proposta_acquisto p " +
+                     "JOIN richiesta_ordine r ON p.richiesta_id = r.id " +
+                     "WHERE (r.utente = ? OR r.tecnico = ?)";
         
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, userId);
@@ -155,12 +212,36 @@ public class ProposteServiceImpl implements ProposteService{
             
              ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
-             
+            if (proposta.getProduttore().equals("")) {
+                throw new IllegalArgumentException("Produttore mancante.");
+            }
+            else{
              ps.setString(1, proposta.getProduttore());
+            }
+             if (proposta.getProdotto().equals("")) {
+                throw new IllegalArgumentException("Prodotto mancante");
+            }
+            else{
              ps.setString(2, proposta.getProdotto());
+             }
+               if (proposta.getCodiceProdotto().equals("")) {
+                throw new IllegalArgumentException("Codice Prodotto mancante");
+            }
+            else{
              ps.setString(3, proposta.getCodiceProdotto());
+               }
+                 if (proposta.getPrezzo() == 0) {
+                throw new IllegalArgumentException("Prezzo mancante");
+            }
+            else{
              ps.setFloat(4, proposta.getPrezzo());
+                 }
+            if (proposta.getUrl().equals("")) {
+                throw new IllegalArgumentException("Url mancante");
+            }
+            else{
              ps.setString(5, proposta.getUrl());
+            }
              ps.setString(6, proposta.getNote());
              ps.setString(7,"IN_ATTESA");
 

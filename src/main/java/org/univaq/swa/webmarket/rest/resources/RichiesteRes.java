@@ -50,6 +50,8 @@ public class RichiesteRes {
         this.business = RichiesteServiceFactory.getRichiesteService();
 
     }
+     
+     /*
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
@@ -59,6 +61,7 @@ public class RichiesteRes {
 
         return Response.ok(richiesteInAttesa).build();
     }
+     */
 
     @Path("/{idrichiesta: [0-9]+}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -131,6 +134,7 @@ public Response addItem(
 
     //trovo richieste in attesa
     @GET
+    @Logged
     @Path("/in_attesa")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getRichiesteInAttesa() {
@@ -166,7 +170,7 @@ public Response addItem(
             return Response.ok(richieste).build();
     }
     
-    
+    /*
     @GET
     @Path("/non_assegnate")
     @Produces(MediaType.APPLICATION_JSON)
@@ -183,12 +187,13 @@ public Response addItem(
 
            return Response.ok(richiesteNonAssegnate).build();
     }
-
+    */
 
 
 
 
          @GET
+         @Logged
          @Path("/gestite_da_tecnico/{idtecnico}")
          @Produces(MediaType.APPLICATION_JSON)
          public Response getRichiesteGestiteDaTecnico(@PathParam("idtecnico") int idTecnico) {
