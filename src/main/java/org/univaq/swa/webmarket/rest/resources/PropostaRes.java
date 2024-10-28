@@ -66,7 +66,7 @@ public class PropostaRes {
         try{
             rowsUpdated = business.approvaProposta(proposta.getId());
             if (rowsUpdated > 0) {
-                return Response.ok("Proposta aggiornata con successo.").build();
+                return Response.noContent().build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND)
                                .entity("Proposta non trovata.")
@@ -89,7 +89,7 @@ public class PropostaRes {
         try{
             rowsUpdated = business.rifiutaProposta(proposta.getId(), motivazione);
             if (rowsUpdated > 0) {
-                return Response.ok("Proposta aggiornata con successo.").build();
+                return Response.noContent().build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND)
                                .entity("Proposta non trovata.")
@@ -115,7 +115,7 @@ public class PropostaRes {
                  rowsUpdated = business.modificaProposta(prop, proposta.getId());
 
                  if (rowsUpdated > 0) {
-                     return Response.ok("Proposta modificata con successo").build();
+                     return Response.noContent().build();
                  } else {
                      return Response.status(Response.Status.NOT_FOUND).entity("Proposta non trovata").build();
                  }

@@ -78,7 +78,7 @@ public class RichiestaRes {
             
             rowsUpdated = business.prendiInCarico(techId, richiesta);
             if (rowsUpdated > 0) {
-                return Response.ok("Richiesta aggiornata con successo.").build();
+                return Response.noContent().build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND)
                                .entity("Richiesta non trovata.")
@@ -102,7 +102,7 @@ public class RichiestaRes {
             RichiestaOrdine richiestaDetails = business.getDettagliRichiesta(richiesta.getId());
 
             if (richiestaDetails != null) {
-                return Response.noContent().build();
+                return Response.ok(richiestaDetails).build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND)
                                .entity("Dettagli della richiesta non trovati.")
