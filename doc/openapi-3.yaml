@@ -61,7 +61,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RichiestaOrdineList'
+                type: array
+                items:
+                  $ref: '#/components/schemas/RichiestaOrdineBase'
         '500':
           $ref: '#/components/responses/GeneralError'
   /rest/richieste/in_corso:
@@ -79,7 +81,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RichiestaOrdineList'
+                type: array
+                items:
+                  $ref: '#/components/schemas/RichiestaOrdineBase'
                 
         '500':
           $ref: '#/components/responses/GeneralError'
@@ -99,7 +103,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RichiestaOrdineList'
+                type: array
+                items:
+                  $ref: '#/components/schemas/RichiestaOrdineBase'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -122,7 +128,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RichiestaOrdine'
+                $ref: '#/components/schemas/RichiestaOrdineBase'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -147,7 +153,7 @@ paths:
   /rest/richieste/{uid}/presa_in_carico:
     parameters:
       - $ref: '#/components/parameters/RichiestaUID'
-    put:
+    patch:
       operationId: prendiInCarico
       description: prende in carico una richiesta
       tags:
@@ -278,6 +284,7 @@ paths:
       security:
         - bearerAuth: []
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -294,7 +301,7 @@ paths:
   /rest/proposte/{uid}/approva:
     parameters: 
       - $ref: '#/components/parameters/PropostaUID'
-    put:
+    patch:
       operationId: approvaProposta
       description: approva la proposta
       tags:
@@ -314,7 +321,7 @@ paths:
   /rest/proposte/{uid}/rifiuta:
     parameters: 
       - $ref: '#/components/parameters/PropostaUID'
-    put:
+    patch:
       operationId: rifiutaProposta
       description: rifiuta la proposta
       tags:
@@ -470,7 +477,7 @@ components:
   schemas:
     uid:
       type: integer
-      pattern: "^[0-9]+$"
+      pattern: "[0-9]+"
     Utente:
       type: object
       properties:
@@ -538,7 +545,7 @@ components:
         - data
         - richiestaOrdine
       additionalProperties: false
-    RichiestaOrdine:
+    RichiestaOrdineBase:
       type: object
       properties:
         uid:
@@ -562,6 +569,11 @@ components:
           $ref: '#/components/schemas/Utente'
         categoria:
           $ref: '#/components/schemas/Categoria'
+    RichiestaOrdine:
+      type: object
+      properties:
+        richiesta:
+          $ref: '#/components/schemas/RichiestaOrdineBase'
         proposte:
           type: array
           items:
@@ -574,8 +586,6 @@ components:
           - uid
           - stato
           - data
-          - codiceRequired
-          - utente
       additionalProperties: false
     RichiestaOrdineList:
       type: object
