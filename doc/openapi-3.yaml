@@ -44,6 +44,8 @@ paths:
           $ref: '#/components/responses/SuccessfulInsert'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '500':
           $ref: '#/components/responses/GeneralError'
   /rest/richieste/in_attesa:
@@ -64,6 +66,20 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/RichiestaOrdineBase'
+              example: 
+               id: 5,
+               note: "Acquisto sedia ergonomica"
+               stato: "IN_ATTESA"
+               codiceRichiesta: "52kSv6aSOQ"
+               data: "2024-09-02"
+               utente:
+                username: "geaviozzi"
+                email: "geaviozzi@icloud.com"
+               categoria:
+                id: 10
+                nome: "Sedie"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
         '500':
           $ref: '#/components/responses/GeneralError'
   /rest/richieste/in_corso:
@@ -84,14 +100,15 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/RichiestaOrdineBase'
-                
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'        
         '500':
           $ref: '#/components/responses/GeneralError'
   /rest/richieste/gestite_da_tecnico/{uid}:
     parameters:
       - $ref: '#/components/parameters/TecnicoUID'
     get:
-      operationId: getRichiesteGestite
+      operationId: getRichiesteGestiteDa
       description: trova le richieste gestite da un determinato tecnico
       tags:
         - Richieste Collection
@@ -106,6 +123,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/RichiestaOrdineBase'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -116,7 +135,8 @@ paths:
       - $ref: '#/components/parameters/RichiestaUID'
     get:
       operationId: getRichiesta
-      description: Trova la richiesta con l'id specificato
+      summary: Ottieni i dettagli di una Richiesta specifica
+      description: Restituisce i dettagli di una singola `RichiestaOrdine` in base all'`idrichiesta` fornito.
       tags:
         - Richiesta
         - Richiesta properties
@@ -129,6 +149,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RichiestaOrdineBase'
+              example:
+                id: 21
+                note: "Vorrei un mobile da studio"
+                stato: "PRESA_IN_CARICO"
+                codiceRichiesta: "56ghjkl90"
+                utente:
+                  username: "samanta"
+                  email: "samanta_dis@hotmail.com"
+                tecnico:
+                  username: "tecnicoS"
+                  email: "tecnicoS@hotmail.com"
+                categoria:
+                  id: 8
+                  nome: "Mobili"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -155,7 +191,7 @@ paths:
       - $ref: '#/components/parameters/RichiestaUID'
     patch:
       operationId: prendiInCarico
-      description: prende in carico una richiesta
+      description: Consente ad un tecnico di prendere in carico una richiesta in attesa
       tags:
         - Richiesta
         - Richiesta properties
@@ -187,6 +223,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RichiestaOrdine'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -248,6 +286,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProposteAcquistoList'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
         '500':
           $ref: '#/components/responses/GeneralError'
   
@@ -444,6 +484,8 @@ components:
        schema:
         type: string
         format: uri
+    BadRequest:
+      description: Errore nella richiesta 
     GeneralError:
       description: Errore Interno del Server
     UnauthorizedError:
@@ -576,10 +618,12 @@ components:
           $ref: '#/components/schemas/RichiestaOrdineBase'
         proposte:
           type: array
+          description: Lista di proposte associate alla Richiesta in questione
           items:
             $ref: '#/components/schemas/PropostaAcquisto'
         caratteristiche:             
           type: object
+          description: Una mappa di caratteristiche scelte dall'ordinante, associate alla Richiesta specifica.
           additionalProperties:
             type: string 
       required:

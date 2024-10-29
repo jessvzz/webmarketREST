@@ -71,7 +71,7 @@ public class RichiesteRes {
         @Context UriInfo uriinfo,
         @Context SecurityContext sec,
         @Context ContainerRequestContext req) throws RESTWebApplicationException {
-    
+        
         RichiestaOrdine richiesta = business.getRichiesta(id);
 
         return new RichiestaRes(richiesta);
@@ -120,6 +120,7 @@ public Response addItem(
             RichiestaOrdine richiesta
     ) throws SQLException, NamingException {
 
+        try {
             int utenteId = UserUtils.getLoggedId(sec);
             if (utenteId == -1) {
                 return Response.status(Response.Status.UNAUTHORIZED)
@@ -134,8 +135,12 @@ public Response addItem(
             } else {
                 return Response.status(Response.Status.BAD_REQUEST).entity("Inserimento della richiesta fallito").build();
             }
-
-    }
+        }catch (SQLException | NamingException e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+            .entity("Errore del server durante l'elaborazione della richiesta")
+            .build();
+        }
+   }
 
     //trovo richieste in attesa
     @GET
@@ -210,6 +215,12 @@ public Response addItem(
         
              try {
                  richiesteGestite = business.getRichiesteGestiteDa(idTecnico);
+                    // Controllo se la lista è vuota e restituzione del codice 404 se necessario
+                if (richiesteGestite.isEmpty()) {
+                    return Response.status(Response.Status.NOT_FOUND)
+                                .entity("Nessuna richiesta trovata per il tecnico con ID: " + idTecnico)
+                                .build();
+                }
         
              } catch (Exception ex) {
                  Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, ex);

@@ -499,6 +499,7 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
             "    pa.stato AS proposta_stato,\n" +
             "    pa.data AS proposta_data,\n" +
             "    pa.motivazione\n" +
+            // "    ,pa.richiesta_id AS proposta_richiesta_id\n" +
             "FROM richiesta_ordine ro\n" +
             "LEFT JOIN proposta_acquisto pa ON ro.ID = pa.richiesta_id\n" +
             "WHERE ro.ID = ?;";
@@ -549,6 +550,14 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
                     proposta.setNote(rs.getString("proposta_note"));
                     proposta.setMotivazione(rs.getString("motivazione"));
 
+                    // int richiestaOrdineId = rs.getInt("proposta_richiesta_id");
+                    
+                    // if (richiestaOrdineId > 0) {
+                    //     RichiesteService richiesteService = RichiesteServiceFactory.getRichiesteService();
+                    //     RichiestaOrdine richiestaOrdine = richiesteService.getRichiesta(richiestaOrdineId);
+                    //     proposta.setRichiestaOrdine(richiestaOrdine);
+                    // }
+                    
                     proposte.add(proposta); 
                 }
             }
