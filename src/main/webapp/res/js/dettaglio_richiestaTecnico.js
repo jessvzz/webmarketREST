@@ -28,45 +28,60 @@ $(document).ready(function() {
                 $('#categoria').text(data.categoria.nome);
                 $('#data_richiesta').text(data.data);
                 $('#note_richiesta').text(data.note);
-                
+
+                // Caratteristiche della richiesta
+                if (data.caratteristiche) {
+                    var caratteristicheHtml = '';
+                    Object.keys(data.caratteristiche).forEach(function (key) {
+                        caratteristicheHtml += `<div><strong>${key}:</strong> ${data.caratteristiche[key]}</div>`;
+                    });
+                    $('#caratteristiche').html(caratteristicheHtml);
+                } else {
+                    $('#caratteristiche').html('<div class="caratteristica-card empty">Nessuna caratteristica disponibile.</div>');
+                }
+
+                // Proposte      
+
                 const statoPropostaMapping = {
                 ACCETTATO: "Accettato",
                 RIFIUTATO: "Rifiutato",
                 IN_ATTESA: "In Attesa",
                 ORDINATO: "Ordinato"
-};
+            };
 
-                if (data.proposte && data.proposte.length > 0) {
-                var proposteHtml = '';
-                data.proposte.forEach(function (proposta) {
-                    var readableStatoProposta = statoPropostaMapping[proposta.stato] || proposta.statoProposta; // Fallback to raw value
 
-                    var propostaHtml = `
-                        <div class="proposta-card">
-                            <div><strong>Produttore:</strong> ${proposta.produttore}</div>
-                            <div><strong>Prodotto:</strong> ${proposta.prodotto}</div>
-                            <div><strong>Codice Prodotto:</strong> ${proposta.codice}</div>
-                            <div><strong>Prezzo:</strong> ${proposta.prezzo}</div>
-                            <div><strong>Stato Proposta:</strong> ${readableStatoProposta}</div>
-                            <div><strong>URL:</strong> <a href="${proposta.url}" target="_blank">Vai al prodotto</a></div>`;
 
-                    if (proposta.motivazione) {
-                        propostaHtml += `<div><strong>Motivazione:</strong> ${proposta.motivazione}</div>`;
-                    }
+                        //     if (data.proposte && data.proposte.length > 0) {
+                        //     var proposteHtml = '';
+                        //     data.proposte.forEach(function (proposta) {
+                        //         var readableStatoProposta = statoPropostaMapping[proposta.stato] || proposta.statoProposta; // Fallback to raw value
 
-                    if (proposta.note) {
-                        propostaHtml += `<div><strong>Note:</strong> ${proposta.note}</div>`;
-                    }
+                        //         var propostaHtml = `
+                        //             <div class="proposta-card">
+                        //                 <div><strong>Produttore:</strong> ${proposta.produttore}</div>
+                        //                 <div><strong>Prodotto:</strong> ${proposta.prodotto}</div>
+                        //                 <div><strong>Codice Prodotto:</strong> ${proposta.codice}</div>
+                        //                 <div><strong>Prezzo:</strong> ${proposta.prezzo}</div>
+                        //                 <div><strong>Stato Proposta:</strong> ${readableStatoProposta}</div>
+                        //                 <div><strong>URL:</strong> <a href="${proposta.url}" target="_blank">Vai al prodotto</a></div>`;
 
-                    propostaHtml += `</div>`;
-                    proposteHtml += propostaHtml;
-                });
-                
-                $('#proposte').html(proposteHtml);
-            } else {
-                $('#proposte').html('<div class="proposta-card empty">Nessuna proposta disponibile.</div>');
-            }
-            },
+                        //         if (proposta.motivazione) {
+                        //             propostaHtml += `<div><strong>Motivazione:</strong> ${proposta.motivazione}</div>`;
+                        //         }
+
+                        //         if (proposta.note) {
+                        //             propostaHtml += `<div><strong>Note:</strong> ${proposta.note}</div>`;
+                        //         }
+
+                        //         propostaHtml += `</div>`;
+                        //         proposteHtml += propostaHtml;
+                        //     });
+                            
+                        //     $('#proposte').html(proposteHtml);
+                        // } else {
+                        //     $('#proposte').html('<div class="proposta-card empty">Nessuna proposta disponibile.</div>');
+                        // }
+           },
            
             error: function (xhr) {
                 if (xhr.status === 401) {
