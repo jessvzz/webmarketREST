@@ -67,6 +67,27 @@ public class AuthHelpers {
     return null;
 }
 
+public int getUserId(String username) {
+    InitialContext ctx;
+    try {
+        ctx = new InitialContext();
+        DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+
+        try (Connection conn = ds.getConnection()) {
+            String query = "SELECT ID FROM utente WHERE username = ?";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("ID");
+            }
+        }
+    } catch (NamingException | SQLException ex) {
+        ex.printStackTrace();
+    }
+    return 0;
+}
 
     public static String validateToken(String token)
     {

@@ -20,7 +20,8 @@ public class AuthenticationRes {
         if(AuthHelpers.getInstance().authenticateUser(username, password)){
             String token = AuthHelpers.getInstance().issueToken(username, uriInfo);
             String userRole = AuthHelpers.getInstance().getUserRole(username);
-            String jsonResponse = "{\"token\": \"" + token + "\", \"role\": \"" + userRole + "\"}";
+            Integer userId = AuthHelpers.getInstance().getUserId(username);
+            String jsonResponse = "{\"token\": \"" + token + "\", \"role\": \"" + userRole + "\", \"userId\": \"" + userId + "\"}";
 
             return Response.ok(jsonResponse)
                     .cookie(new NewCookie.Builder("token").value(token).build())
