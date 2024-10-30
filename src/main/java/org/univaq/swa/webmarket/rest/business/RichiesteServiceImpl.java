@@ -168,6 +168,9 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
     public RichiestaOrdine getRichiesta(int id) {
         RichiestaOrdine richiesta = new RichiestaOrdine();
         InitialContext ctx;
+        PreparedStatement ps2 = null;
+        ResultSet rs2 = null;
+        Map<String, String> caratteristiche = new HashMap<>();
 
         try {
             ctx = new InitialContext();
@@ -208,7 +211,26 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
                         Categoria categoria = recuperaCategoria(conn, categoriaId);
                         richiesta.setCategoria(categoria);
                     }
+                    
+                    String query2 = "SELECT c.nome AS caratteristica, cr.valore AS valore FROM caratteristica_richiesta cr RIGHT JOIN caratteristica c ON cr.caratteristica_id=c.ID WHERE cr.richiesta_id = ? ";
+                    ps2 = conn.prepareStatement(query2);
+                    ps2.setInt(1, id);
+                    rs2 = ps2.executeQuery();
 
+                    while (rs2.next()) {
+
+                            String caratteristica = rs2.getString("caratteristica");
+                            String valore = rs2.getString("valore");
+
+                            if (caratteristica != null && valore != null) {
+                                caratteristiche.put(caratteristica, valore);
+                            }
+
+                        }
+
+                    
+                    richiesta.setCaratteristiche(caratteristiche);
+                   
 
                 } else {
                     throw new RESTWebApplicationException(Response.Status.NOT_FOUND.getStatusCode(), "Richiesta non trovata");

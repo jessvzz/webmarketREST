@@ -217,7 +217,7 @@ paths:
       - $ref: '#/components/parameters/RichiestaUID'
     patch:
       operationId: prendiInCarico
-      description: Consente ad un tecnico di prendere in carico una richiesta in attesa
+      description: Consente al tecnico loggato di prendere in carico una richiesta in attesa
       tags:
         - Richiesta
         - Richiesta properties

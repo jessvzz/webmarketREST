@@ -121,12 +121,7 @@ public Response addItem(
     ) throws SQLException, NamingException {
 
         try {
-            int utenteId = UserUtils.getLoggedId(sec);
-            if (utenteId == -1) {
-                return Response.status(Response.Status.UNAUTHORIZED)
-                        .entity("Utente non autenticato")
-                        .build();
-            }
+            
             int richiestaId = business.inserisciNuovaRichiesta(richiesta);
 
             if (richiestaId > 0){
@@ -169,12 +164,7 @@ public Response addItem(
 
         try {
             
-            int utenteId = UserUtils.getLoggedId(sec);
             
-            if (utenteId == -1) {
-                return Response.status(Response.Status.UNAUTHORIZED).entity("Accesso non autorizzato").build();
-            }
-
             richieste = business.getRichiesteInCorso(userId);
             } catch (Exception ex) {
                 Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, ex);
