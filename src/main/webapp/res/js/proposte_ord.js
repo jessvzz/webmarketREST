@@ -1,7 +1,7 @@
 $(document).ready(function () {
     var token = localStorage.getItem("authToken"); //mi sono salvata il token nel localstorage che genio
-    console.log('token: '+ token);
-
+    var uid = localStorage.getItem("utenteId"); 
+    
     if (!token) {
         alert("Errore: token non trovato. Per favore, effettua nuovamente il login.");
         window.location.href = "index.html"; // Reindirizza alla pagina di login se il token non è presente
@@ -15,7 +15,7 @@ $(document).ready(function () {
     }
         function caricaProposte() {
             $.ajax({
-                url: "http://localhost:8080/WebMarketREST/rest/proposte/in_attesa",
+                url: "http://localhost:8080/WebMarketREST/rest/proposte/in_attesa?userId="+uid,
                 method: "GET",
                  headers: {
                     "Authorization": "Bearer " + token

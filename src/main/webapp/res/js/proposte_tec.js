@@ -1,5 +1,6 @@
 $(document).ready(function () {
     var token = localStorage.getItem("authToken"); //mi sono salvata il token nel localstorage che genio
+    var uid = localStorage.getItem("utenteId"); 
 
     console.log('token: '+ token);
 
@@ -17,7 +18,7 @@ $(document).ready(function () {
 
 
     $.ajax({
-        url: "/WebMarketREST/rest/proposte/in_attesa",
+        url: "/WebMarketREST/rest/proposte/in_attesa?userId="+uid,
         method: "GET",
         headers: {
             "Authorization": "Bearer " + token

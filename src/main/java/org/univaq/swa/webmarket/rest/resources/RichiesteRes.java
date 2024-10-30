@@ -164,7 +164,7 @@ public Response addItem(
     @Logged
     @Path("/in_corso")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getRichiesteNonRisolte(@Context SecurityContext sec) {
+    public Response getRichiesteNonRisolte(@QueryParam("ordId") int userId, @Context SecurityContext sec) {
         List<RichiestaOrdine> richieste = new ArrayList<>();
 
         try {
@@ -175,7 +175,7 @@ public Response addItem(
                 return Response.status(Response.Status.UNAUTHORIZED).entity("Accesso non autorizzato").build();
             }
 
-            richieste = business.getRichiesteInCorso(utenteId);
+            richieste = business.getRichiesteInCorso(userId);
             } catch (Exception ex) {
                 Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, ex);
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore interno del server").build();
@@ -208,9 +208,9 @@ public Response addItem(
 
          @GET
          @Logged
-         @Path("/gestite_da_tecnico/{idtecnico}")
+         @Path("/gestite_da_tecnico")
          @Produces(MediaType.APPLICATION_JSON)
-         public Response getRichiesteGestiteDaTecnico(@PathParam("idtecnico") int idTecnico) {
+         public Response getRichiesteGestiteDaTecnico(@QueryParam("idtecnico") int idTecnico) {
              List<RichiestaOrdine> richiesteGestite = new ArrayList<>();
         
              try {

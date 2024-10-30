@@ -1,6 +1,6 @@
 $(document).ready(function () {
     var token = localStorage.getItem("authToken"); //mi sono salvata il token nel localstorage che genio
-    console.log('token: '+ token);
+
     if (!token) {
         alert("Errore: token non trovato. Per favore, effettua nuovamente il login.");
         window.location.href = "index.html"; // Reindirizza alla pagina di login se il token non è presente

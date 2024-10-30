@@ -1,5 +1,7 @@
 $(document).ready(function () {
     var token = localStorage.getItem("authToken"); 
+    var uid = localStorage.getItem("utenteId"); 
+
     console.log('token: '+ token);
 
     if (!token) {
@@ -16,7 +18,7 @@ $(document).ready(function () {
 
 
     $.ajax({
-        url: "/WebMarketREST/rest/richieste/in_corso",
+        url: "/WebMarketREST/rest/richieste/in_corso?ordId="+uid,
         method: "GET",
         headers: {
             "Authorization": "Bearer " + token

@@ -53,6 +53,12 @@ let handleLoginButton = function () {
                 let role = jsonResponse.role;
 
                 setToken(token);
+                
+                let utenteId = jsonResponse.userId;
+                
+                if (utenteId) {
+                    localStorage.setItem("utenteId", utenteId);
+                }
 
                 // reindirizzo in base a utente
                 if (role === "ORDINANTE") {

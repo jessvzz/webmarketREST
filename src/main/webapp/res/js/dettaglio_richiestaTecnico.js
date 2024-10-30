@@ -2,6 +2,7 @@ $(document).ready(function() {
     var token = localStorage.getItem("authToken"); 
     var richiestaId = localStorage.getItem("richiestaId");
 
+
     if (!richiestaId) {
         alert("Errore: Nessuna richiesta selezionata.");
         window.location.href = "tecnicohomepage.html";
