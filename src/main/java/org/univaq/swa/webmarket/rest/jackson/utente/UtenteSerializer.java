@@ -13,7 +13,7 @@ public class UtenteSerializer extends JsonSerializer<Utente> {
     public void serialize(Utente utente, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
         jgen.writeStartObject(); // {
         
-        // jgen.writeNumberField("id", utente.getId());
+        jgen.writeNumberField("id", utente.getId());
         jgen.writeStringField("username", utente.getUsername());
         jgen.writeStringField("email", utente.getEmail());
 

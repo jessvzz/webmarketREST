@@ -685,7 +685,7 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
 
     
     @Override
-    public int inserisciNuovaRichiesta(RichiestaOrdine richiesta, int userId) throws SQLException, NamingException{
+    public int inserisciNuovaRichiesta(RichiestaOrdine richiesta) throws SQLException, NamingException{
         InitialContext ctx = new InitialContext();
         DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
         Connection conn = ds.getConnection();
@@ -697,7 +697,7 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
             ps.setString(1, richiesta.getNote());
             ps.setDate(2, new java.sql.Date(richiesta.getData().getTime()));
             ps.setString(3, richiesta.getStato().toString());
-            ps.setInt(4,userId);
+            ps.setInt(4,richiesta.getUtente().getId());
             ps.setInt(5, richiesta.getCategoria().getId());
 
 

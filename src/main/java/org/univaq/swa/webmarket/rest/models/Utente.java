@@ -3,7 +3,6 @@ package org.univaq.swa.webmarket.rest.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class Utente{
-    @JsonIgnore
     private int id;
     private String username;
     private String email;

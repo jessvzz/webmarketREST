@@ -127,7 +127,7 @@ public Response addItem(
                         .entity("Utente non autenticato")
                         .build();
             }
-            int richiestaId = business.inserisciNuovaRichiesta(richiesta, utenteId);
+            int richiestaId = business.inserisciNuovaRichiesta(richiesta);
 
             if (richiestaId > 0){
                 URI uri = uriinfo.getAbsolutePathBuilder().path(String.valueOf(richiestaId)).build();
