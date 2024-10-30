@@ -18,6 +18,8 @@
 
 - [ ] per Gea --> rileggiti tutto file yaml e capisci bene cosa mettere sui campi required lol
 - [ ] non so se mi piace uno schema per uid
+- [ ] inserimento e modifica DA PARTE DEL TECNICO INCARICATO penso di voler fare una roba
+- [ ] modifica presaInCarico
 
 - Non mi funziona richieste/in_corso su postman, su client sì.. mah
 - devo finire di controllare se sono presenti tutte le eccezioni e se gestite correttamente nel codice.
