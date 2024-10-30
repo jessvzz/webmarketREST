@@ -102,9 +102,16 @@ paths:
       description: >-
         trova le richieste in corso di un determinato utente
       tags:
-        - Events collection
+        - Richieste collection
       security:
         - bearerAuth: []
+      parameters:
+        - in: query
+          name: ordId
+          required: true
+          schema:
+            type: integer
+          description: ID dell'utente per il quale si vogliono recuperare le richieste in corso.
       responses:
         '200':
           description: richieste in corso di un determinato utente
@@ -118,16 +125,21 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'        
         '500':
           $ref: '#/components/responses/GeneralError'
-  /rest/richieste/gestite_da_tecnico/{uid}:
-    parameters:
-      - $ref: '#/components/parameters/TecnicoUID'
+  /rest/richieste/gestite_da_tecnico:
     get:
       operationId: getRichiesteGestiteDa
       description: trova le richieste gestite da un determinato tecnico
       tags:
-        - Richieste Collection
+        - Richieste collection
       security:
         - bearerAuth: []
+      parameters:
+        - in: query
+          name: idtecnico
+          required: true
+          schema:
+            type: integer
+          description: ID del tecnico per il quale si vogliono recuperare le richieste gestite.
       responses:
         '200':
           description: Richieste info
@@ -252,6 +264,13 @@ paths:
         - Proposte collection
       security:
         - bearerAuth: []
+      parameters:
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: ID del tecnico o dell'ordinante
       responses:
         '200':
           description: List di Proposte
@@ -293,6 +312,13 @@ paths:
         - Proposte collection
       security:
         - bearerAuth: []
+      parameters:
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: ID dell'ordinante o tecnico di cui si vogliono estrarre le proposte in attesa
       responses:
         '200':
           description: Lista di proposte in attesa
@@ -436,6 +462,8 @@ paths:
                     pattern: Bearer [a-z0-9A-Z-]+
                   role:
                     type: string
+                  userId: 
+                    type: integer
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '500':
@@ -603,7 +631,6 @@ components:
         richiestaOrdine:
           $ref: '#/components/schemas/RichiestaOrdine'
       required:
-        - uid
         - produttore
         - prodotto
         - codiceProdotto
@@ -659,9 +686,9 @@ components:
           additionalProperties:
             type: string 
       required:
-          - uid
           - stato
           - data
+          - utente
       additionalProperties: false
     RichiestaOrdineList:
       type: object

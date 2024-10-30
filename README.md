@@ -16,6 +16,8 @@
 - [x] ENDPOINT richieste/gestite_da da rivedere
 - [x] Gestire sessione scaduta --> deve rimandare al login
 
+- [ ] per Gea --> rileggiti tutto file yaml e capisci bene cosa mettere sui campi required lol
+
 - Non mi funziona richieste/in_corso su postman, su client sì.. mah
 - devo finire di controllare se sono presenti tutte le eccezioni e se gestite correttamente nel codice.
 - nel file yaml mi da warning su RichiestaOrdineList, perchè mai utilizzato.
