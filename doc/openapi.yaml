@@ -209,6 +209,13 @@ paths:
   /rest/richieste/{uid}/presa_in_carico:
     parameters:
       - $ref: '#/components/parameters/RichiestaUID'
+      
+      - in: query
+        name: idtecnico
+        required: true
+        schema:
+          type: integer
+        description: ID del tecnico da assegnare alla richiesta.
     patch:
       operationId: prendiInCarico
       description: Consente al tecnico loggato di prendere in carico una richiesta in attesa

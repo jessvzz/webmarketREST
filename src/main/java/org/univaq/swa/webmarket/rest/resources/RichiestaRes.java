@@ -63,19 +63,12 @@ public class RichiestaRes {
     @Logged
     @Path("/presa_in_carico") 
     @Produces(MediaType.APPLICATION_JSON)
-    public Response presaInCarico(@Context SecurityContext sec) throws SQLException {
+    public Response presaInCarico(@QueryParam("idtecnico") int techId, @Context SecurityContext sec) throws SQLException {
         int rowsUpdated = 0;
 
         try {
             
-            int techId = UserUtils.getLoggedId(sec);
-
             
-            if (techId < 0) {
-                return Response.status(Response.Status.FORBIDDEN)
-                               .entity("Tecnico non autenticato.")
-                               .build();
-            }
             
             rowsUpdated = business.prendiInCarico(techId, richiesta);
             if (rowsUpdated > 0) {
