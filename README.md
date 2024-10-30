@@ -2,12 +2,12 @@
 - [x] aggiungere caratteristiche dove servono e cambiare in caso il file openapi
 - [x] inserire l'errore 401 in tutte le responses del file openapi
 - [ ] gestire correttamente nel codice le varie eccezioni aggiunte (tipo 401 non è gestita in  richieste/in_attesa)
-- [ ] cambiare schema liste openapi
+- [ ] cambiare schema liste openapi --> non lo so in realta
 - [ ] controlla tutte le responses (soprattutto quelle che rispondono con html)
-- [ ] togliere amministratore db 
-- [ ] Togliere presa in carico ecc da client tecnico ("prendi in carico" da fixare).
+- [x] togliere amministratore db 
+- [x] Togliere presa in carico ecc da client tecnico ("prendi in carico" da fixare).
 - [ ] inserire tutti gli esempi necessari nel file yaml
-- [?] Nel dettaglio richiesta client lato ordinante mostrare anche gli altri campi tipo motivazione, stato proposta 
+- [?] Nel dettaglio richiesta client lato ordinante mostrare anche gli altri campi tipo motivazione, stato proposta --> necessario?
 - [x] Contrassegnare tutto come "protected path" con @Logged
 - [x] semplice client tecnico
 - [x] dettagli richiesta --> da metterci anche le caratteristiche
