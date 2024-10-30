@@ -1,5 +1,5 @@
 # TO DO LIST
-- [ ] aggiungere caratteristiche dove servono e cambiare in caso il file openapi
+- [x] aggiungere caratteristiche dove servono e cambiare in caso il file openapi
 - [x] inserire l'errore 401 in tutte le responses del file openapi
 - [ ] gestire correttamente nel codice le varie eccezioni aggiunte (tipo 401 non è gestita in  richieste/in_attesa)
 - [ ] cambiare schema liste openapi
@@ -17,6 +17,7 @@
 - [x] Gestire sessione scaduta --> deve rimandare al login
 
 - [ ] per Gea --> rileggiti tutto file yaml e capisci bene cosa mettere sui campi required lol
+- [ ] non so se mi piace uno schema per uid
 
 - Non mi funziona richieste/in_corso su postman, su client sì.. mah
 - devo finire di controllare se sono presenti tutte le eccezioni e se gestite correttamente nel codice.

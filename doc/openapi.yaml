@@ -63,9 +63,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/RichiestaOrdineBase'
+                $ref: '#/components/schemas/RichiestaOrdineBaseList'
               example: 
                esempioRichieste:
                   summary: Esempio di risposta con lista di richieste
@@ -118,9 +116,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/RichiestaOrdineBase'
+                $ref: '#/components/schemas/RichiestaOrdineBaseList'
         '401':
           $ref: '#/components/responses/UnauthorizedError'        
         '500':
@@ -146,9 +142,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/RichiestaOrdineBase'
+                $ref: '#/components/schemas/RichiestaOrdineBaseList'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '404':
@@ -174,7 +168,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RichiestaOrdineBase'
+                $ref: '#/components/schemas/RichiestaOrdine'
               example:
                 id: 21
                 note: "Vorrei un mobile da studio"
@@ -248,7 +242,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RichiestaOrdine'
+                $ref: '#/components/schemas/RichiestaOrdineConProposte'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '404':
@@ -670,8 +664,68 @@ components:
     RichiestaOrdine:
       type: object
       properties:
-        richiesta:
-          $ref: '#/components/schemas/RichiestaOrdineBase'
+        uid:
+          $ref: '#/components/schemas/uid'
+        note:
+          type: string
+          example: "vorrei uno smartphone non troppo costoso ma con una buona fotocamera"
+        stato:
+          enum:
+            - IN_ATTESA
+            - PRESA_IN_CARICO
+            - ORDINATA
+            - RISOLTA
+        data:
+          type: string
+          format: date-time
+        codiceRichiesta:
+          type: string
+          example: "sHeGD7kFrN"
+        tecnico:
+          $ref: '#/components/schemas/Utente'
+        utente:
+          $ref: '#/components/schemas/Utente'
+        categoria:
+          $ref: '#/components/schemas/Categoria'
+        caratteristiche:             
+          type: object
+          description: Una mappa di caratteristiche scelte dall'ordinante, associate alla Richiesta specifica.
+          example: 
+            - nome: "Sistema operativo"
+            - valore: "Android"
+          additionalProperties:
+            type: string 
+      required:
+          - stato
+          - data
+          - utente
+      additionalProperties: false
+    RichiestaOrdineConProposte:
+      type: object
+      properties:
+        uid:
+          $ref: '#/components/schemas/uid'
+        note:
+          type: string
+          example: "vorrei uno smartphone non troppo costoso ma con una buona fotocamera"
+        stato:
+          enum:
+            - IN_ATTESA
+            - PRESA_IN_CARICO
+            - ORDINATA
+            - RISOLTA
+        data:
+          type: string
+          format: date-time
+        codiceRichiesta:
+          type: string
+          example: "sHeGD7kFrN"
+        tecnico:
+          $ref: '#/components/schemas/Utente'
+        utente:
+          $ref: '#/components/schemas/Utente'
+        categoria:
+          $ref: '#/components/schemas/Categoria'
         proposte:
           type: array
           description: Lista di proposte associate alla Richiesta in questione
@@ -690,13 +744,13 @@ components:
           - data
           - utente
       additionalProperties: false
-    RichiestaOrdineList:
+    RichiestaOrdineBaseList:
       type: object
       properties:
         richieste:
             type: array
             items:
-              $ref: '#/components/schemas/RichiestaOrdine'
+              $ref: '#/components/schemas/RichiestaOrdineBase'
       additionalProperties: false
 
     ProposteAcquistoList:
