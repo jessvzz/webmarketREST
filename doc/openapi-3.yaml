@@ -67,17 +67,31 @@ paths:
                 items:
                   $ref: '#/components/schemas/RichiestaOrdineBase'
               example: 
-               id: 5,
-               note: "Acquisto sedia ergonomica"
-               stato: "IN_ATTESA"
-               codiceRichiesta: "52kSv6aSOQ"
-               data: "2024-09-02"
-               utente:
-                username: "geaviozzi"
-                email: "geaviozzi@icloud.com"
-               categoria:
-                id: 10
-                nome: "Sedie"
+               esempioRichieste:
+                  summary: Esempio di risposta con lista di richieste
+                  value:
+                  - id: 5,
+                    note: "Acquisto sedia ergonomica"
+                    stato: "IN_ATTESA"
+                    codiceRichiesta: "52kSv6aSOQ"
+                    data: "2024-09-02"
+                    utente:
+                     username: "geaviozzi"
+                     email: "geaviozzi@icloud.com"
+                    categoria:
+                     id: 10
+                     nome: "Sedie"
+                  - id: 7
+                    note: "Ergonomica contro il mal di schiena"
+                    stato: "IN_ATTESA"
+                    codiceRichiesta: "VCMzkbb1Ab"
+                    data: "2024-09-03"
+                    utente:
+                     username: "userOrd"
+                     email: "example@univaq.it"
+                    categoria: 
+                        id: 10
+                        nome: "Sedie"
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '500':
@@ -520,6 +534,7 @@ components:
     uid:
       type: integer
       pattern: "[0-9]+"
+      example: "123"
     Utente:
       type: object
       properties:
@@ -527,11 +542,14 @@ components:
           $ref: '#/components/schemas/uid'
         username:
           type: string
+          example: "mario"
         email:
           type: string
           format: e-mail
+          example: "mario.rossi@univaq.it"
         password:
           type: string
+          example: "passwordmario00"
         tipologiaUtente:
           enum:
             - ORDINANTE
@@ -550,18 +568,25 @@ components:
           $ref: '#/components/schemas/uid'
         produttore:
           type: string
+          example: "Lenovo"
         prodotto:
           type: string
+          example: "Lenovo IdeaPad Slim 3 "
         codiceProdotto:
           type: string
+          example: "LEN-UHD-27"
         codice:
           type: string
+          example: "8IvYqRV3ZX"
         prezzo:
           type: number
+          example: 299.99
         url:
           type: string
+          example: "https://www.amazon.it/Lenovo-Slim-Full-Chromebook-Laptop"
         note:
           type: string
+          example: "Schermo UHD 4K"
         stato:
           enum:
             - ACCETTATO
@@ -571,8 +596,10 @@ components:
         data:
           type: string
           format: date-time
+          example: "2024-08-18"
         motivazione:
           type: string
+          example: "preferirei un prodotto più performante"
         richiestaOrdine:
           $ref: '#/components/schemas/RichiestaOrdine'
       required:
@@ -594,6 +621,7 @@ components:
           $ref: '#/components/schemas/uid'
         note:
           type: string
+          example: "vorrei uno smartphone non troppo costoso ma con una buona fotocamera"
         stato:
           enum:
             - IN_ATTESA
@@ -605,6 +633,7 @@ components:
           format: date-time
         codiceRichiesta:
           type: string
+          example: "sHeGD7kFrN"
         tecnico:
           $ref: '#/components/schemas/Utente'
         utente:
@@ -624,6 +653,9 @@ components:
         caratteristiche:             
           type: object
           description: Una mappa di caratteristiche scelte dall'ordinante, associate alla Richiesta specifica.
+          example: 
+            - nome: "Sistema operativo"
+            - valore: "Android"
           additionalProperties:
             type: string 
       required:
@@ -656,10 +688,18 @@ components:
           $ref: '#/components/schemas/uid'
         nome:
           type: string
+          example: "Monitor"
         caratteristiche:
           type: array
           items:
             $ref: '#/components/schemas/Caratteristiche'
+          example: 
+            - id: 8
+              nome: "Dimensione schermo"
+              categoria_id: 6
+            - id: 9
+              nome: "Risoluzione"
+              categoria_id: 6
       required:
           - uid
           - nome    
@@ -671,6 +711,7 @@ components:
           $ref: '#/components/schemas/uid'
         nome: 
           type: string
+          example: "Risoluzione"
         categoria:
           $ref: '#/components/schemas/Categoria'
       required:
