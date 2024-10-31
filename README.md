@@ -18,7 +18,8 @@
 
 - [ ] per Gea --> rileggiti tutto file yaml e capisci bene cosa mettere sui campi required lol
 - [ ] non so se mi piace uno schema per uid
-- [ ] inserimento e modifica DA PARTE DEL TECNICO INCARICATO penso di voler fare una roba
+- [x] inserimento e modifica DA PARTE DEL TECNICO INCARICATO penso di voler fare una roba
+- [ ] fai stessa roba per approvazione e rifiuto proposta
 - [x] modifica presaInCarico
 
 - Non mi funziona richieste/in_corso su postman, su client sì.. mah
