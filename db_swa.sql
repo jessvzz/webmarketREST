@@ -287,16 +287,16 @@ INSERT INTO caratteristica (nome, categoria_id) VALUES
     ('Formato', 13);
 
 INSERT INTO richiesta_ordine (note, stato, data, codice_richiesta, utente, tecnico, categoria_id) VALUES
-    ('Acquisto nuovo notebook', 'RISOLTA', '2024-09-01', generate_codice(), 3, 2, 3),
-    ('Acquisto scrivania', 'PRESA_IN_CARICO', '2024-08-25', generate_codice(), 3, 2, 9),
-    ('Monitor esterno per ufficio', 'RISOLTA', '2024-08-15', generate_codice(), 4, 5, 6),
-    ('Stampante multifunzione', 'ORDINATA', '2024-07-30', generate_codice(), 4, 2, 7),
-    ('Acquisto sedia ergonomica', 'IN_ATTESA', '2024-09-02', generate_codice(), 3, NULL, 10), 
-    ('Lo vorrei leggero', 'ORDINATA', '2024-09-02', generate_codice(), 6, 7, 3),
-    ('Ergonomica contro il mal di schiena', 'IN_ATTESA', '2024-09-03', generate_codice(), 6, NULL, 10),
-    (NULL, 'PRESA_IN_CARICO', '2024-09-04', generate_codice(), 6, 7, 12),
-    ('Schemo curvo', 'RISOLTA', '2024-09-05', generate_codice(), 6, 7, 6),
-    ('magic mouse', 'PRESA_IN_CARICO', '2024-09-06', generate_codice(), 3, 7, 5),
+    ('Acquisto nuovo notebook', 'RISOLTA', '2024-09-01', generate_codice(), 2, 1, 3),
+    ('Acquisto scrivania', 'PRESA_IN_CARICO', '2024-08-25', generate_codice(), 2, 1, 9),
+    ('Monitor esterno per ufficio', 'RISOLTA', '2024-08-15', generate_codice(), 3, 4, 6),
+    ('Stampante multifunzione', 'ORDINATA', '2024-07-30', generate_codice(), 3, 1, 7),
+    ('Acquisto sedia ergonomica', 'IN_ATTESA', '2024-09-02', generate_codice(), 2, NULL, 10), 
+    ('Lo vorrei leggero', 'ORDINATA', '2024-09-02', generate_codice(), 5, 6, 3),
+    ('Ergonomica contro il mal di schiena', 'IN_ATTESA', '2024-09-03', generate_codice(), 5, NULL, 10),
+    (NULL, 'PRESA_IN_CARICO', '2024-09-04', generate_codice(), 5, 6, 12),
+    ('Schemo curvo', 'RISOLTA', '2024-09-05', generate_codice(), 5, 6, 6),
+    ('magic mouse', 'PRESA_IN_CARICO', '2024-09-06', generate_codice(), 2, 6, 5),
     ('Deve essere abbastanza grande per il mio fisso, il mio pranzo e la mia borsa da lavoro', 'IN_ATTESA', '2024-09-07', generate_codice(), 6, NULL, 9);
 
 INSERT INTO caratteristica_richiesta (richiesta_id, caratteristica_id, valore) VALUES

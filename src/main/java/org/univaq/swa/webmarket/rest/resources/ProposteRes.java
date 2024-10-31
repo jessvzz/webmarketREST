@@ -121,17 +121,23 @@ public class ProposteRes {
         @Context ContainerRequestContext req) throws RESTWebApplicationException, SQLException, ClassNotFoundException, NamingException {
         
 
-            try{ 
-             int rowsInserted = business.inserisciProposta(proposta);
+            try{
+             int techId = UserUtils.getLoggedId(sec);
+             
+             int newProp = business.inserisciProposta(proposta, techId);
 
-             if (rowsInserted > 0) {
-                System.out.println("DEBUG: Inserimento riuscito");
+             if (newProp > 0) {
 
-                URI uri = uriinfo.getAbsolutePathBuilder().path(String.valueOf(rowsInserted)).build();
+                URI uri = uriinfo.getAbsolutePathBuilder().path(String.valueOf(proposta)).build();
                 //  return Response.status(Response.Status.CREATED).entity("Proposta inserita con successo").build();
                 return Response.created(uri).build();
-             } else {
-                System.out.println("DEBUG: Inserimento non riuscito");
+             } 
+             else if (newProp == -1) { 
+            return Response.status(Response.Status.UNAUTHORIZED)
+                           .entity("ID utente loggato non corrisponde al tecnico incaricato della richiesta")
+                           .build();
+        }
+             else {
                  return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore durante l'inserimento della proposta").build();
              }
 

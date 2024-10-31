@@ -195,12 +195,13 @@ public class ProposteServiceImpl implements ProposteService{
        }
 
     @Override
-    public int inserisciProposta(PropostaAcquisto proposta) {
+    public int inserisciProposta(PropostaAcquisto proposta, int techId) {
             InitialContext ctx;
             Connection conn = null;
             PreparedStatement ps = null;
             int rowsInserted = 0;
-            int propostaId = 0; 
+            int propostaId = 0;
+            PreparedStatement ps2 = null;
 
          try {
 
@@ -253,7 +254,23 @@ public class ProposteServiceImpl implements ProposteService{
             }
              ps.setDate(9, new java.sql.Date(System.currentTimeMillis()));
              
-             rowsInserted = ps.executeUpdate();
+             String query2 = "SELECT tecnico FROM richiesta_ordine WHERE ID = ?";
+             ps2 = conn.prepareStatement(query2);
+             ps2.setInt(1, proposta.getRichiestaOrdine().getId());
+             ps2.execute();
+             
+             ResultSet rs = ps2.executeQuery();
+            
+            if (rs.next()){
+                if(rs.getInt("tecnico") == techId) {
+                    rowsInserted = ps.executeUpdate();
+                }
+                else{
+                propostaId = -1;
+            }
+                        }
+             
+             
              
             if (rowsInserted == 1) {
                 // Recupera l'ID generato
