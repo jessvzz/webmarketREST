@@ -93,7 +93,9 @@ public class PropostaRes {
     public Response reject(@FormParam("motivazione") String motivazione, @Context SecurityContext sec) throws SQLException {
         int rowsUpdated = 0;
         try{
-            rowsUpdated = business.rifiutaProposta(proposta.getId(), motivazione);
+            int ordId = UserUtils.getLoggedId(sec);
+
+            rowsUpdated = business.rifiutaProposta(proposta.getId(), motivazione, ordId);
             if (rowsUpdated > 0) {
                 return Response.noContent().build();
             }else if (rowsUpdated == -1) { 

@@ -347,10 +347,11 @@ public class ProposteServiceImpl implements ProposteService{
     }
 
     @Override
-    public int rifiutaProposta(int id, String motivazione) {
+    public int rifiutaProposta(int id, String motivazione, int ordId) {
         InitialContext ctx;
         Connection conn = null;
         PreparedStatement ps = null;
+        PreparedStatement ps2 = null;
         int rowsUpdated = 0;
 
         try {
@@ -365,8 +366,22 @@ public class ProposteServiceImpl implements ProposteService{
             ps.setString(2, motivazione);
 
             ps.setInt(3, id);
-            
-            rowsUpdated = ps.executeUpdate();
+            String query2 = "SELECT r.utente AS utente FROM richiesta_ordine r JOIN proposta_acquisto p ON r.ID = p.richiesta_id WHERE p.ID = ?";
+                ps2 = conn.prepareStatement(query2);
+                ps2.setInt(1, id);
+                ps2.execute();
+
+                ResultSet rs2 = ps2.executeQuery();
+
+               if (rs2.next()){
+                   if(rs2.getInt("utente") == ordId) {
+                        rowsUpdated = ps.executeUpdate();
+
+                   }
+                   else{
+                   rowsUpdated = -1;
+               }
+               }
             
         } catch (SQLException | NamingException ex) {
             Logger.getLogger(PropostaRes.class.getName()).log(Level.SEVERE, null, ex);
