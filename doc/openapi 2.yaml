@@ -286,7 +286,7 @@ paths:
           $ref: '#/components/responses/GeneralError'
     post:
       operationId: addProposta
-      description: adds a new Proposta
+      description: aggiunge una nuova proposta (deve essere eseguita esclusivamente dal tecnico incaricato della richiesta)
       tags:
         - Proposte collection
       security:
@@ -357,7 +357,7 @@ paths:
           $ref: '#/components/responses/GeneralError'
      put:
       operationId: modificaProposta
-      description: modifica la proposta
+      description: modifica la proposta (deve essere eseguita esclusivamente dal tecnico incaricato della richiesta)
       tags:
         - Proposta
         - Proposta properties

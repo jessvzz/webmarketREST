@@ -108,16 +108,21 @@ public class PropostaRes {
          @Logged
          @Consumes(MediaType.APPLICATION_JSON)
          @Produces(MediaType.APPLICATION_JSON)
-         public Response modificaProposta(PropostaAcquisto prop) {
+         public Response modificaProposta(PropostaAcquisto prop,         
+                 @Context SecurityContext sec) {
              int rowsUpdated = 0;
 
              try {
-                 
-                 rowsUpdated = business.modificaProposta(prop, proposta.getId());
+                 int techId = UserUtils.getLoggedId(sec);
+                 rowsUpdated = business.modificaProposta(prop, proposta.getId(), techId);
 
                  if (rowsUpdated > 0) {
                      return Response.noContent().build();
-                 } else {
+                 } else if (rowsUpdated == -1) { 
+                    return Response.status(Response.Status.UNAUTHORIZED)
+                                   .entity("ID utente loggato non corrisponde al tecnico incaricato della richiesta")
+                                   .build();
+                }else {
                      return Response.status(Response.Status.NOT_FOUND).entity("Proposta non trovata").build();
                  }
 

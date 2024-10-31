@@ -257,7 +257,6 @@ public class ProposteServiceImpl implements ProposteService{
              String query2 = "SELECT tecnico FROM richiesta_ordine WHERE ID = ?";
              ps2 = conn.prepareStatement(query2);
              ps2.setInt(1, proposta.getRichiestaOrdine().getId());
-             ps2.execute();
              
              ResultSet rs = ps2.executeQuery();
             
@@ -362,10 +361,12 @@ public class ProposteServiceImpl implements ProposteService{
     }
 
     @Override
-    public int modificaProposta(PropostaAcquisto prop, int idProposta) {
+    public int modificaProposta(PropostaAcquisto prop, int idProposta, int techId) {
              InitialContext ctx;
              Connection conn = null;
              PreparedStatement ps = null;
+             PreparedStatement ps2 = null;
+
              int rowsUpdated = 0;
              ResultSet rs = null;
 
@@ -409,7 +410,23 @@ public class ProposteServiceImpl implements ProposteService{
                  ps.setString(6, note);
                  ps.setInt(7, idProposta);
                  
-                 rowsUpdated = ps.executeUpdate();
+                 String query2 = "SELECT r.tecnico AS tec FROM richiesta_ordine r JOIN proposta_acquisto p ON r.ID = p.richiesta_id WHERE p.ID = ?";
+                ps2 = conn.prepareStatement(query2);
+                ps2.setInt(1, idProposta);
+                ps2.execute();
+
+                ResultSet rs2 = ps2.executeQuery();
+
+               if (rs2.next()){
+                   if(rs2.getInt("tec") == techId) {
+                        rowsUpdated = ps.executeUpdate();                   
+                   }
+                   else{
+                   rowsUpdated = -1;
+               }
+                           }
+                 
+                 
                 }
 
                  
