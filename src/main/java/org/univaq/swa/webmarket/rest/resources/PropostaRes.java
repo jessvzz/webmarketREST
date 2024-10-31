@@ -65,10 +65,15 @@ public class PropostaRes {
     public Response approve(@Context SecurityContext sec) throws SQLException {
         int rowsUpdated = 0;
         try{
-            rowsUpdated = business.approvaProposta(proposta.getId());
+            int ordId = UserUtils.getLoggedId(sec);
+            rowsUpdated = business.approvaProposta(proposta.getId(), ordId);
             if (rowsUpdated > 0) {
                 return Response.noContent().build();
-            } else {
+            }else if (rowsUpdated == -1) { 
+                    return Response.status(Response.Status.UNAUTHORIZED)
+                                   .entity("ID utente loggato non corrisponde all'ordinante associato alla richiesta")
+                                   .build();
+                } else {
                 return Response.status(Response.Status.NOT_FOUND)
                                .entity("Proposta non trovata.")
                                .build();
@@ -91,7 +96,11 @@ public class PropostaRes {
             rowsUpdated = business.rifiutaProposta(proposta.getId(), motivazione);
             if (rowsUpdated > 0) {
                 return Response.noContent().build();
-            } else {
+            }else if (rowsUpdated == -1) { 
+                    return Response.status(Response.Status.UNAUTHORIZED)
+                                   .entity("ID utente loggato non corrisponde all'ordinante associato alla richiesta")
+                                   .build();
+                } else {
                 return Response.status(Response.Status.NOT_FOUND)
                                .entity("Proposta non trovata.")
                                .build();

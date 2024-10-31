@@ -17,7 +17,7 @@ public interface ProposteService {
     List<PropostaAcquisto> getAllInAttesa(int userId);
 
     int inserisciProposta(PropostaAcquisto proposta, int techId);
-    int approvaProposta(int id);
+    int approvaProposta(int id, int ordId);
     int rifiutaProposta(int id, String motivazione);
     int modificaProposta(PropostaAcquisto prop, int idProposta, int techId);
     

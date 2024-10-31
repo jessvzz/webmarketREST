@@ -291,10 +291,12 @@ public class ProposteServiceImpl implements ProposteService{
     }
 
     @Override
-    public int approvaProposta(int id) {
+    public int approvaProposta(int id, int ordId) {
         InitialContext ctx;
         Connection conn = null;
         PreparedStatement ps = null;
+        PreparedStatement ps2 = null;
+
         int rowsUpdated = 0;
 
         try {
@@ -308,7 +310,26 @@ public class ProposteServiceImpl implements ProposteService{
             ps.setString(1, StatoProposta.ACCETTATO.toString());
             ps.setInt(2, id);
             
-            rowsUpdated = ps.executeUpdate();
+            String query2 = "SELECT r.utente AS utente FROM richiesta_ordine r JOIN proposta_acquisto p ON r.ID = p.richiesta_id WHERE p.ID = ?";
+                ps2 = conn.prepareStatement(query2);
+                ps2.setInt(1, id);
+                ps2.execute();
+
+                ResultSet rs2 = ps2.executeQuery();
+
+               if (rs2.next()){
+                   System.out.println("sono dentro al primo if");
+                   if(rs2.getInt("utente") == ordId) {
+                        rowsUpdated = ps.executeUpdate();
+                        System.out.println("sono dentro al secondo if");
+
+                   }
+                   else{
+                    System.out.println("sono nell'else");
+
+                   rowsUpdated = -1;
+               }
+            }
             
         } catch (SQLException | NamingException ex) {
             Logger.getLogger(PropostaRes.class.getName()).log(Level.SEVERE, null, ex);
@@ -321,6 +342,7 @@ public class ProposteServiceImpl implements ProposteService{
                 Logger.getLogger(ProposteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
         } 
+        System.out.println("rows updated?? "+ rowsUpdated);
         return rowsUpdated;
     }
 
