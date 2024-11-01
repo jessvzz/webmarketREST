@@ -23,7 +23,6 @@ import org.univaq.swa.webmarket.rest.models.StatoProposta;
 import org.univaq.swa.webmarket.rest.resources.PropostaRes;
 import org.univaq.swa.webmarket.rest.resources.ProposteRes;
 import org.univaq.swa.webmarket.rest.resources.RichiesteRes;
-import org.univaq.swa.webmarket.rest.resources.UserUtils;
 
 /**
  *

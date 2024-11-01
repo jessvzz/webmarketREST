@@ -4,12 +4,8 @@
  */
 package org.univaq.swa.webmarket.rest.business;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObjectBuilder;
 import jakarta.ws.rs.core.Response;
-import java.net.URI;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,7 +20,6 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import org.univaq.swa.webmarket.rest.exceptions.RESTWebApplicationException;
-import org.univaq.swa.webmarket.rest.models.Caratteristica;
 import org.univaq.swa.webmarket.rest.models.Categoria;
 import org.univaq.swa.webmarket.rest.models.PropostaAcquisto;
 import org.univaq.swa.webmarket.rest.models.RichiestaOrdine;
@@ -34,7 +29,6 @@ import org.univaq.swa.webmarket.rest.models.TipologiaUtente;
 import org.univaq.swa.webmarket.rest.models.Utente;
 import org.univaq.swa.webmarket.rest.resources.RichiestaRes;
 import org.univaq.swa.webmarket.rest.resources.RichiesteRes;
-import org.univaq.swa.webmarket.rest.resources.UserUtils;
 
 /**
  *
@@ -42,69 +36,6 @@ import org.univaq.swa.webmarket.rest.resources.UserUtils;
  */
 public class RichiesteServiceImpl implements RichiesteService{
 
-    @Override
-    public List<RichiestaOrdine> getAllRichieste() {
-        List<RichiestaOrdine> richiesteInAttesa = new ArrayList<>();
-        InitialContext ctx;
-
-        try {
-            ctx = new InitialContext();
-            DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
-
-            try (Connection conn = ds.getConnection()) {
-                PreparedStatement ps = conn.prepareStatement("SELECT * FROM richiesta_ordine");
-                ResultSet rs = ps.executeQuery();
-
-                while (rs.next()) {
-                    RichiestaOrdine richiesta = new RichiestaOrdine();
-                    richiesta.setId(rs.getInt("id"));
-                    richiesta.setCodiceRichiesta(rs.getString("codice_richiesta"));
-                    richiesta.setData(rs.getDate("data"));
-                    richiesta.setNote(rs.getString("note"));
-                    richiesta.setStato(StatoRichiesta.valueOf(rs.getString("stato")));
-                    
-                    
-                    int utenteId = rs.getInt("utente");
-                    int tecnicoId = rs.getInt("tecnico");
-                    int categoriaId = rs.getInt("categoria_id");
-
-                    
-                    System.out.println("utente: "+utenteId+", tecnico: "+tecnicoId+", categoria: "+categoriaId);
-                    
-                    if (!rs.wasNull() && utenteId > 0) {
-                        Utente utente = recuperaUtente(conn, utenteId);
-                        if (utente != null) {
-                           richiesta.setUtente(utente);
-                        }
-                    }
-
-                    if (!rs.wasNull() && tecnicoId > 0) {
-                        Utente tecnico = recuperaUtente(conn, tecnicoId);
-                        if (tecnico != null) {
-                            richiesta.setTecnico(tecnico);
-                        }
-                    }
-
-                    if (!rs.wasNull() && categoriaId > 0) {
-                        Categoria categoria = recuperaCategoria(conn, categoriaId);
-                        if (categoria != null) {
-                            richiesta.setCategoria(categoria);
-                        }
-                    }
-                    
-
-                    richiesteInAttesa.add(richiesta);
-                }
-            }
-
-        } catch (NamingException | SQLException ex) {
-            Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, ex);
-        }    
-            return richiesteInAttesa;
-
-    }
-    
-    
      //recuperaro l'Utente
 private Utente recuperaUtente(Connection conn, int utenteId) throws SQLException {
     PreparedStatement ps = conn.prepareStatement("SELECT * FROM utente WHERE id = ?");
@@ -656,55 +587,6 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
 
     }
     
-    @Override
-    public int inserisciNuovaRichiesta(int userId, String note, Date data, String stato, int categoriaId, List<Integer> idcaratteristica, List<String> valore) throws SQLException, NamingException{
-        InitialContext ctx = new InitialContext();
-        DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
-        Connection conn = ds.getConnection();
-
-        try {
-
-            String query = "INSERT INTO richiesta_ordine (note, data, stato, utente, categoria_id) VALUES(?, ?, ?, ?,?)";
-            PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, note);
-            ps.setDate(2, new java.sql.Date(data.getTime()));
-            ps.setString(3, stato);
-            ps.setInt(4,userId);
-            ps.setInt(5, categoriaId);
-
-
-            int rowsInserted = ps.executeUpdate();
-            if (rowsInserted == 1) {
-            ResultSet keys = ps.getGeneratedKeys();
-            keys.next();
-            int richiestaId = keys.getInt(1);
-
-            // Inserimento delle caratteristiche associate
-            String queryCaratteristica = "INSERT INTO caratteristica_richiesta (richiesta_id, caratteristica_id, valore) VALUES(?, ?, ?)";
-            PreparedStatement psCaratteristica = conn.prepareStatement(queryCaratteristica);
-
-            for (int i = 0; i < idcaratteristica.size(); i++) {
-                psCaratteristica.setInt(1, richiestaId);
-                psCaratteristica.setInt(2, idcaratteristica.get(i));
-                psCaratteristica.setString(3, valore.get(i));
-                psCaratteristica.addBatch();  // Usa batch per ottimizzare le prestazioni
-            }
-
-            psCaratteristica.executeBatch();  // Esegue il batch
-            psCaratteristica.close();
-
-            
-            return richiestaId;
-        } else {
-            return 0;
-        }
-    } finally {
-        if (conn != null) {
-            conn.close();
-        }
-    }
-    }
-
     
     @Override
     public int inserisciNuovaRichiesta(RichiestaOrdine richiesta) throws SQLException, NamingException{

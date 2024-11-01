@@ -14,11 +14,14 @@
 - [x] rivedere POST della proposta
 - [x] ENDPOINT richieste/gestite_da da rivedere
 - [x] Gestire sessione scaduta --> deve rimandare al login
-
 - [ ] per Gea --> rileggiti tutto file yaml e capisci bene cosa mettere sui campi required lol
 - [ ] non so se mi piace uno schema per uid
 - [x] inserimento e modifica DA PARTE DEL TECNICO INCARICATO penso di voler fare una roba
 - [x] fai stessa roba per rifiuto proposta
 - [x] modifica presaInCarico
 
+
+-Capire perchè dentro ProposteService:   int modificaProposta(PropostaAcquisto prop, int idProposta, int techId); gli passo sia la proposta che l'id della proposta..?
+
+-Tolgo getAllRequest, tutti i metodi commentati tipo getAll(), la post che avevo fatto bruttissima addItem(), getRichiesteNonAssegnate(), eliminato file openapi (ho lasciato la versione attuale openapi2.yaml), eliminato file json schemas che tanto non ci servono, faccio il controlo sulla motivazione proposte che se null non lo restituisco in output,getAllRichieste().
 

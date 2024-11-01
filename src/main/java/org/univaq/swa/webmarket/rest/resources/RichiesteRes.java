@@ -1,12 +1,9 @@
 package org.univaq.swa.webmarket.rest.resources;
 
-import javax.sql.DataSource;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DefaultValue;
-import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
@@ -18,7 +15,6 @@ import jakarta.ws.rs.core.UriInfo;
 import jakarta.ws.rs.container.ContainerRequestContext;
 
 import java.net.URI;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,18 +46,6 @@ public class RichiesteRes {
         this.business = RichiesteServiceFactory.getRichiesteService();
 
     }
-     
-     /*
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll() {
-        List<RichiestaOrdine> richiesteInAttesa = new ArrayList<>();
-
-        richiesteInAttesa = business.getAllRichieste();
-
-        return Response.ok(richiesteInAttesa).build();
-    }
-     */
 
     @Path("/{idrichiesta: [0-9]+}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -76,39 +60,6 @@ public class RichiesteRes {
 
         return new RichiestaRes(richiesta);
 }
-
-
-
-
-/*
-@POST
-@Logged
-@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-public Response addItem(
-        @Context ContainerRequestContext req,
-        @Context UriInfo uriinfo,
-        @Context SecurityContext sec,
-        @FormParam("note") String note,
-        @FormParam("data") Date data,
-        @FormParam("stato") String stato,
-        @FormParam("categoriaId") int categoriaId,
-        @FormParam("idcaratteristica[]") List<Integer> idcaratteristica,  // Gestisce più ID
-        @FormParam("valore[]") List<String> valore  // Gestisce più valori
-) throws SQLException, NamingException {
-
-        int utenteId = UserUtils.getLoggedId(sec);
-        int richiestaId = business.inserisciNuovaRichiesta(utenteId, note, data, stato, categoriaId, idcaratteristica, valore);
-        
-        if (richiestaId > 0){
-            URI uri = uriinfo.getAbsolutePathBuilder().path(String.valueOf(richiestaId)).build();
-            return Response.created(uri).build();
-        } else {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Inserimento della richiesta fallito").build();
-        }
-    
-}
-
-*/
     
     @POST
     @Logged
@@ -174,28 +125,6 @@ public Response addItem(
             return Response.ok(richieste).build();
     }
     
-    /*
-    @GET
-    @Path("/non_assegnate")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getRichiesteNonAssegnate() {
-        List<RichiestaOrdine> richiesteNonAssegnate = new ArrayList<>();
-
-            try  {
-               
-                   richiesteNonAssegnate = business.getRichiesteNonAssegnate();
-        } catch (Exception ex) {
-            Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, ex);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore interno del server").build();
-        }
-
-           return Response.ok(richiesteNonAssegnate).build();
-    }
-    */
-
-
-
-
          @GET
          @Logged
          @Path("/gestite_da_tecnico")

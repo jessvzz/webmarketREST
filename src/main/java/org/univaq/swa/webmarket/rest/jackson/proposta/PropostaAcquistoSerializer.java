@@ -26,7 +26,8 @@ public class PropostaAcquistoSerializer extends JsonSerializer<PropostaAcquisto>
         jgen.writeNumberField("id", item.getId());
         jgen.writeStringField("codice", item.getCodice());
         jgen.writeStringField("codiceProdotto", item.getCodiceProdotto());
-        jgen.writeStringField("motivazione", item.getMotivazione());
+        if(item.getMotivazione() != null) jgen.writeStringField("motivazione", item.getMotivazione());
+        // jgen.writeStringField("motivazione", item.getMotivazione());
         jgen.writeStringField("note", item.getNote());
         jgen.writeStringField("prodotto", item.getProdotto());
         jgen.writeStringField("produttore", item.getProduttore());
