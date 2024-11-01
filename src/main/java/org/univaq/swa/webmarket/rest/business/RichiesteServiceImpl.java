@@ -717,8 +717,8 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
             String query = "INSERT INTO richiesta_ordine (note, data, stato, utente, categoria_id) VALUES(?, ?, ?, ?,?)";
             PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, richiesta.getNote());
-            ps.setDate(2, new java.sql.Date(richiesta.getData().getTime()));
-            ps.setString(3, richiesta.getStato().toString());
+            ps.setDate(2, new java.sql.Date(System.currentTimeMillis()));
+            ps.setString(3, "IN_ATTESA");
             ps.setInt(4,richiesta.getUtente().getId());
             ps.setInt(5, richiesta.getCategoria().getId());
 
