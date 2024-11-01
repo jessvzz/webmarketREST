@@ -36,6 +36,76 @@ import org.univaq.swa.webmarket.rest.resources.RichiesteRes;
  */
 public class RichiesteServiceImpl implements RichiesteService{
 
+    @Override
+    public List<RichiestaOrdine> getAllRichieste(int userId) {
+        List<RichiestaOrdine> richieste = new ArrayList<>();
+        InitialContext ctx;
+
+        try {
+            ctx = new InitialContext();
+            DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
+
+            try (Connection conn = ds.getConnection()) {
+
+                String sql = "SELECT r.* " +
+                "FROM richiesta_ordine r " +
+                "WHERE (r.utente = ? OR r.tecnico = ?)";
+   
+            PreparedStatement ps = conn.prepareStatement(sql);
+                ps.setInt(1, userId);
+                ps.setInt(2, userId);
+              
+                ResultSet rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    RichiestaOrdine richiesta = new RichiestaOrdine();
+                    richiesta.setId(rs.getInt("id"));
+                    richiesta.setCodiceRichiesta(rs.getString("codice_richiesta"));
+                    richiesta.setData(rs.getDate("data"));
+                    richiesta.setNote(rs.getString("note"));
+                    richiesta.setStato(StatoRichiesta.valueOf(rs.getString("stato")));
+                    
+                    
+                    int utenteId = rs.getInt("utente");
+                    int tecnicoId = rs.getInt("tecnico");
+                    int categoriaId = rs.getInt("categoria_id");
+
+                    
+                    System.out.println("utente: "+utenteId+", tecnico: "+tecnicoId+", categoria: "+categoriaId);
+                    
+                    if (!rs.wasNull() && utenteId > 0) {
+                        Utente utente = recuperaUtente(conn, utenteId);
+                        if (utente != null) {
+                           richiesta.setUtente(utente);
+                        }
+                    }
+
+                    if (!rs.wasNull() && tecnicoId > 0) {
+                        Utente tecnico = recuperaUtente(conn, tecnicoId);
+                        if (tecnico != null) {
+                            richiesta.setTecnico(tecnico);
+                        }
+                    }
+
+                    if (!rs.wasNull() && categoriaId > 0) {
+                        Categoria categoria = recuperaCategoria(conn, categoriaId);
+                        if (categoria != null) {
+                            richiesta.setCategoria(categoria);
+                        }
+                    }
+                    
+
+                    richieste.add(richiesta);
+                }
+            }
+
+        } catch (NamingException | SQLException ex) {
+            Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, ex);
+        }    
+            return richieste;
+    }
+    
+
      //recuperaro l'Utente
 private Utente recuperaUtente(Connection conn, int utenteId) throws SQLException {
     PreparedStatement ps = conn.prepareStatement("SELECT * FROM utente WHERE id = ?");

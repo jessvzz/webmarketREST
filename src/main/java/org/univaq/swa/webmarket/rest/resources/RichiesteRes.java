@@ -47,6 +47,24 @@ public class RichiesteRes {
 
     }
 
+     
+    @GET
+    @Logged
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAll(
+    @Context UriInfo uriinfo,
+    @QueryParam("userId") int userId,
+    @Context SecurityContext sec,
+    @Context ContainerRequestContext req)
+    throws RESTWebApplicationException, SQLException, ClassNotFoundException, NamingException  {
+        List<RichiestaOrdine> richieste = new ArrayList<>();
+
+        richieste = business.getAllRichieste(userId);
+
+        return Response.ok(richieste).build();
+    }
+     
+
     @Path("/{idrichiesta: [0-9]+}")
     @Produces(MediaType.APPLICATION_JSON)
  
@@ -61,6 +79,8 @@ public class RichiesteRes {
         return new RichiestaRes(richiesta);
 }
     
+
+
     @POST
     @Logged
     @Consumes(MediaType.APPLICATION_JSON)

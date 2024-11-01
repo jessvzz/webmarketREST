@@ -97,13 +97,11 @@ public class ProposteRes {
     public Response getAllProposals(
             @Context UriInfo uriinfo,
             @QueryParam("userId") int userId,
-            //iniettiamo elementi di contesto utili per la verifica d'accesso
             @Context SecurityContext sec,
             @Context ContainerRequestContext req)
             throws RESTWebApplicationException, SQLException, ClassNotFoundException, NamingException {
         List<PropostaAcquisto> proposte = new ArrayList<>();
-        
-        InitialContext ctx;
+
         proposte = business.getAll(userId);
         
         return Response.ok(proposte).build();
