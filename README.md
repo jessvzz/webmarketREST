@@ -7,7 +7,6 @@
 - [x] togliere amministratore db 
 - [x] Togliere presa in carico ecc da client tecnico ("prendi in carico" da fixare).
 - [ ] inserire tutti gli esempi necessari nel file yaml
-- [?] Nel dettaglio richiesta client lato ordinante mostrare anche gli altri campi tipo motivazione, stato proposta --> necessario?
 - [x] Contrassegnare tutto come "protected path" con @Logged
 - [x] semplice client tecnico
 - [x] dettagli richiesta --> da metterci anche le caratteristiche
@@ -22,10 +21,4 @@
 - [x] fai stessa roba per rifiuto proposta
 - [x] modifica presaInCarico
 
-- Non mi funziona richieste/in_corso su postman, su client sì.. mah
-- devo finire di controllare se sono presenti tutte le eccezioni e se gestite correttamente nel codice.
-- nel file yaml mi da warning su RichiestaOrdineList, perchè mai utilizzato.
-- in richieste/in_attesa manca il controllo del id utente per il 401. va lasciato così com'è il metodo ed eventualemnte togliere tra le responses il 401 o è giusto gestirlo in tutti gli endpoint il caso non fosse autorizzato l'utente?
-- Ma l'errore 404 not found va messo a ogni endpoint e gestito? per capire se modificare lo yaml togliendo '404' per gli endpoint che non lo riguardano.
-- Gestire il codice 500 in getRichiesta, non so dove è meglio posizionare il catch.
 
