@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import org.univaq.swa.webmarket.rest.business.ProposteService;
 import org.univaq.swa.webmarket.rest.business.ProposteServiceFactory;
@@ -113,7 +112,7 @@ public class ProposteRes {
 
              if (newProp > 0) {
 
-                URI uri = uriinfo.getAbsolutePathBuilder().path(String.valueOf(proposta)).build();
+                URI uri = uriinfo.getAbsolutePathBuilder().path(String.valueOf(newProp)).build();
                 //  return Response.status(Response.Status.CREATED).entity("Proposta inserita con successo").build();
                 return Response.created(uri).build();
              } 
@@ -123,7 +122,7 @@ public class ProposteRes {
                            .build();
         }
              else {
-                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore durante l'inserimento della proposta").build();
+                 return Response.status(Response.Status.BAD_REQUEST).entity("Errore durante l'inserimento della proposta").build();
              }
 
          } catch (Exception e) {
