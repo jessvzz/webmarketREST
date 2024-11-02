@@ -21,6 +21,7 @@
 - [x] modifica presaInCarico
 
                                         DOMANDINE
+- [ ] occhio all'inserimento proposta!! deve restituire l'uri con l'url corretto! e non http://localhost:8080/WebMarketREST/rest/proposte/org.univaq.swa.webmarket.rest.models.PropostaAcquisto@64d9a3b3. Giusto?
 
 - [ ] metodo inserisciProposta, si può togliere il paramentro techId? perchè glielo passiamo da lì anzichè recuperarlo dal security context?
 
@@ -28,5 +29,6 @@
 
 - [ ] Vengono veramente sfruttate le classi dentro la cartella "exception"?
 
+- [ ] isUserInRole è stato implementato poi effettivamente?
 -Ho tolto getAllRequest, tutti i metodi commentati tipo getAll(), la post che avevo fatto bruttissima addItem(), getRichiesteNonAssegnate(), eliminato file openapi (ho lasciato la versione attuale openapi2.yaml), eliminato file json schemas che tanto non ci servono, faccio il controlo sulla motivazione proposte che se null non lo restituisco in output,getAllRichieste().
 
