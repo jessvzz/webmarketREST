@@ -27,6 +27,34 @@ tags:
     description: Operations on single proposal properties
 paths:
   /rest/richieste:
+    get:
+      operationId: getRichieste
+      description: >-
+        trova le richieste in corso di un determinato utente o tecnico
+      tags:
+        - Richieste collection
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: ID dell'utente per il quale si vogliono recuperare le richieste in corso.
+      responses:
+        '200':
+          description: richieste in corso di un determinato utente o tecnico
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RichiestaOrdineBase'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'        
+        '500':
+          $ref: '#/components/responses/GeneralError'
     post:
       operationId: addRequest
       description: adds a new request

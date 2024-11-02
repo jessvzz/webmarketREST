@@ -178,7 +178,6 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
             DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/webdb2");
 
             try (Connection conn = ds.getConnection()) {
-                // Query per recuperare i dettagli della richiesta
                 PreparedStatement ps = conn.prepareStatement("SELECT * FROM richiesta_ordine WHERE id = ?");
                 ps.setInt(1, id);
                 ResultSet rs = ps.executeQuery();
@@ -573,13 +572,6 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
                     proposta.setNote(rs.getString("proposta_note"));
                     proposta.setMotivazione(rs.getString("motivazione"));
 
-                    // int richiestaOrdineId = rs.getInt("proposta_richiesta_id");
-                    
-                    // if (richiestaOrdineId > 0) {
-                    //     RichiesteService richiesteService = RichiesteServiceFactory.getRichiesteService();
-                    //     RichiestaOrdine richiestaOrdine = richiesteService.getRichiesta(richiestaOrdineId);
-                    //     proposta.setRichiestaOrdine(richiestaOrdine);
-                    // }
                     
                     proposte.add(proposta); 
                 }
@@ -635,7 +627,6 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
              conn = ds.getConnection();
              
              
-             // Query SQL per eliminare la richiesta
              String query = "DELETE FROM richiesta_ordine WHERE id = ?";
              ps = conn.prepareStatement(query);
              ps.setInt(1, id);
@@ -649,7 +640,6 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
          } catch (NamingException e) {
              Logger.getLogger(RichiesteRes.class.getName()).log(Level.SEVERE, null, e);
          } finally {
-             // Chiusura delle risorse
              if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
              if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
          }
@@ -684,7 +674,6 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
             String queryCaratteristicaId = "SELECT ID FROM caratteristica WHERE nome = ?";
             PreparedStatement psCaratteristicaId = conn.prepareStatement(queryCaratteristicaId);
 
-            // Inserimento delle caratteristiche associate
             String queryCaratteristica = "INSERT INTO caratteristica_richiesta (richiesta_id, caratteristica_id, valore) VALUES(?, ?, ?)";
             PreparedStatement psCaratteristica = conn.prepareStatement(queryCaratteristica);
             

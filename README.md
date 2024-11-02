@@ -24,11 +24,15 @@
 - [ ] occhio all'inserimento proposta!! deve restituire l'uri con l'url corretto! e non http://localhost:8080/WebMarketREST/rest/proposte/org.univaq.swa.webmarket.rest.models.PropostaAcquisto@64d9a3b3. Giusto?
 
 - [ ] metodo inserisciProposta, si può togliere il paramentro techId? perchè glielo passiamo da lì anzichè recuperarlo dal security context?
+??? lo recuperiamo nel security context e vediamo se il tecnico che inserisce la proposta è quello incaricato della richiesta
 
 - [ ] Capire perchè dentro ProposteService --> int modificaProposta(PropostaAcquisto prop, int idProposta, int techId); perchè gli passo sia la proposta che l'id della proposta? cioè, perchè non uso direttamente l'ID contenuto nell'oggetto prop? e perchè gli passo anche l'id del tecnico anzichè estrarmelo dal security context assicurandomi che la modifica avvenga solo se l'utente loggato sia il tecnico incaricato della richiesta?
+Perchè l'id della proposta è quella contenuta nel path
 
 - [ ] Vengono veramente sfruttate le classi dentro la cartella "exception"?
 
-- [ ] isUserInRole è stato implementato poi effettivamente?
+- [ ] isUserInRole è stato implementato poi effettivamente? 
+non serve 
+
 -Ho tolto getAllRequest, tutti i metodi commentati tipo getAll(), la post che avevo fatto bruttissima addItem(), getRichiesteNonAssegnate(), eliminato file openapi (ho lasciato la versione attuale openapi2.yaml), eliminato file json schemas che tanto non ci servono, faccio il controlo sulla motivazione proposte che se null non lo restituisco in output,getAllRichieste().
 

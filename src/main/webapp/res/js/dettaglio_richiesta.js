@@ -39,7 +39,8 @@
                     if (data.proposte && data.proposte.length > 0) {
                     var proposteHtml = '';
                     data.proposte.forEach(function (proposta) {
-                        var readableStatoProposta = statoPropostaMapping[proposta.stato] || proposta.statoProposta; // Fallback to raw value
+                        var readableStatoProposta = statoPropostaMapping[proposta.stato] || proposta.statoProposta;
+                        
 
                         var propostaHtml = `
                             <div class="proposta-card">
