@@ -36,12 +36,7 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - in: query
-          name: userId
-          required: true
-          schema:
-            type: integer
-          description: ID dell'utente per il quale si vogliono recuperare le richieste in corso.
+        - $ref: '#/components/parameters/userId'
       responses:
         '200':
           description: richieste in corso di un determinato utente o tecnico
@@ -134,12 +129,7 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - in: query
-          name: ordId
-          required: true
-          schema:
-            type: integer
-          description: ID dell'utente per il quale si vogliono recuperare le richieste in corso.
+        - $ref: '#/components/parameters/ordId'
       responses:
         '200':
           description: richieste in corso di un determinato utente
@@ -162,12 +152,8 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - in: query
-          name: idtecnico
-          required: true
-          schema:
-            type: integer
-          description: ID del tecnico per il quale si vogliono recuperare le richieste gestite.
+        - $ref: '#/components/parameters/idtecnico'
+
       responses:
         '200':
           description: Richieste info
@@ -243,12 +229,8 @@ paths:
   /rest/richieste/{uid}/presa_in_carico:
     parameters:
       - $ref: '#/components/parameters/RichiestaUID'
-      - in: query
-        name: idtecnico
-        required: true
-        schema:
-          type: integer
-        description: ID del tecnico o dell'ordinante
+      - $ref: '#/components/parameters/idtecnico'
+
     patch:
       operationId: prendiInCarico
       description: Consente ad un tecnico di prendere in carico una richiesta in attesa
@@ -299,12 +281,8 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - in: query
-          name: userId
-          required: true
-          schema:
-            type: integer
-          description: ID del tecnico o dell'ordinante
+        - $ref: '#/components/parameters/userId'
+
       responses:
         '200':
           description: List di Proposte
@@ -341,18 +319,14 @@ paths:
      get:
       operationId: getProposteInAttesa
       description: >-
-        trova tutte le proposte in attesa di essere accettate/rifiutate da un ordinante
+        trova tutte le proposte in attesa (associate ad un tecnico o ad un ordinante) di essere accettate/rifiutate da un ordinante
       tags:
         - Proposte collection
       security:
         - bearerAuth: []
       parameters:
-        - in: query
-          name: userId
-          required: true
-          schema:
-            type: integer
-          description: ID dell'ordinante o tecnico di cui si vogliono estrarre le proposte in attesa
+        - $ref: '#/components/parameters/userId'
+
       responses:
         '200':
           description: Lista di proposte in attesa
@@ -574,6 +548,27 @@ components:
         type: string
         example: Not found
   parameters:
+    userId:
+      name: userId
+      in: query
+      description: "id di un tecnico o di un ordinante"
+      required: true
+      schema:
+       $ref: '#/components/schemas/uid'
+    ordId:
+      name: ordId     
+      in: query
+      required: true
+      description: ID dell'ordinante.
+      schema:
+        $ref: '#/components/schemas/uid'
+    idtecnico:      
+      name: idtecnico     
+      in: query
+      required: true
+      description: ID del tecnico.
+      schema:
+        $ref: '#/components/schemas/uid'
     TecnicoUID:
       name: uid
       in: path
