@@ -13,7 +13,6 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 import jakarta.ws.rs.core.UriInfo;
 import jakarta.ws.rs.container.ContainerRequestContext;
-
 import java.net.URI;
 import java.sql.SQLException;
 import java.util.ArrayList;

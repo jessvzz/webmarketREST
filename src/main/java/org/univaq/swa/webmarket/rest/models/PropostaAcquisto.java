@@ -19,7 +19,7 @@ public class PropostaAcquisto{
     private String motivazione;
     private RichiestaOrdine richiestaOrdine;
 
-    // Costruttori
+    
     public PropostaAcquisto() {
         super();
         produttore = "";

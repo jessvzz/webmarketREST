@@ -23,9 +23,7 @@ public class RichiestaOrdine{
     private List<PropostaAcquisto> proposte;
     private Map<String, String> caratteristiche = new HashMap<>();
 
-
-
-    // Costruttori
+    
     public RichiestaOrdine() {
         super();
         note = "";

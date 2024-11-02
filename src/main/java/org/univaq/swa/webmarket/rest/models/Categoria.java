@@ -1,11 +1,6 @@
 package org.univaq.swa.webmarket.rest.models;
 
-
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-
 
 
 public class Categoria{
@@ -15,7 +10,6 @@ public class Categoria{
     
     private List<Caratteristica> caratteristiche;
 
-    // Costruttori
     public Categoria() {
         super();
         nome = "";

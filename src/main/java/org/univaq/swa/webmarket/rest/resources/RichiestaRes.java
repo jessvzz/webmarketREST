@@ -101,7 +101,6 @@ public class RichiestaRes {
 
 
     
-    //cancellazione
      @DELETE
      @Logged
      @Produces(MediaType.APPLICATION_JSON)

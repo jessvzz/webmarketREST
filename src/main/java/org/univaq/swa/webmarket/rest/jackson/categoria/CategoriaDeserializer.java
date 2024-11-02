@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
-import org.univaq.swa.webmarket.rest.models.Caratteristica;
 import org.univaq.swa.webmarket.rest.models.Categoria;
 
 /**
@@ -32,18 +31,7 @@ public class CategoriaDeserializer extends JsonDeserializer<Categoria> {
         if (node.has("nome")) {
             c.setNome(node.get("nome").asText());
         }
-        
-        // da capire quale usare
-        // if (node.has("padre")) {
-        //     c.setPadre(node.get("padre").asInt());
-        // }
-        /*
-        if (node.has("padre")) {
-            JsonNode ne = node.get("padre");
-            Categoria padre = jp.getCodec().treeToValue(ne, Categoria.class);
-            c.setPadre(padre);
-            }   
-        */
+
         return c;     
         
     }

@@ -16,7 +16,7 @@ public class RichiestaOrdineSerializer extends JsonSerializer<RichiestaOrdine> {
     @Override
     public void serialize(RichiestaOrdine item, JsonGenerator jgen, SerializerProvider provider) 
             throws IOException, JsonProcessingException {
-        jgen.writeStartObject(); // {
+        jgen.writeStartObject(); 
         jgen.writeNumberField("id", item.getId());
         jgen.writeStringField("note", item.getNote());
         jgen.writeObjectField("stato", item.getStato());
@@ -27,15 +27,15 @@ public class RichiestaOrdineSerializer extends JsonSerializer<RichiestaOrdine> {
         String formattedDate = sdf.format(sqlDate);
         jgen.writeStringField("data", formattedDate); 
         
-        // if (item.getUtente() != null) {
+       
         jgen.writeObjectField("utente", item.getUtente());
-        // }
+    
         if (item.getTecnico() != null) {
             jgen.writeObjectField("tecnico", item.getTecnico()); 
         }
-        // if (item.getUtente() != null) {
+    
         jgen.writeObjectField("categoria", item.getCategoria());
-        // }
+       
         
         List<PropostaAcquisto> proposte = item.getProposte();
         if (proposte != null && !proposte.isEmpty()) {
@@ -54,6 +54,6 @@ public class RichiestaOrdineSerializer extends JsonSerializer<RichiestaOrdine> {
             }
             jgen.writeEndObject();
         }
-        jgen.writeEndObject(); // }
+        jgen.writeEndObject(); 
     }
 }

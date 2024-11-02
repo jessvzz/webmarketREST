@@ -9,7 +9,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
-import org.univaq.swa.webmarket.rest.models.Caratteristica;
 import org.univaq.swa.webmarket.rest.models.Categoria;
 
 /**
@@ -19,9 +18,9 @@ import org.univaq.swa.webmarket.rest.models.Categoria;
 public class CategoriaSerializer extends JsonSerializer<Categoria> {
     @Override
     public void serialize(Categoria item, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
-        jgen.writeStartObject(); // {
+        jgen.writeStartObject(); 
         jgen.writeNumberField("id", item.getId());
         jgen.writeStringField("nome", item.getNome());
-        jgen.writeEndObject(); // }
+        jgen.writeEndObject(); 
     }
 }

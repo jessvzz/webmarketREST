@@ -10,7 +10,6 @@ public class Caratteristica{
     private String nome;
     private Categoria categoria;
     
-    // Costruttori
     public Caratteristica() {
         super();
         nome = "";
@@ -48,8 +47,4 @@ public class Caratteristica{
         this.categoria= categoria;
     }
 
-// @Override
-// public String toString() {
-//     return "Caratteristica{id=" + id + ", nome='" + nome + "', categoria=" + categoria.getId() + "}";
-// }
 }

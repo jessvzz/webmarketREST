@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import org.univaq.swa.webmarket.rest.models.Caratteristica;
 import org.univaq.swa.webmarket.rest.models.CaratteristicaRichiesta;
-import org.univaq.swa.webmarket.rest.models.Categoria;
 import org.univaq.swa.webmarket.rest.models.RichiestaOrdine;
 
 /**

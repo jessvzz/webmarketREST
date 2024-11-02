@@ -18,10 +18,10 @@ import org.univaq.swa.webmarket.rest.models.Caratteristica;
 public class CaratteristicaSerializer extends JsonSerializer<Caratteristica> {
     @Override
     public void serialize(Caratteristica item, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
-        jgen.writeStartObject(); // {
+        jgen.writeStartObject(); 
         jgen.writeNumberField("id", item.getId());
         jgen.writeStringField("nome", item.getNome());
         jgen.writeObjectField("categoria", item.getCategoria());
-        jgen.writeEndObject(); // }
+        jgen.writeEndObject(); 
     }
 }

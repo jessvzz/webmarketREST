@@ -12,13 +12,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.univaq.swa.webmarket.rest.models.Caratteristica;
-import org.univaq.swa.webmarket.rest.models.CaratteristicaRichiesta;
 import org.univaq.swa.webmarket.rest.models.Ordine;
 import org.univaq.swa.webmarket.rest.models.PropostaAcquisto;
-import org.univaq.swa.webmarket.rest.models.RichiestaOrdine;
 import org.univaq.swa.webmarket.rest.models.StatoOrdine;
 
 /**

@@ -317,15 +317,11 @@ public class ProposteServiceImpl implements ProposteService{
                 ResultSet rs2 = ps2.executeQuery();
 
                if (rs2.next()){
-                   System.out.println("sono dentro al primo if");
                    if(rs2.getInt("utente") == ordId) {
                         rowsUpdated = ps.executeUpdate();
-                        System.out.println("sono dentro al secondo if");
 
                    }
                    else{
-                    System.out.println("sono nell'else");
-
                    rowsUpdated = -1;
                }
             }
@@ -340,8 +336,7 @@ public class ProposteServiceImpl implements ProposteService{
             } catch (SQLException ex) {
                 Logger.getLogger(ProposteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } 
-        System.out.println("rows updated?? "+ rowsUpdated);
+        }
         return rowsUpdated;
     }
 
@@ -462,12 +457,11 @@ public class ProposteServiceImpl implements ProposteService{
                }
                            }
                  
-                 
                 }
-
                  
              } catch (SQLException | NamingException e) {
-                 Logger.getLogger(ProposteRes.class.getName()).log(Level.SEVERE, null, e);             } finally {
+                 Logger.getLogger(ProposteRes.class.getName()).log(Level.SEVERE, null, e);     
+             } finally {
                  // Chiusura delle risorse
                  if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
                  if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }

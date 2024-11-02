@@ -41,7 +41,6 @@ public class AuthLoggedFilter implements ContainerRequestFilter {
                                 return () -> username; 
                             }
                             
-                            //DA IMPLEMENTARE
                             @Override
                             public boolean isUserInRole(String role) {
                                 return true; 

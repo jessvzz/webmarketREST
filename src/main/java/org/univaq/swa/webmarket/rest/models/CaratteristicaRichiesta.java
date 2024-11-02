@@ -1,16 +1,13 @@
 package org.univaq.swa.webmarket.rest.models;
 
 
-
-
-
 public class CaratteristicaRichiesta{
     private int id;
     private RichiestaOrdine richiestaOrdine;
     private Caratteristica caratteristica;
     private String valore;
 
-    // Costruttori
+ 
     public CaratteristicaRichiesta() {
         super();
         richiestaOrdine=null;

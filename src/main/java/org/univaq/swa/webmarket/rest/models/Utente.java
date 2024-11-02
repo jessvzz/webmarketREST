@@ -11,7 +11,7 @@ public class Utente{
     @JsonIgnore
     private TipologiaUtente tipologiaUtente;
 
-    // Costruttori
+
     public Utente() {
         super();
         username = "";

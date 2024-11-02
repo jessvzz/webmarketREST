@@ -20,8 +20,13 @@
 - [x] fai stessa roba per rifiuto proposta
 - [x] modifica presaInCarico
 
+                                        DOMANDINE
 
--Capire perchè dentro ProposteService:   int modificaProposta(PropostaAcquisto prop, int idProposta, int techId); gli passo sia la proposta che l'id della proposta..?
+- [ ] metodo inserisciProposta, si può togliere il paramentro techId? perchè glielo passiamo da lì anzichè recuperarlo dal security context?
 
--Tolgo getAllRequest, tutti i metodi commentati tipo getAll(), la post che avevo fatto bruttissima addItem(), getRichiesteNonAssegnate(), eliminato file openapi (ho lasciato la versione attuale openapi2.yaml), eliminato file json schemas che tanto non ci servono, faccio il controlo sulla motivazione proposte che se null non lo restituisco in output,getAllRichieste().
+- [ ] Capire perchè dentro ProposteService --> int modificaProposta(PropostaAcquisto prop, int idProposta, int techId); perchè gli passo sia la proposta che l'id della proposta? cioè, perchè non uso direttamente l'ID contenuto nell'oggetto prop? e perchè gli passo anche l'id del tecnico anzichè estrarmelo dal security context assicurandomi che la modifica avvenga solo se l'utente loggato sia il tecnico incaricato della richiesta?
+
+- [ ] Vengono veramente sfruttate le classi dentro la cartella "exception"?
+
+-Ho tolto getAllRequest, tutti i metodi commentati tipo getAll(), la post che avevo fatto bruttissima addItem(), getRichiesteNonAssegnate(), eliminato file openapi (ho lasciato la versione attuale openapi2.yaml), eliminato file json schemas che tanto non ci servono, faccio il controlo sulla motivazione proposte che se null non lo restituisco in output,getAllRichieste().
 

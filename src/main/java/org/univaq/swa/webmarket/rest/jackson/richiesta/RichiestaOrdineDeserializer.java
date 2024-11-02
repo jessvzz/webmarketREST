@@ -22,7 +22,7 @@ import org.univaq.swa.webmarket.rest.models.PropostaAcquisto;
 public class RichiestaOrdineDeserializer extends JsonDeserializer<RichiestaOrdine> {
     @Override
     public RichiestaOrdine deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-        RichiestaOrdine richiesta = new RichiestaOrdine(); // Creo un oggetto vuoto di RichiestaOrdine
+        RichiestaOrdine richiesta = new RichiestaOrdine();
         
         JsonNode node = jp.getCodec().readTree(jp);
         if (node.has("id")) {

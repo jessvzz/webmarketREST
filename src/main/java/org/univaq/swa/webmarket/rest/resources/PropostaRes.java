@@ -10,27 +10,18 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
 import org.univaq.swa.webmarket.rest.business.ProposteService;
 import org.univaq.swa.webmarket.rest.business.ProposteServiceFactory;
 import org.univaq.swa.webmarket.rest.exceptions.RESTWebApplicationException;
 import org.univaq.swa.webmarket.rest.models.PropostaAcquisto;
-import org.univaq.swa.webmarket.rest.models.StatoProposta;
-import org.univaq.swa.webmarket.rest.models.StatoRichiesta;
 import org.univaq.swa.webmarket.rest.security.Logged;
 
 /**

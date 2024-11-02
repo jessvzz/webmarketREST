@@ -9,11 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
-import java.sql.Date;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import org.univaq.swa.webmarket.rest.models.CaratteristicaRichiesta;
 import org.univaq.swa.webmarket.rest.models.Ordine;
 
 /**
@@ -23,7 +19,7 @@ import org.univaq.swa.webmarket.rest.models.Ordine;
 public class OrdineSerializer extends JsonSerializer<Ordine> {
     @Override
     public void serialize(Ordine item, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
-        jgen.writeStartObject(); // {
+        jgen.writeStartObject(); 
         jgen.writeNumberField("id", item.getId());
         jgen.writeObjectField("propostaAcquisto", item.getProposta());
         jgen.writeObjectField("statoOrdine", item.getStato());
@@ -31,7 +27,7 @@ public class OrdineSerializer extends JsonSerializer<Ordine> {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); //in caso questo poi lo cambiamo
         String formattedDate = sdf.format(sqlDate);
         jgen.writeStringField("data", formattedDate);
-        jgen.writeEndObject(); // }
+        jgen.writeEndObject(); 
     }
     
 }

@@ -5,20 +5,12 @@
 package org.univaq.swa.webmarket.rest.security;
 
 
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 
 public class SecurityHelpers {
 

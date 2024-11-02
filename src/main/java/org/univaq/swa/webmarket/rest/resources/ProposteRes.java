@@ -4,12 +4,9 @@
  */
 package org.univaq.swa.webmarket.rest.resources;
 
-import javax.sql.DataSource;
-
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -22,9 +19,6 @@ import jakarta.ws.rs.core.SecurityContext;
 import jakarta.ws.rs.core.UriInfo;
 
 import java.net.URI;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,13 +28,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import org.univaq.swa.webmarket.rest.business.ProposteService;
 import org.univaq.swa.webmarket.rest.business.ProposteServiceFactory;
-import org.univaq.swa.webmarket.rest.business.ProposteServiceImpl;
-import org.univaq.swa.webmarket.rest.business.RichiesteService;
-import org.univaq.swa.webmarket.rest.business.RichiesteServiceFactory;
 import org.univaq.swa.webmarket.rest.exceptions.RESTWebApplicationException;
 import org.univaq.swa.webmarket.rest.models.PropostaAcquisto;
-import org.univaq.swa.webmarket.rest.models.StatoProposta;
-import org.univaq.swa.webmarket.rest.models.StatoRichiesta;
 import org.univaq.swa.webmarket.rest.security.Logged;
 
 /**
@@ -85,7 +74,6 @@ public class ProposteRes {
             throws RESTWebApplicationException, SQLException, ClassNotFoundException, NamingException {
         List<PropostaAcquisto> proposte = new ArrayList<>();
         
-        InitialContext ctx;
         proposte = business.getAllInAttesa(userId);
         
         return Response.ok(proposte).build();
@@ -107,8 +95,7 @@ public class ProposteRes {
         return Response.ok(proposte).build();
     }
 
-
-    //inserimento
+    
      @POST
      @Logged
      @Consumes(MediaType.APPLICATION_JSON)

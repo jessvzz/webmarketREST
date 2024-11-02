@@ -13,9 +13,9 @@ public class UtenteDeserializer extends JsonDeserializer<Utente> {
 
     @Override
     public Utente deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-        Utente utente = new Utente(); // Creiamo un oggetto vuoto di Utente
+        Utente utente = new Utente(); 
         
-        JsonNode node = jp.getCodec().readTree(jp); // Leggiamo l'albero JSON
+        JsonNode node = jp.getCodec().readTree(jp); 
         
         if (node.has("id")) {
             utente.setId(node.get("id").asInt());
@@ -29,7 +29,6 @@ public class UtenteDeserializer extends JsonDeserializer<Utente> {
             utente.setEmail(node.get("email").asText());
         }
         
-        // (attenzione all'utilizzo)
         if (node.has("password")) {
             utente.setPassword(node.get("password").asText());
         }

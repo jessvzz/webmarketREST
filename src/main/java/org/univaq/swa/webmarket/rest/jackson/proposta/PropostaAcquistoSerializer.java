@@ -22,12 +22,11 @@ public class PropostaAcquistoSerializer extends JsonSerializer<PropostaAcquisto>
     public void serialize(PropostaAcquisto item, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
         try{
         jgen.writeStartObject();
-         // {
+         
         jgen.writeNumberField("id", item.getId());
         jgen.writeStringField("codice", item.getCodice());
         jgen.writeStringField("codiceProdotto", item.getCodiceProdotto());
         if(item.getMotivazione() != null) jgen.writeStringField("motivazione", item.getMotivazione());
-        // jgen.writeStringField("motivazione", item.getMotivazione());
         jgen.writeStringField("note", item.getNote());
         jgen.writeStringField("prodotto", item.getProdotto());
         jgen.writeStringField("produttore", item.getProduttore());
@@ -46,7 +45,7 @@ public class PropostaAcquistoSerializer extends JsonSerializer<PropostaAcquisto>
         }
 
 
-        jgen.writeEndObject(); // }
+        jgen.writeEndObject();
         } catch(Exception e) {
         System.err.println("Errore durante la serializzazione: " + e.getMessage());
         e.printStackTrace();
