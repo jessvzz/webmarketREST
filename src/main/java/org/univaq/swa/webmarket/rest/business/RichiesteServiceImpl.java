@@ -71,7 +71,6 @@ public class RichiesteServiceImpl implements RichiesteService{
                     int categoriaId = rs.getInt("categoria_id");
 
                     
-                    System.out.println("utente: "+utenteId+", tecnico: "+tecnicoId+", categoria: "+categoriaId);
                     
                     if (!rs.wasNull() && utenteId > 0) {
                         Utente utente = recuperaUtente(conn, utenteId);
@@ -119,7 +118,6 @@ private Utente recuperaUtente(Connection conn, int utenteId) throws SQLException
         utente.setEmail(rs.getString("email"));
         utente.setPassword(rs.getString("password"));
         
-        System.out.println("sono qui utente");
         return utente;
     }
     return null; 
@@ -138,7 +136,6 @@ private Categoria recuperaCategoria(Connection conn, int categoriaId) throws SQL
         categoria.setNome(rs.getString("nome"));
 
         
-        System.out.println("sono qui categoria");
 
         return categoria;
     }
@@ -158,7 +155,6 @@ private Utente recuperaTecnico(Connection conn, int tecnicoId) throws SQLExcepti
         tecnico.setEmail(rs.getString("email"));
         tecnico.setPassword(rs.getString("password"));
         tecnico.setTipologiaUtente(TipologiaUtente.valueOf(rs.getString("tipologia_utente")));
-        System.out.println("sono qui tecnico");
         return tecnico;
     }
     return null;    

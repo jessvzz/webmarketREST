@@ -1,5 +1,6 @@
 $(document).ready(function() {
     var token = localStorage.getItem("authToken"); 
+    var utenteId = localStorage.getItem("utenteId");
     var richiestaId = localStorage.getItem("richiestaId");
 
 
@@ -64,7 +65,28 @@ $(document).ready(function() {
             }
         });
     }
-
+        $('#prendiInCarico').click(function () {
+            $.ajax({
+                url: `/WebMarketREST/rest/richieste/${richiestaId}/presa_in_carico?idtecnico=${utenteId}`,
+                method: "PATCH",
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                success: function (response) {
+                    window.location.href = "richiesteInAttesa.html";
+                },
+                error: function (xhr) {
+                    if (xhr.status === 401) {
+                        alert("Si prega di effettuare l'accesso.");
+                    window.location.href = "index.html";
+                    return;   }
+        
+                    else {  alert("Errore durante l'operazione");
+                    }
+                }
+            });
+        
+    });
     caricaDettagliRichiesta();
 
 });
