@@ -170,7 +170,7 @@ paths:
         '500':
           $ref: '#/components/responses/GeneralError'
     
-  /rest/richieste/{uid}:
+  /rest/richieste/{id}:
     parameters:
       - $ref: '#/components/parameters/RichiestaUID'
     get:
@@ -226,7 +226,7 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/GeneralError'
-  /rest/richieste/{uid}/presa_in_carico:
+  /rest/richieste/{id}/presa_in_carico:
     parameters:
       - $ref: '#/components/parameters/RichiestaUID'
       - $ref: '#/components/parameters/idtecnico'
@@ -249,7 +249,7 @@ paths:
         '500':
           $ref: '#/components/responses/GeneralError'
           
-  /rest/richieste/{uid}/dettagli:
+  /rest/richieste/{id}/dettagli:
     parameters:
       - $ref: '#/components/parameters/RichiestaUID'
     get:
@@ -339,7 +339,7 @@ paths:
         '500':
           $ref: '#/components/responses/GeneralError'
   
-  /rest/proposte/{uid}: 
+  /rest/proposte/{id}: 
      parameters: 
       - $ref: '#/components/parameters/PropostaUID'
      get:
@@ -386,7 +386,7 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/GeneralError'
-  /rest/proposte/{uid}/approva:
+  /rest/proposte/{id}/approva:
     parameters: 
       - $ref: '#/components/parameters/PropostaUID'
     patch:
@@ -406,7 +406,7 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/GeneralError'
-  /rest/proposte/{uid}/rifiuta:
+  /rest/proposte/{id}/rifiuta:
     parameters: 
       - $ref: '#/components/parameters/PropostaUID'
     patch:
@@ -554,49 +554,49 @@ components:
       description: "id di un tecnico o di un ordinante"
       required: true
       schema:
-       $ref: '#/components/schemas/uid'
+       $ref: '#/components/schemas/id'
     ordId:
       name: ordId     
       in: query
       required: true
       description: ID dell'ordinante.
       schema:
-        $ref: '#/components/schemas/uid'
+        $ref: '#/components/schemas/id'
     idtecnico:      
       name: idtecnico     
       in: query
       required: true
       description: ID del tecnico.
       schema:
-        $ref: '#/components/schemas/uid'
+        $ref: '#/components/schemas/id'
     TecnicoUID:
-      name: uid
+      name: id
       in: path
       required: true
       schema:
-       $ref: '#/components/schemas/uid'
+       $ref: '#/components/schemas/id'
     RichiestaUID:
-      name: uid
+      name: id
       in: path
       required: true
       schema:
-       $ref: '#/components/schemas/uid'
+       $ref: '#/components/schemas/id'
     PropostaUID:
-      name: uid
+      name: id
       in: path
       required: true
       schema:
-       $ref: '#/components/schemas/uid'
+       $ref: '#/components/schemas/id'
   schemas:
-    uid:
+    id:
       type: integer
       pattern: "[0-9]+"
       example: "123"
     Utente:
       type: object
       properties:
-        uid: 
-          $ref: '#/components/schemas/uid'
+        id: 
+          $ref: '#/components/schemas/id'
         username:
           type: string
           example: "mario"
@@ -612,7 +612,7 @@ components:
             - ORDINANTE
             - TECNICO
       required:
-        - uid
+        - id
         - username
         - email
         - password
@@ -621,8 +621,8 @@ components:
     PropostaAcquisto:
       type: object
       properties:
-        uid:
-          $ref: '#/components/schemas/uid'
+        id:
+          $ref: '#/components/schemas/id'
         produttore:
           type: string
           example: "Lenovo"
@@ -673,8 +673,8 @@ components:
     RichiestaOrdineBase:
       type: object
       properties:
-        uid:
-          $ref: '#/components/schemas/uid'
+        id:
+          $ref: '#/components/schemas/id'
         note:
           type: string
           example: "vorrei uno smartphone non troppo costoso ma con una buona fotocamera"
@@ -696,11 +696,40 @@ components:
           $ref: '#/components/schemas/Utente'
         categoria:
           $ref: '#/components/schemas/Categoria'
+      required:
+        - id
+        - note
+        - stato
+        - codiceRichiesta
+        - data
+        - utente
+        - categoria
     RichiestaOrdine:
       type: object
       properties:
-        richiesta:
-          $ref: '#/components/schemas/RichiestaOrdineBase'
+        id:
+          $ref: '#/components/schemas/id'
+        note:
+          type: string
+          example: "vorrei uno smartphone non troppo costoso ma con una buona fotocamera"
+        stato:
+          enum:
+            - IN_ATTESA
+            - PRESA_IN_CARICO
+            - ORDINATA
+            - RISOLTA
+        data:
+          type: string
+          format: date-time
+        codiceRichiesta:
+          type: string
+          example: "sHeGD7kFrN"
+        tecnico:
+          $ref: '#/components/schemas/Utente'
+        utente:
+          $ref: '#/components/schemas/Utente'
+        categoria:
+          $ref: '#/components/schemas/Categoria'
         proposte:
           type: array
           description: Lista di proposte associate alla Richiesta in questione
@@ -740,8 +769,8 @@ components:
     Categoria:
       type: object
       properties:
-        uid:
-          $ref: '#/components/schemas/uid'
+        id:
+          $ref: '#/components/schemas/id'
         nome:
           type: string
           example: "Monitor"
@@ -757,20 +786,20 @@ components:
               nome: "Risoluzione"
               categoria_id: 6
       required:
-          - uid
+          - id
           - nome    
       additionalProperties: false
     Caratteristiche:
       type: object
       properties:
-        uid:
-          $ref: '#/components/schemas/uid'
+        id:
+          $ref: '#/components/schemas/id'
         nome: 
           type: string
           example: "Risoluzione"
         categoria:
           $ref: '#/components/schemas/Categoria'
       required:
-          - uid
+          - id
           - nome
           - categoria
