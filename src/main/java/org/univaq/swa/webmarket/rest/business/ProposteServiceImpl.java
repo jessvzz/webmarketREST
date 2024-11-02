@@ -420,8 +420,7 @@ public class ProposteServiceImpl implements ProposteService{
                     String url = rs.getString("URL");
                     String note = rs.getString("note");
 
-                    if(prop.getUrl().equals("")) System.out.println("null");
-                    else System.out.println("no null");
+                    
 
                     produttore = (!prop.getProduttore().equals("")) ? prop.getProduttore() : produttore;
                     prodotto = (!prop.getProdotto().equals("")) ? prop.getProdotto() : prodotto;

@@ -27,7 +27,6 @@ public class UserUtils {
         }
 
         String username = sec.getUserPrincipal().getName();
-        System.out.println("Logged username: " + username);
 
         int id = findIdByUsername(username);
        

@@ -15,7 +15,6 @@ import org.univaq.swa.webmarket.rest.exceptions.JacksonExceptionMapper;
 import org.univaq.swa.webmarket.rest.jackson.ObjectMapperContextResolver;
 import org.univaq.swa.webmarket.rest.resources.ProposteRes;
 import org.univaq.swa.webmarket.rest.resources.RichiesteRes;
-import org.univaq.swa.webmarket.rest.resources.SimpleRes;
 import org.univaq.swa.webmarket.rest.security.AuthLoggedFilter;
 import org.univaq.swa.webmarket.rest.security.AuthenticationRes;
 import org.univaq.swa.webmarket.rest.security.CORSFilter;
@@ -31,7 +30,6 @@ public class RESTApp extends Application {
         HashSet<Class<?>> c = new HashSet<Class<?>>();
         //aggiungiamo tutte le *root resurces* (cioè quelle
         //con l'annotazione Path) che vogliamo pubblicare
-        c.add(SimpleRes.class);
         c.add(AuthenticationRes.class);
         c.add(RichiesteRes.class);
         c.add(ProposteRes.class);

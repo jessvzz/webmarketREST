@@ -153,7 +153,6 @@ public class RichiesteRes {
         
              try {
                  richiesteGestite = business.getRichiesteGestiteDa(idTecnico);
-                    // Controllo se la lista è vuota e restituzione del codice 404 se necessario
                 if (richiesteGestite.isEmpty()) {
                     return Response.status(Response.Status.NOT_FOUND)
                                 .entity("Nessuna richiesta trovata per il tecnico con ID: " + idTecnico)
