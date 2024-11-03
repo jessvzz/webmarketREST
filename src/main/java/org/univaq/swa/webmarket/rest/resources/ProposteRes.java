@@ -75,6 +75,9 @@ public class ProposteRes {
         
         proposte = business.getAllInAttesa(userId);
         
+        if (proposte.isEmpty()) return Response.status(Response.Status.NOT_FOUND).entity("Nessuna proposta in attesa associata all'utente selezionato").build();
+
+        
         return Response.ok(proposte).build();
     }
     
@@ -90,6 +93,8 @@ public class ProposteRes {
         List<PropostaAcquisto> proposte = new ArrayList<>();
 
         proposte = business.getAll(userId);
+        if(proposte.isEmpty()) return Response.status(Response.Status.NOT_FOUND).entity("Nessuna proposta associata all'utente")
+                           .build();
         
         return Response.ok(proposte).build();
     }
