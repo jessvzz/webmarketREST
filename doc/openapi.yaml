@@ -861,3 +861,75 @@ components:
           - id
           - nome
           - categoria
+          
+  #output e payload di esempio
+  examples:
+   id:
+      summary: esempio di id
+      value:
+        id: 12
+   Utente:
+      summary: esempio di utente
+      value:
+        id: 4
+        username: tecnicoS
+        email: tecnicoS@gmail.com
+   
+   RichiestaOrdineBase:
+      summary: esempio di una richiesta base
+      value:
+        id: 12
+        note: "Deve essere abbastanza grande per il mio fisso, il mio pranzo e la mia borsa da lavoro"
+        stato: "IN_ATTESA"
+        codiceRichiesta : "359K1yc00q"
+        data: "2024-09-07"
+        utente: 
+         id: 5
+         username: userOrd
+         email: example@univaq.it
+        tecnico:
+         id: 6
+         username: userTec
+         email: exampleTec@univaq.it
+        categoria:
+         id: 3
+         nome: "Periferiche"
+         
+   RichiestaOrdine:
+      summary: esempio di una richiesta 
+      value:
+        id: 1
+        note: "Deve essere abbastanza grande per il mio fisso, il mio pranzo e la mia borsa da lavoro"
+        stato: "IN_ATTESA"
+        codiceRichiesta: "359K1yc00q"
+        data: "2024-09-07"
+        utente:
+         id: 5
+         username: "userOrd"
+         email: "example@univaq.it"
+        tecnico:
+         id: 6
+         username: "userTec"
+         email: "exampleTec@univaq.it"
+        categoria:
+         id: 3
+         nome: "Periferiche"
+        proposte: 
+          - id: 1
+            codice: "4dnxE6fr7u"
+            codiceProdotto: ""
+            note: "Perfetto per ufficio"
+            prodotto: "Notebook XPS 15"
+            produttore: "Dell"
+            url: "https://dell.com/notebook-xps15"
+            prezzo: 1500.5
+            stato: "ORDINATO"
+            data: "2024-09-03"
+          
+        caratteristiche: 
+          - nome: "Sistema Op supportato"
+            valore: "16GB"
+            
+          - nome: "Scheda Grafica"
+            valore: "Intel i7"
+
