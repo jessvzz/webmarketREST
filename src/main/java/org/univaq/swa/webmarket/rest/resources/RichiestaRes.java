@@ -75,29 +75,6 @@ public class RichiestaRes {
     }
     
     
-    @GET
-    @Logged
-    @Path("/dettagli")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getDettagliRichiesta() throws SQLException {
-        try {
-            RichiestaOrdine richiestaDetails = business.getDettagliRichiesta(richiesta.getId());
-
-            if (richiestaDetails != null) {
-                return Response.ok(richiestaDetails).build();
-            } else {
-                return Response.status(Response.Status.NOT_FOUND)
-                               .entity("Dettagli della richiesta non trovati.")
-                               .build();
-            }
-
-        } catch (Exception ex) {
-            Logger.getLogger(RichiestaRes.class.getName()).log(Level.SEVERE, null, ex);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                           .entity("Errore interno del server.")
-                           .build();
-        }
-    }
 
 
     
