@@ -14,32 +14,33 @@ servers:
   - url: http://localhost:8080/WebMarketREST
 tags:
   - name: Richiesta
-    description: Operations on single request
+    description: Operazioni su una singola richiesta
   - name: Richieste collection
-    description: Operations on the requests collection
+    description: Operazioni sulla collection delle richieste
   - name: Richiesta properties
-    description: Operations on single request properties
+    description: Operazioni sulle proprietà di una singola richiesta
   - name: Proposta
-    description: Operations on single proposal
+    description: Operazioni su una singola proposta
   - name: Proposte collection
-    description: Operations on the proposals collection
+    description: Operazioni su una collezione di proposte
   - name: Proposte properties
-    description: Operations on single proposal properties
+    description: Operazioni sulle proprietà di una singola proposta
 paths:
   /rest/richieste:
     get:
       operationId: getRichieste
       description: >-
-        trova le richieste in corso di un determinato utente o tecnico
+        trova le richieste in corso di un determinato ordinante o tecnico
       tags:
         - Richieste collection
       security:
         - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/userId'
+          description: id dell'utente per il quale si vogliono estrarre le richieste
       responses:
         '200':
-          description: richieste in corso di un determinato utente o tecnico
+          description: richieste in corso di un determinato ordinante o tecnico
           content:
             application/json:
               schema:
@@ -52,7 +53,7 @@ paths:
           $ref: '#/components/responses/GeneralError'
     post:
       operationId: addRequest
-      description: adds a new request
+      description: inserisce una nuova richiesta
       tags:
         - Richieste collection
       security:
@@ -123,16 +124,17 @@ paths:
     get:
       operationId: getRichiesteInCorso
       description: >-
-        trova le richieste in corso di un determinato utente
+        trova le richieste in corso di un determinato ordinante
       tags:
         - Richieste collection
       security:
         - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/ordId'
+          description: id dell'ordinante sul quale si vuole eseguire il controllo
       responses:
         '200':
-          description: richieste in corso di un determinato utente
+          description: richieste in corso di un determinato ordinante
           content:
             application/json:
               schema:
@@ -153,7 +155,7 @@ paths:
         - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/idtecnico'
-
+          description: id del tecnico sul quale si vuole eseguire il controllo
       responses:
         '200':
           description: Richieste info
@@ -174,41 +176,64 @@ paths:
     parameters:
       - $ref: '#/components/parameters/RichiestaUID'
     get:
-      operationId: getRichiesta
-      summary: Ottieni i dettagli di una Richiesta specifica
-      description: Restituisce i dettagli di una singola `RichiestaOrdine` in base all'`idrichiesta` fornito.
+      operationId: getDettagliRichiesta
+      description: dettagli di una richiesta
       tags:
         - Richiesta
-        - Richiesta properties
-      security:
-        - bearerAuth: []
       responses:
         '200':
-          description: Richiesta info
+          description: Dettagli richiesta
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RichiestaOrdineBase'
+                $ref: '#/components/schemas/RichiestaOrdine'
               example:
-                id: 21
-                note: "Vorrei un mobile da studio"
-                stato: "PRESA_IN_CARICO"
-                codiceRichiesta: "56ghjkl90"
-                utente:
-                  username: "samanta"
-                  email: "samanta_dis@hotmail.com"
-                tecnico:
-                  username: "tecnicoS"
-                  email: "tecnicoS@hotmail.com"
-                categoria:
-                  id: 8
-                  nome: "Mobili"
+                    id: 21
+                    note: "Vorrei un mobile da studio"
+                    stato: "PRESA_IN_CARICO"
+                    codiceRichiesta: "56ghjkl90"
+                    utente:
+                      username: "samanta"
+                      email: "samanta_dis@hotmail.com"
+                    tecnico:
+                      username: "tecnicoS"
+                      email: "tecnicoS@hotmail.com"
+                    categoria:
+                      id: 8
+                      nome: "Mobili"
+                    proposte:
+                      - id: 1
+                        codice: "UivIZl0XXt"
+                        codiceProdotto: ""
+                        motivazione: "yuck"
+                        note: "per ufficio"
+                        prodotto: "Notebook XPS 15"
+                        produttore: "Dell"
+                        url: "https://dell.com/notebook-xps15"
+                        prezzo: 1500.5
+                        stato: "RIFIUTATO"
+                        data: "2024-09-03"
+                      - id: 11
+                        codice: "b9nJ4Dhf7S"
+                        codiceProdotto: ""
+                        note: "Perfetto per ufficio"
+                        prodotto: "Notebook XPS 15"
+                        produttore: "Dell"
+                        url: "https://dell.com/notebook-xps15"
+                        prezzo: 1500.5
+                        stato: "ACCETTATO"
+                        data: "2024-10-31"
+                    caratteristiche:
+                      Sistema operativo: "Android"
+                      Memoria RAM: "16GB"
+                      Scheda Grafica: "Intel i7"
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/GeneralError'
+    
     delete:
       operationId: deleteRichiesta
       description: elimana la richiesta
@@ -230,6 +255,7 @@ paths:
     parameters:
       - $ref: '#/components/parameters/RichiestaUID'
       - $ref: '#/components/parameters/idtecnico'
+        description: id del tecnico a cui si vuole assegnare una richiesta
 
     patch:
       operationId: prendiInCarico
@@ -241,7 +267,7 @@ paths:
         - bearerAuth: []
       responses:
         '204':
-          description: Update Richiesta
+          description: Richiesta Modificata
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '404':
@@ -249,28 +275,7 @@ paths:
         '500':
           $ref: '#/components/responses/GeneralError'
           
-  /rest/richieste/{id}/dettagli:
-    parameters:
-      - $ref: '#/components/parameters/RichiestaUID'
-    get:
-      operationId: getDettagliRichiesta
-      description: dettagli di una richiesta
-      tags:
-        - Richiesta
-        - Richiesta properties
-      responses:
-        '200':
-          description: Dettagli richiesta
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RichiestaOrdine'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/GeneralError'
+
     
   /rest/proposte:
     get:
@@ -282,10 +287,10 @@ paths:
         - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/userId'
-
+          description: id dell'utente per cui si vogliono estrarre le proposte
       responses:
         '200':
-          description: List di Proposte
+          description: Lista di Proposte
           content: 
             application/json:
               schema: 
@@ -326,6 +331,7 @@ paths:
         - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/userId'
+          description: id dell'utente di qui si vogliono estrarre le proposte in attesa
 
       responses:
         '200':
@@ -334,6 +340,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProposteAcquistoList'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '500':
@@ -376,10 +384,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PropostaAcquisto'
+              $ref: '#/components/schemas/PropostaAcquistoBase'
       responses:
         '204':
-          description: Update Proposta
+          description: Proposta modificata con successo
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '404':
@@ -391,7 +399,7 @@ paths:
       - $ref: '#/components/parameters/PropostaUID'
     patch:
       operationId: approvaProposta
-      description: approva la proposta
+      description: approva la proposta  (deve essere eseguita esclusivamente dall'ordinante associato della richiesta)
       tags:
         - Proposta
         - Proposta properties
@@ -399,7 +407,7 @@ paths:
         - bearerAuth: []
       responses:
         '204':
-          description: Approva Proposta
+          description: Proposta approvata
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '404':
@@ -425,6 +433,8 @@ paths:
               properties:
                 motivazione:
                   type: string
+              required:
+                - motivazione
       responses:
         '204':
           description: Rifiuta Proposta
@@ -438,9 +448,7 @@ paths:
   /rest/auth/login:
     post:
       operationId: doLogin
-      description: >-
-        performs the login by sending the username/password pair and receiving
-        an authorization token
+      description: login
       tags:
         - authentication
       requestBody:
@@ -455,7 +463,7 @@ paths:
                   type: string
       responses:
         '200':
-          description: Successful login
+          description: login eseguito
           content:
             text/plain:
               schema:
@@ -479,14 +487,14 @@ paths:
   /rest/auth/logout:
     delete:
       operationId: doLogout
-      description: performs the logout
+      description: logout
       tags:
         - authentication
       security:
         - bearerAuth: []
       responses:
         '200':
-          description: Successful logout
+          description: logout eseguito
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '500':
@@ -494,14 +502,14 @@ paths:
   /rest/auth/refresh:
     get:
       operationId: refreshToken
-      description: refreshes the current authorization token
+      description: refresha l'autorizzazione del token
       tags:
         - authentication
       security:
         - bearerAuth: []
       responses:
         '200':
-          description: New (refreshed) token
+          description: Nuovo token refreshato
           content:
             text/plain:
               schema:
@@ -618,58 +626,7 @@ components:
         - password
         - tipologiaUtente
       additionalProperties: false
-    PropostaAcquisto:
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/id'
-        produttore:
-          type: string
-          example: "Lenovo"
-        prodotto:
-          type: string
-          example: "Lenovo IdeaPad Slim 3 "
-        codiceProdotto:
-          type: string
-          example: "LEN-UHD-27"
-        codice:
-          type: string
-          example: "8IvYqRV3ZX"
-        prezzo:
-          type: number
-          example: 299.99
-        url:
-          type: string
-          example: "https://www.amazon.it/Lenovo-Slim-Full-Chromebook-Laptop"
-        note:
-          type: string
-          example: "Schermo UHD 4K"
-        stato:
-          enum:
-            - ACCETTATO
-            - RIFIUTATO
-            - IN_ATTESA
-            - ORDINATO
-        data:
-          type: string
-          format: date-time
-          example: "2024-08-18"
-        motivazione:
-          type: string
-          example: "preferirei un prodotto più performante"
-        richiestaOrdine:
-          $ref: '#/components/schemas/RichiestaOrdine'
-      required:
-        - produttore
-        - prodotto
-        - codiceProdotto
-        - codice
-        - prezzo
-        - url
-        - stato
-        - data
-        - richiestaOrdine
-      additionalProperties: false
+    
     RichiestaOrdineBase:
       type: object
       properties:
@@ -748,7 +705,7 @@ components:
           - data
           - utente
       additionalProperties: false
-    RichiestaOrdineList:
+    RichiestaOrdineList: 
       type: object
       properties:
         richieste:
@@ -756,7 +713,108 @@ components:
             items:
               $ref: '#/components/schemas/RichiestaOrdine'
       additionalProperties: false
-
+    RichiestaOrdineSoloId:
+    # questo schema potrebbe risultare ridondante, è stato incluso esclusivamente per utilizzarlo nella PropostaAcquisto, dove in una post è necessario (required) solamente l'id della richiesta (ma anche altri campi possono essere inclusi)
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/id'
+        note:
+          type: string
+          example: "vorrei uno smartphone non troppo costoso ma con una buona fotocamera"
+        stato:
+          enum:
+            - IN_ATTESA
+            - PRESA_IN_CARICO
+            - ORDINATA
+            - RISOLTA
+        data:
+          type: string
+          format: date-time
+        codiceRichiesta:
+          type: string
+          example: "sHeGD7kFrN"
+        tecnico:
+          $ref: '#/components/schemas/Utente'
+        utente:
+          $ref: '#/components/schemas/Utente'
+        categoria:
+          $ref: '#/components/schemas/Categoria'
+      required:
+        - id
+    PropostaAcquisto:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/id'
+        produttore:
+          type: string
+          example: "Lenovo"
+        prodotto:
+          type: string
+          example: "Lenovo IdeaPad Slim 3 "
+        codiceProdotto:
+          type: string
+          example: "LEN-UHD-27"
+        codice:
+          type: string
+          example: "8IvYqRV3ZX"
+        prezzo:
+          type: number
+          example: 299.99
+        url:
+          type: string
+          example: "https://www.amazon.it/Lenovo-Slim-Full-Chromebook-Laptop"
+        note:
+          type: string
+          example: "Schermo UHD 4K"
+        stato:
+          enum:
+            - ACCETTATO
+            - RIFIUTATO
+            - IN_ATTESA
+            - ORDINATO
+        data:
+          type: string
+          format: date-time
+          example: "2024-08-18"
+        motivazione:
+          type: string
+          example: "preferirei un prodotto più performante"
+        richiestaOrdine:
+          $ref: '#/components/schemas/RichiestaOrdineBase'
+      required:
+        - produttore
+        - prodotto
+        - codiceProdotto
+        - codice
+        - prezzo
+        - url
+        - richiestaOrdine
+      additionalProperties: false
+    PropostaAcquistoBase:
+      type: object
+      properties:
+        produttore:
+          type: string
+          example: "Lenovo"
+        prodotto:
+          type: string
+          example: "Lenovo IdeaPad Slim 3 "
+        codiceProdotto:
+          type: string
+          example: "LEN-UHD-27"
+        prezzo:
+          type: number
+          example: 299.99
+        url:
+          type: string
+          example: "https://www.amazon.it/Lenovo-Slim-Full-Chromebook-Laptop"
+        note:
+          type: string
+          example: "Schermo UHD 4K"
+      additionalProperties: false
+      
     ProposteAcquistoList:
       type: object
       properties:
