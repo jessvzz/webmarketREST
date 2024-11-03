@@ -25,6 +25,8 @@ tags:
     description: Operazioni su una collezione di proposte
   - name: Proposte properties
     description: Operazioni sulle proprietà di una singola proposta
+    
+# gli esempi di payloads sono riportati all'interno dei relativi paths, gli esempi di output sono collocati alla fine del documento
 paths:
   /rest/richieste:
     get:
@@ -44,9 +46,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/RichiestaOrdineBase'
+                  $ref: '#/components/schemas/RichiestaOrdineList'
         '401':
           $ref: '#/components/responses/UnauthorizedError'        
         '500':
@@ -63,6 +63,20 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/RichiestaOrdine'
+            example:
+              esempioPayload:
+                summary: esempio del payload per questa post
+                value:
+                  note: Richiesta Urgente
+                  utente:
+                    id: 2
+                  categoria:
+                    id: 3
+                  caratteristiche:
+                    Sistema operativo: Windows 10
+                    Memoria RAM: 16GB
+                    Scheda Grafica: Intel Iris Xe
+              
       responses:
         '201':
           $ref: '#/components/responses/SuccessfulInsert'
@@ -87,35 +101,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/RichiestaOrdineBase'
-              example: 
-               esempioRichieste:
-                  summary: Esempio di risposta con lista di richieste
-                  value:
-                  - id: 5,
-                    note: "Acquisto sedia ergonomica"
-                    stato: "IN_ATTESA"
-                    codiceRichiesta: "52kSv6aSOQ"
-                    data: "2024-09-02"
-                    utente:
-                     username: "geaviozzi"
-                     email: "geaviozzi@icloud.com"
-                    categoria:
-                     id: 10
-                     nome: "Sedie"
-                  - id: 7
-                    note: "Ergonomica contro il mal di schiena"
-                    stato: "IN_ATTESA"
-                    codiceRichiesta: "VCMzkbb1Ab"
-                    data: "2024-09-03"
-                    utente:
-                     username: "userOrd"
-                     email: "example@univaq.it"
-                    categoria: 
-                        id: 10
-                        nome: "Sedie"
+                $ref: '#/components/schemas/RichiestaOrdineList'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '500':
@@ -138,9 +124,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/RichiestaOrdineBase'
+                $ref: '#/components/schemas/RichiestaOrdineList'
         '401':
           $ref: '#/components/responses/UnauthorizedError'        
         '500':
@@ -162,9 +146,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/RichiestaOrdineBase'
+                $ref: '#/components/schemas/RichiestaOrdineList'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '404':
@@ -187,46 +169,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RichiestaOrdine'
-              example:
-                    id: 21
-                    note: "Vorrei un mobile da studio"
-                    stato: "PRESA_IN_CARICO"
-                    codiceRichiesta: "56ghjkl90"
-                    utente:
-                      username: "samanta"
-                      email: "samanta_dis@hotmail.com"
-                    tecnico:
-                      username: "tecnicoS"
-                      email: "tecnicoS@hotmail.com"
-                    categoria:
-                      id: 8
-                      nome: "Mobili"
-                    proposte:
-                      - id: 1
-                        codice: "UivIZl0XXt"
-                        codiceProdotto: ""
-                        motivazione: "yuck"
-                        note: "per ufficio"
-                        prodotto: "Notebook XPS 15"
-                        produttore: "Dell"
-                        url: "https://dell.com/notebook-xps15"
-                        prezzo: 1500.5
-                        stato: "RIFIUTATO"
-                        data: "2024-09-03"
-                      - id: 11
-                        codice: "b9nJ4Dhf7S"
-                        codiceProdotto: ""
-                        note: "Perfetto per ufficio"
-                        prodotto: "Notebook XPS 15"
-                        produttore: "Dell"
-                        url: "https://dell.com/notebook-xps15"
-                        prezzo: 1500.5
-                        stato: "ACCETTATO"
-                        data: "2024-10-31"
-                    caratteristiche:
-                      Sistema operativo: "Android"
-                      Memoria RAM: "16GB"
-                      Scheda Grafica: "Intel i7"
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '404':
@@ -313,6 +255,18 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PropostaAcquisto'
+            example:
+              esempioPayload:
+                description: esempio di un payload oer questo inserimento
+                value:
+                  produttore: Amazon
+                  prodotto: sedia ergonomica
+                  codiceProdotto: feri93
+                  prezzo: 10
+                  url: https://www.amazon.it
+                  richiestaOrdine:
+                    id: 1
+                  
       responses:
         '201':
           $ref: '#/components/responses/SuccessfulInsert'
@@ -385,6 +339,15 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PropostaAcquistoBase'
+            example:
+              esempioPayload:
+                description: esempio di un payload per questa modifica
+                value:
+                  produttore: Amazon
+                  prodotto: sedia ergonomica
+                  codiceProdotto: feri93
+                  prezzo: 10
+                  url: https://www.amazon.it
       responses:
         '204':
           description: Proposta modificata con successo
@@ -433,6 +396,8 @@ paths:
               properties:
                 motivazione:
                   type: string
+                  example: "Costo eccessivo rispetto al budget"
+
               required:
                 - motivazione
       responses:
@@ -463,23 +428,30 @@ paths:
                   type: string
       responses:
         '200':
-          description: login eseguito
+          description: Login eseguito con successo, restituisce il token di autenticazione.
           content:
-            text/plain:
-              schema:
-                type: string
-          headers:
-            Authorization:
+            application/json:
               schema:
                 type: object
                 properties:
                   token:
                     type: string
-                    pattern: Bearer [a-z0-9A-Z-]+
+                    description: "Token di autenticazione"
+                    example: "abcdef12345"
                   role:
                     type: string
-                  userId: 
+                    description: "Ruolo dell'utente autenticato."
+                    example: "ORDINANTE"
+                  userId:
                     type: integer
+                    description: "ID univoco dell'utente autenticato."
+                    example: 2
+          headers:
+            Authorization:
+              schema:
+                type: string
+                description: "Token di autenticazione per l'accesso alle risorse protette."
+                example: "Bearer abcdef12345"
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '500':
@@ -711,7 +683,7 @@ components:
         richieste:
             type: array
             items:
-              $ref: '#/components/schemas/RichiestaOrdine'
+              $ref: '#/components/schemas/RichiestaOrdineBase'
       additionalProperties: false
     RichiestaOrdineSoloId:
     # questo schema potrebbe risultare ridondante, è stato incluso esclusivamente per utilizzarlo nella PropostaAcquisto, dove in una post è necessario (required) solamente l'id della richiesta (ma anche altri campi possono essere inclusi)
