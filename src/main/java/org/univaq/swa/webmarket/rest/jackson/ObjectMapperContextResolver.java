@@ -15,8 +15,6 @@ import org.univaq.swa.webmarket.rest.jackson.ordine.OrdineDeserializer;
 import org.univaq.swa.webmarket.rest.jackson.ordine.OrdineSerializer;
 import org.univaq.swa.webmarket.rest.jackson.proposta.PropostaAcquistoDeserializer;
 import org.univaq.swa.webmarket.rest.jackson.proposta.PropostaAcquistoSerializer;
-import org.univaq.swa.webmarket.rest.jackson.richiesta.RichiestaCompletaDeserializer;
-import org.univaq.swa.webmarket.rest.jackson.richiesta.RichiestaCompletaSerializer;
 import org.univaq.swa.webmarket.rest.jackson.richiesta.RichiestaOrdineDeserializer;
 import org.univaq.swa.webmarket.rest.jackson.richiesta.RichiestaOrdineSerializer;
 import org.univaq.swa.webmarket.rest.jackson.utente.UtenteDeserializer;
@@ -26,7 +24,6 @@ import org.univaq.swa.webmarket.rest.models.CaratteristicaRichiesta;
 import org.univaq.swa.webmarket.rest.models.Categoria;
 import org.univaq.swa.webmarket.rest.models.Ordine;
 import org.univaq.swa.webmarket.rest.models.PropostaAcquisto;
-import org.univaq.swa.webmarket.rest.models.RichiestaCompleta;
 import org.univaq.swa.webmarket.rest.models.RichiestaOrdine;
 import org.univaq.swa.webmarket.rest.models.Utente;
 
@@ -81,8 +78,6 @@ public class ObjectMapperContextResolver implements ContextResolver<ObjectMapper
         customSerializers.addSerializer(RichiestaOrdine.class, new RichiestaOrdineSerializer());
         customSerializers.addDeserializer(RichiestaOrdine.class, new RichiestaOrdineDeserializer());
         
-        customSerializers.addSerializer(RichiestaCompleta.class, new RichiestaCompletaSerializer());
-        customSerializers.addDeserializer(RichiestaCompleta.class, new RichiestaCompletaDeserializer());
         
         //Utente
         customSerializers.addSerializer(Utente.class, new UtenteSerializer());

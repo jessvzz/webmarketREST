@@ -73,7 +73,7 @@ public class RichiesteRes {
         @Context SecurityContext sec,
         @Context ContainerRequestContext req) throws RESTWebApplicationException {
         
-        RichiestaOrdine richiesta = business.getRichiesta(id);
+        RichiestaOrdine richiesta = business.getDettagliRichiesta(id);
 
         return new RichiestaRes(richiesta);
 }
