@@ -10,7 +10,7 @@
 
         if (!token) {
             alert("Errore: token non trovato. Per favore, effettua nuovamente il login.");
-            window.location.href = "index.html"; // Reindirizza alla pagina di login se il token non è presente
+            window.location.href = "index.html"; 
             return;
         }
 
@@ -48,8 +48,8 @@
                                 <div><strong>Prodotto:</strong> ${proposta.prodotto}</div>
                                 <div><strong>Codice Prodotto:</strong> ${proposta.codice}</div>
                                 <div><strong>Prezzo:</strong> ${proposta.prezzo}</div>
-                                <div><strong>Stato Proposta:</strong> ${readableStatoProposta}</div>
-                                <div><strong>URL:</strong> <a href="${proposta.url}" target="_blank">Vai al prodotto</a></div>`;
+                                <div><strong>URL:</strong> <a href="${proposta.url}" target="_blank">Vai al prodotto</a></div>
+                                <div><strong>Stato Proposta:</strong> ${readableStatoProposta}</div>`;
 
                         if (proposta.motivazione) {
                             propostaHtml += `<div><strong>Motivazione:</strong> ${proposta.motivazione}</div>`;

@@ -47,9 +47,7 @@ $(document).ready(function() {
     }
 
     caricaDettagliProposta();
-    
-    // segnando i punti in cui ho dovuto pensare troppo ed ho pianto
-    
+
     $('#prendiInCarico').click(function() {
         $('#url_link').hide();
         $('#url_input').show();

@@ -36,3 +36,4 @@ non serve
 
 -Ho tolto getAllRequest, tutti i metodi commentati tipo getAll(), la post che avevo fatto bruttissima addItem(), getRichiesteNonAssegnate(), eliminato file openapi (ho lasciato la versione attuale openapi2.yaml), eliminato file json schemas che tanto non ci servono, faccio il controlo sulla motivazione proposte che se null non lo restituisco in output,getAllRichieste().
 
+   <link rel="stylesheet" href="res/normalize.css" type="text/css"/>    da errore da sempre in console. lo togliamo?
