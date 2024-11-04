@@ -16,7 +16,7 @@
 
         function caricaDettagliRichiesta() {
             $.ajax({
-                url: `/WebMarketREST/rest/richieste/${richiestaId}/dettagli`,
+                url: `/WebMarketREST/rest/richieste/${richiestaId}`,
                 method: "GET",
                 headers: {
                     "Authorization": "Bearer " + token
