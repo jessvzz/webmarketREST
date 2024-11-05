@@ -57,8 +57,8 @@ $(document).ready(function () {
                     window.location.href = "index.html";
                     return;   }
         
-                    else {  alert("Errore durante il caricamento delle proposte.");
-                        window.location.href = "index.html";
+                    else {  alert("Non ci sono proposte in attesa per questo utente!");
+                        window.location.href = "ordinantehomepage.html";
                     }
                 }
             });

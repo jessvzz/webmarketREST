@@ -22,8 +22,7 @@ $(document).ready(function () {
                 window.location.href = "index.html";
             },
             error: function (xhr, status, error) {
-                console.error("Errore nel logout:", error);
-                alert("Errore durante il logout");
+                window.location.href = "index.html";
             }
         });
     });
