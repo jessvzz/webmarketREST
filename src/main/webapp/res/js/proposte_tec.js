@@ -61,7 +61,10 @@ $(document).ready(function () {
                         alert("Si prega di effettuare l'accesso.");
                     window.location.href = "index.html";
                     return;   }
-        
+                    else if (xhr.status === 404) {
+                        alert("Non ci sono proposte in attesa per questo utente!");
+                        window.location.href = "tecnicohomepage.html";
+                    }
                     else {  alert("Errore durante il caricamento delle proposte.");
                     }
                 }
