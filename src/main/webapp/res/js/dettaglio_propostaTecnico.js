@@ -48,7 +48,7 @@ $(document).ready(function() {
 
     caricaDettagliProposta();
 
-    $('#prendiInCarico').click(function() {
+    $('#modifica').click(function() {
         $('#url_link').hide();
         $('#url_input').show();
         
