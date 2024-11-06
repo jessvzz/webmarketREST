@@ -58,7 +58,6 @@ $(document).ready(function () {
                     return;   }
         
                     else {  alert("Non ci sono proposte in attesa per questo utente!");
-                        window.location.href = "ordinantehomepage.html";
                     }
                 }
             });

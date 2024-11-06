@@ -57,7 +57,7 @@ $(document).ready(function () {
             window.location.href = "index.html";
             return;   }
 
-            else {  alert("Errore durante il caricamento delle richieste.");
+            else {  alert("Non ci sono richieste in attesa per questo utente");
             }
         }
 

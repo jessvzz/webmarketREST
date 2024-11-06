@@ -11,7 +11,7 @@
 
         if (!token) {
             alert("Errore: token non trovato. Per favore, effettua nuovamente il login.");
-            window.location.href = "index.html"; // Reindirizza alla pagina di login se il token non è presente
+            window.location.href = "index.html"; 
             return;
         }
 

@@ -62,7 +62,7 @@ $(document).ready(function () {
             window.location.href = "index.html";
             return;   }
 
-            else {  alert("Errore durante il caricamento delle richieste.");
+            else {  alert("Non ci sono richieste in attesa per questo utente");
             }             
             
         }
@@ -70,46 +70,6 @@ $(document).ready(function () {
 
     });
 
-    // filtro stato richieste
-    $('#status').on('change', function () {
-        const selectedStatus = $(this).val();
-        $(".richiesta-container").each(function () {
-            const richiestaStatus = $(this).data('stato');
-            if (selectedStatus === 'tutti' || richiestaStatus === selectedStatus) {
-                $(this).show();
-            } else {
-                $(this).hide();
-            }
-        });
-    });
 
-    // Gestione click del pulsante "Elimina"
-$(document).on('click', '.delete-button', function () {
-    const richiestaId = $(this).data('id');
-    const confirmed = confirm("Sei sicuro di voler eliminare questa richiesta?");
-
-    if (confirmed) {
-        $.ajax({
-            url: `/WebMarketREST/rest/richieste/${richiestaId}`, // Assicurati che questo sia l'URL corretto per l'eliminazione
-            method: "DELETE",
-            headers: {
-                "Authorization": "Bearer " + token
-            },
-            success: function () {
-                alert("Richiesta eliminata con successo.");
-                location.reload(); // Ricarica la pagina per mostrare le modifiche
-            },
-            error: function (xhr, status, error) {
-                if (xhr.status === 401) {
-                    alert("Si prega di effettuare l'accesso.");
-                window.location.href = "index.html";
-                return;   }
-    
-                else {  alert("Errore durante l'eliminazione della richiesta.");
-                }
-            }
-        });
-    }
-});
 
 });
