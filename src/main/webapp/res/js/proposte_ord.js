@@ -56,8 +56,10 @@ $(document).ready(function () {
                         alert("Si prega di effettuare l'accesso.");
                     window.location.href = "index.html";
                     return;   }
-        
-                    else {  alert("Non ci sono proposte in attesa per questo utente!");
+                    else if(xhr.status === 404) {  
+                        alert("Non ci sono proposte in attesa per questo utente!");
+                    }
+                    else {  alert("Errore durante il caricamento delle proposte. Riprova più tardi.");
                     }
                 }
             });
